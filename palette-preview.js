@@ -3,8 +3,9 @@
 
   const palette = document.querySelector('#palette');
   const accent = document.querySelector('#accentPicker');
+  const other = document.querySelector('#otherPicker');
   const chat = document.querySelector('#bgPicker');
-  if (!palette || !accent || !chat) return;
+  if (!palette || !accent || !other || !chat) return;
 
   const clamp = (v, min = 0, max = 255) => Math.max(min, Math.min(max, v));
   const hexToRgb = hex => {
@@ -50,7 +51,39 @@
     )).join('');
   }
 
-  [accent, chat].forEach(input => {
+  function applyPreset(a, o, b) {
+    accent.value = a;
+    other.value = o;
+    chat.value = b;
+    [accent, other, chat].forEach(input => input.dispatchEvent(new Event('input', { bubbles: true })));
+    requestAnimationFrame(renderPalette);
+  }
+
+  function addExtraPresets() {
+    const presets = document.querySelector('.presets');
+    if (!presets || presets.querySelector('[data-extra-preset="beige"]')) return;
+
+    const extra = [
+      { key: 'beige', name: '베이지', a: '#D6B98C', o: '#FFF9ED', b: '#E8DDCB' },
+      { key: 'peach', name: '피치', a: '#F2B29A', o: '#FFF4EE', b: '#EEDBD1' },
+      { key: 'sage', name: '세이지', a: '#A8C3A0', o: '#F4F7EF', b: '#DCE5D7' }
+    ];
+
+    extra.forEach(item => {
+      const button = document.createElement('button');
+      button.className = 'preset';
+      button.type = 'button';
+      button.dataset.extraPreset = item.key;
+      button.dataset.a = item.a;
+      button.dataset.o = item.o;
+      button.dataset.b = item.b;
+      button.innerHTML = `<i style="background:${item.a}"></i>${item.name}`;
+      button.addEventListener('click', () => applyPreset(item.a, item.o, item.b));
+      presets.appendChild(button);
+    });
+  }
+
+  [accent, other, chat].forEach(input => {
     input.addEventListener('input', renderPalette);
     input.addEventListener('change', renderPalette);
   });
@@ -59,5 +92,6 @@
     if (event.target.closest('.preset, #resetTheme')) requestAnimationFrame(renderPalette);
   });
 
+  addExtraPresets();
   renderPalette();
 })();
