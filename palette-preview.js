@@ -69,6 +69,21 @@
     if (event.target.closest('.preset, #resetTheme')) requestAnimationFrame(renderPalette);
   });
 
+  const downloadButton = document.querySelector('#downloadScript');
+  const fontSize = document.querySelector('#fontSize');
+  if (downloadButton && fontSize) {
+    const RAW = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
+    downloadButton.textContent = '.user.js 저장 + 몽키 추가';
+    downloadButton.addEventListener('click', () => {
+      const url = new URL(RAW);
+      url.searchParams.set('bubble', accent.value.slice(1).toUpperCase());
+      url.searchParams.set('other', other.value.slice(1).toUpperCase());
+      url.searchParams.set('bg', chat.value.slice(1).toUpperCase());
+      url.searchParams.set('fs', String(Math.max(12, Math.min(20, Number(fontSize.value) || 15))));
+      setTimeout(() => { location.href = url.href; }, 450);
+    }, true);
+  }
+
   removeDuplicatePresets();
   renderPalette();
 })();
