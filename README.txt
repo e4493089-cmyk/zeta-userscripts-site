@@ -1,3 +1,8 @@
+Zeta Tools site v5.1
+- 모바일에서 현재 설치 환경이 확실히 보이도록 표시 강화
+- site.css/site.js 캐시 버스터 추가 (?v=5.1)
+- JS 로딩 전 fallback 표시 추가
+
 Zeta Tools Site v5
 
 GitHub Pages 저장소(zeta-userscripts-site)의 루트에 아래 파일들을 그대로 업로드/덮어쓰기:
