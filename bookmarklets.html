@@ -1,26 +1,20 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#FEE500"><meta name="description" content="Zeta bookmarklet 링크 복사 및 설치 페이지."><title>Zeta Tools — Bookmarklets</title><link rel="stylesheet" href="site.css?v=5.1"></head><body>
-<header class="header"><div class="wrap header-in"><a class="brand" href="index.html"><span class="logo">Z</span>Zeta Tools</a><nav class="nav"><a href="index.html">홈</a><a href="scripts.html">스크립트</a><a class="active" href="bookmarklets.html">북마클릿</a><a class="gh" href="https://github.com/e4493089-cmyk/zeta-userscripts" target="_blank" rel="noopener">GitHub ↗</a></nav></div></header>
-<main><section class="hero"><div class="wrap"><span class="eyebrow">BOOKMARKLET · 링크 복사가 1순위</span><h1>복사하고,<br>북마크 주소에 붙여넣기.</h1><p>북마클릿은 긴 코드를 읽으라고 만든 게 아니라 <b>링크 하나 복사해서 북마크 URL에 넣는 도구</b>입니다. 그래서 모든 카드의 첫 버튼을 ‘링크 복사’로 통일했습니다.</p><div id="platform-mount" class="platform-mount compact-platform"><div class="platform-fallback"><b>현재 설치 환경</b><span>기기 확인 중…</span></div></div><p class="mini">기기 감지는 Userscript 설치 버튼에만 영향을 줍니다. 북마클릿 링크는 어떤 기기든 동일합니다. · 자동 실행이 더 편하면 → <a class="more" href="scripts.html">Userscript 페이지로</a></p></div></section>
-<section class="section"><div class="wrap"><div class="notice yellow"><strong>모바일 20초 설치:</strong> ① 아래 <b>링크 복사</b> ② 아무 북마크 하나 생성 ③ 북마크 편집 ④ URL/주소를 전부 지우고 붙여넣기 ⑤ Zeta에서 그 북마크 누르기.</div><div class="book-grid" id="bookmark-grid" style="margin-top:14px"></div></div></section>
-<section class="section"><div class="wrap"><div class="section-head"><div><h2>왜 링크 복사?</h2><p>북마클릿의 핵심은 <code>javascript:...</code> 전체를 북마크의 주소로 넣는 것입니다.</p></div></div><div class="guide"><div class="guide-step"><span class="guide-num">1</span><b>링크 복사</b><span>카드의 가장 큰 버튼을 누르면 북마클릿 주소 전체가 복사됩니다.</span></div><div class="guide-step"><span class="guide-num">2</span><b>북마크 URL 교체</b><span>기존 URL을 지우고 복사한 내용을 그대로 붙여넣습니다.</span></div><div class="guide-step"><span class="guide-num">3</span><b>Zeta에서 실행</b><span>해당 북마크를 누르면 GitHub의 최신 userscript를 불러옵니다.</span></div></div><div class="notice blue" style="margin-top:12px"><strong>참고:</strong> 새로고침하면 북마클릿으로 주입한 기능이 풀릴 수 있습니다. 필요하면 다시 북마크를 눌러주세요.</div></div></section>
-</main><footer class="footer"><div class="wrap footer-in"><div>Zeta Tools v5.1 · Bookmarklets</div><div><a href="index.html">홈</a> · <a href="scripts.html">스크립트</a></div></div></footer><div class="toast" id="toast"></div><script src="site.js?v=5.1"></script><script>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#FEE500"><meta name="description" content="Zeta 북마클릿을 복사합니다."><title>Zeta Tools — 북마클릿</title><link rel="stylesheet" href="site.css?v=7.5"></head><body><header class="header"><div class="wrap header-in"><a class="brand" href="index.html"><span class="logo">Z</span><span>Zeta Tools</span></a><nav class="nav" aria-label="주요 메뉴"><a href="index.html">홈</a><a href="scripts.html">스크립트</a><a class="active" href="bookmarklets.html">북마클릿</a><a href="theme-maker.html">테마 만들기</a><a class="gh" href="https://github.com/e4493089-cmyk/zeta-userscripts" target="_blank" rel="noopener">GitHub ↗</a></nav></div></header>
+<main><section class="hero sub-hero"><div class="wrap"><span class="eyebrow">BOOKMARKLETS</span><h1>복사하고,<br>북마크에 붙여넣기.</h1><p>확장 프로그램 없이 필요할 때만 실행하는 방식입니다.</p></div></section>
+<section class="section section-tight"><div class="wrap"><div class="guide"><div class="guide-step"><span class="guide-num">1</span><b>링크 복사</b><span>원하는 도구의 ‘링크 복사’를 누릅니다.</span></div><div class="guide-step"><span class="guide-num">2</span><b>북마크에 붙여넣기</b><span>북마크 주소(URL)를 복사한 링크로 바꿉니다.</span></div><div class="guide-step"><span class="guide-num">3</span><b>Zeta에서 실행</b><span>북마크를 누르면 적용됩니다.</span></div></div></div></section>
+<section class="section"><div class="wrap"><div class="section-head"><div><h2>북마클릿</h2><p>새로고침하면 다시 실행해야 합니다.</p></div></div><div class="book-grid" id="bookmark-grid"></div></div></section>
+</main><footer class="footer"><div class="wrap footer-in"><div>Zeta Tools · Zeta용 개인 도구</div><div><a href="scripts.html">스크립트</a> · <a href="bookmarklets.html">북마클릿</a> · <a href="theme-maker.html">테마 만들기</a></div></div></footer><div class="toast" id="toast"></div><script src="site.js?v=7.5"></script><script>
 const B=ZetaSite.getBookmarklets();
 const items=[
- {key:'both',title:'테마 + 이름 가리기',desc:'카톡 테마와 캡처 이름 가리기를 한 번에 실행.',file:'zeta-theme-and-mask.bookmarklet.txt',recommended:true},
- {key:'theme',title:'카카오톡 테마',desc:'카톡 테마만 필요할 때 실행.',file:'zeta-theme.bookmarklet.txt'},
- {key:'mask',title:'캡처 이름 가리기',desc:'캡처 이름 마스킹만 필요할 때 실행.',file:'zeta-user-mask.bookmarklet.txt'},
- {key:'room',title:'Room Manager',desc:'대화방 별명/검색 기능을 현재 페이지에 불러옵니다. 별명 데이터는 남지만 새로고침 후 다시 실행해야 합니다.',file:'zeta-room-manager.bookmarklet.txt'},
- {key:'full',title:'Fullscreen',desc:'전체화면 전환 버튼을 현재 페이지에 불러옵니다.',file:'zeta-fullscreen.bookmarklet.txt'}
+ {key:'both',title:'테마 + 이름 가리기',desc:'테마와 캡처 이름 가리기를 한 번에.',file:'zeta-theme-and-mask.bookmarklet.txt',recommended:true},
+ {key:'theme',title:'카카오톡 테마',desc:'카카오톡 테마만 적용.',file:'zeta-theme.bookmarklet.txt'},
+ {key:'mask',title:'캡처 이름 가리기',desc:'캡처 이름 가리기만 적용.',file:'zeta-user-mask.bookmarklet.txt'},
+ {key:'room',title:'Room Manager',desc:'별명과 검색 기능. 별명 데이터는 브라우저에 남습니다.',file:'zeta-room-manager.bookmarklet.txt'},
+ {key:'full',title:'Fullscreen',desc:'전체화면 버튼을 불러옵니다.',file:'zeta-fullscreen.bookmarklet.txt'}
 ];
 const grid=document.getElementById('bookmark-grid');
 items.forEach(x=>{
- const article=document.createElement('article');article.className='book-card'+(x.recommended?' recommended':'');article.id=x.key;
- const txtUrl=ZetaSite.pages+x.file;
- article.innerHTML=`<div class="book-top"><div><h2>${x.title}${x.recommended?'<span class="pill">추천</span>':''}</h2><p>${x.desc}</p></div></div><div class="book-actions"><button class="btn btn-primary copy-link">링크 복사</button><a class="btn btn-dark drag" href="${B[x.key]}">PC: 북마크바로 드래그</a><a class="btn btn-soft" href="${x.file}" target="_blank">TXT 열기</a><button class="btn btn-light" data-copy="${txtUrl}" data-message="TXT 주소를 복사했어요.">TXT 주소 복사</button><button class="btn btn-light wide" data-toggle="code-${x.key}">코드 보기</button></div><div class="code-wrap" id="code-${x.key}" hidden><textarea class="bookmark-code" readonly></textarea><div class="book-actions"><button class="btn btn-soft btn-sm copy-code">코드 복사</button></div></div><p class="hint">‘링크 복사’가 북마크 URL 칸에 넣을 실제 javascript: 주소입니다.</p>`;
- article.querySelector('.copy-link').onclick=()=>ZetaSite.copyText(B[x.key],'북마클릿 링크를 복사했어요.');
- article.querySelector('textarea').value=B[x.key];
- article.querySelector('.copy-code').onclick=()=>ZetaSite.copyText(B[x.key],'북마클릿 코드를 복사했어요.');
- grid.appendChild(article);
+ const article=document.createElement('article'); article.className='book-card'+(x.recommended?' recommended':''); article.id=x.key;
+ article.innerHTML=`<div class="book-top"><div><span class="section-label">BOOKMARKLET</span><h2>${x.title}${x.recommended?'<span class="pill">추천</span>':''}</h2><p>${x.desc}</p></div></div><div class="book-actions clean"><button class="btn btn-primary copy-link">링크 복사</button><a class="btn btn-dark drag" href="${B[x.key]}">PC: 드래그</a><a class="btn btn-soft" href="${x.file}" target="_blank">TXT 열기</a></div>`;
+ article.querySelector('.copy-link').onclick=()=>ZetaSite.copyText(B[x.key],'북마클릿 링크를 복사했어요.'); grid.appendChild(article);
 });
-ZetaSite.bindCopies();
 </script></body></html>
