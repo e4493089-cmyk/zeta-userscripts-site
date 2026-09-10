@@ -66,7 +66,7 @@ function platformInstallMeta(platform=getPlatform()){
     primary:'Stay용 링크 복사',
     copyFirst:true,
     badge:'Stay for Safari 추천',
-    summary:'스크립트 URL을 복사한 뒤 Stay에서 + → Link에 붙여넣는 방식으로 설치합니다.',
+    summary:'링크를 복사해 Stay for Safari의 + → Link에 붙여넣습니다.',
     steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Stay for Safari를 열고 + → Link를 선택합니다.','복사된 .user.js 주소를 붙여넣고 저장/활성화합니다.','Safari 확장에서 Stay를 허용한 뒤 Zeta를 새로고침합니다.']
   };
   if(platform==='ios-edge')return {
@@ -75,7 +75,7 @@ function platformInstallMeta(platform=getPlatform()){
     primary:'Stay용 링크 복사',
     copyFirst:true,
     badge:'Stay for Mobile 추천',
-    summary:'iPhone Edge에서는 Stay for Mobile에 Raw .user.js 링크를 등록하는 흐름을 안내합니다.',
+    summary:'링크를 복사해 Stay for Mobile에 등록합니다.',
     steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Edge의 Stay for Mobile을 열어 새 스크립트/Link 추가를 선택합니다.','복사된 .user.js 주소를 붙여넣고 저장/활성화합니다.','Zeta 탭을 새로고침해 적용 여부를 확인합니다.']
   };
   if(platform==='android')return {
@@ -84,7 +84,7 @@ function platformInstallMeta(platform=getPlatform()){
     primary:'Tampermonkey로 설치',
     copyFirst:false,
     badge:'Tampermonkey 추천',
-    summary:'Tampermonkey가 설치된 브라우저라면 Raw .user.js를 열어 바로 설치하는 방식이 가장 편합니다.',
+    summary:'노란 설치 버튼을 누르면 Tampermonkey 설치 화면이 열립니다.',
     steps:['Tampermonkey를 설치/활성화합니다.','원하는 스크립트의 설치 버튼을 누릅니다.','Tampermonkey 설치 화면에서 설치를 확인합니다.','Zeta를 새로고침합니다.']
   };
   return {
@@ -93,7 +93,7 @@ function platformInstallMeta(platform=getPlatform()){
     primary:'Tampermonkey로 설치',
     copyFirst:false,
     badge:'Tampermonkey 추천',
-    summary:'PC에서는 Tampermonkey 설치 후 Raw .user.js 링크를 여는 방식이 가장 간단합니다.',
+    summary:'노란 설치 버튼을 누르면 Tampermonkey 설치 화면이 열립니다.',
     steps:['Tampermonkey를 설치/활성화합니다.','원하는 스크립트의 설치 버튼을 누릅니다.','Tampermonkey 설치 화면에서 설치를 확인합니다.','Zeta를 새로고침합니다.']
   };
 }
@@ -190,7 +190,7 @@ function renderPlatformUI(){
 function mountPlatformBar(){
   const mount=document.getElementById('platform-mount');
   if(!mount)return;
-  mount.innerHTML=`<div class="platform-card"><div class="platform-top"><div><span class="platform-label">현재 설치 환경</span><div class="platform-current"><strong data-platform-name></strong><span data-platform-badge></span></div><p data-platform-summary></p></div><a class="manager-link" data-manager-link target="_blank" rel="noopener"></a></div><div class="platform-switch" aria-label="설치 환경 선택">${Object.entries(PLATFORM_OPTIONS).map(([key,v])=>`<button type="button" data-platform-option="${key}">${v.label}</button>`).join('')}</div><div class="platform-foot"><span><b>감지:</b> <span data-platform-detected></span></span><span data-platform-preview-note></span><span>아이폰 없어도 Safari/Edge 모드 눌러서 설치 흐름 미리보기 가능</span></div></div>`;
+  mount.innerHTML=`<div class="platform-card"><div class="platform-top"><div><span class="platform-label">현재 설치 환경</span><div class="platform-current"><strong data-platform-name></strong><span data-platform-badge></span></div><p data-platform-summary></p></div><a class="manager-link" data-manager-link target="_blank" rel="noopener"></a></div><div class="platform-switch" aria-label="설치 환경 선택">${Object.entries(PLATFORM_OPTIONS).map(([key,v])=>`<button type="button" data-platform-option="${key}">${v.label}</button>`).join('')}</div><div class="platform-foot"><span><b>감지:</b> <span data-platform-detected></span></span><span data-platform-preview-note></span><span>다르면 직접 선택하세요.</span></div></div>`;
   mount.querySelectorAll('[data-platform-option]').forEach(btn=>btn.addEventListener('click',()=>setPlatformMode(btn.dataset.platformOption)));
   renderPlatformUI();
 }
