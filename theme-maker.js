@@ -1,4 +1,4 @@
-const BASE_THEME_VERSION = '3.48.6';
+const BASE_THEME_VERSION = '3.49.0';
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 
 const $ = selector => document.querySelector(selector);
@@ -90,7 +90,7 @@ function buildStandaloneScript() {
   return `// ==UserScript==
 // @name         Zeta Custom Theme (${A} · ${O} · ${C} · ${F}px)
 // @namespace    zeta-custom-theme-maker
-// @version      1.2.0
+// @version      1.2.1
 // @description  Zeta Theme Maker 생성본 · 내 말풍선 ${A} · 캐릭터 말풍선 ${O} · 배경 ${C} · 글씨 ${F}px
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
