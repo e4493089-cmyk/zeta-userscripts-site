@@ -1,5 +1,5 @@
-const BASE_THEME_VERSION = '3.49.2';
-const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/f0f66290ba5a6fc4f7ece330679917c1d08559c0/zeta-kakaotalk-theme.user.js';
+const BASE_THEME_VERSION = '3.50.0';
+const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/f7e52538d021dcd20f6b20978485674a2ecb82ed/zeta-kakaotalk-theme.user.js';
 
 const $ = selector => document.querySelector(selector);
 const accentPicker = $('#accentPicker');
@@ -90,7 +90,7 @@ function buildStandaloneScript() {
   return `// ==UserScript==
 // @name         Zeta Custom Theme (${A} · ${O} · ${C} · ${F}px)
 // @namespace    zeta-custom-theme-maker
-// @version      1.2.4
+// @version      1.2.5
 // @description  Zeta Theme Maker 생성본 · 내 말풍선 ${A} · 캐릭터 말풍선 ${O} · 배경 ${C} · 글씨 ${F}px
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
