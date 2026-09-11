@@ -19,7 +19,7 @@ items.forEach(x=>{
  const article=document.createElement('article'); article.className='book-card'+(x.recommended?' recommended':''); article.id=x.key;
  article.innerHTML=`<div class="book-top"><div><span class="section-label">BOOKMARKLET</span><h2>${x.title}${x.recommended?'<span class="pill">추천</span>':''}</h2><p>${x.desc}</p></div></div><div class="book-actions clean"><button class="btn btn-primary copy-link">링크 복사</button></div>`;
  const actions=article.querySelector('.book-actions');
- const drag=document.createElement('a'); drag.className='btn btn-dark drag'; drag.href=href; drag.textContent='PC: 드래그'; actions.appendChild(drag);
+ const drag=document.createElement('a'); drag.className='btn btn-dark drag'; drag.href=href; drag.textContent=x.title; drag.title=`PC 북마크바로 드래그: ${x.title}`; actions.appendChild(drag);
  const txt=document.createElement('a'); txt.className='btn btn-soft'; txt.href=x.file; txt.target='_blank'; txt.rel='noopener'; txt.textContent='TXT 열기'; actions.appendChild(txt);
  article.querySelector('.copy-link').onclick=()=>ZetaSite.copyText(href,'북마클릿 링크를 복사했어요.');
  grid.appendChild(article);
