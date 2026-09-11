@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Zeta Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.2.1
+// @version      1.2.2
 // @description  Zeta Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
