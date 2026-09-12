@@ -176,6 +176,8 @@ function renderScriptActions(root=document){
       primary.addEventListener('click',()=>installScript(url,name));
     }else{
       primary.href=url;
+      primary.target='_blank';
+      primary.rel='noopener';
       primary.setAttribute('data-userscript-install','1');
     }
     box.appendChild(primary);
