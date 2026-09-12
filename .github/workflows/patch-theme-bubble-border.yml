@@ -1,0 +1,163 @@
+name: Patch theme maker bubble border option
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-theme-bubble-border.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch theme maker
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              s = p.read_text(encoding='utf-8')
+              if old not in s:
+                  raise SystemExit(f'{path}: pattern not found: {old[:100]!r}')
+              p.write_text(s.replace(old, new, 1), encoding='utf-8')
+
+          # theme-maker.html: one toggle block only
+          p = Path('theme-maker.html')
+          s = p.read_text(encoding='utf-8')
+          anchor = '<div class="maker-block font-size-block"><div class="maker-block-head"><b>글씨 크기</b><span><b id="fontSizeValue">15</b>px</span></div><div class="range-row font-range"><input id="fontSize" type="range" min="12" max="20" step="1" value="15" aria-label="채팅 글씨 크기"><div class="range-scale"><span>12</span><span>15</span><span>20</span></div></div></div>'
+          border_block = anchor + '\n<div class="maker-block border-option-block"><div class="maker-block-head"><b>말풍선 외곽선</b><span>선택 옵션</span></div><label class="maker-toggle" for="bubbleBorder"><input id="bubbleBorder" type="checkbox"><span class="maker-toggle-ui" aria-hidden="true"></span><span class="maker-toggle-copy"><b>외곽선 추가</b><small>말풍선 색에 맞춰 1px 선을 자동 적용</small></span></label></div>'
+          if anchor not in s:
+              raise SystemExit('theme-maker.html: font-size block not found')
+          s = s.replace(anchor, border_block, 1)
+          s = s.replace('site.css?v=7.7.9', 'site.css?v=7.7.10')
+          s = s.replace('theme-maker.js?v=7.7.9', 'theme-maker.js?v=7.7.10')
+          p.write_text(s, encoding='utf-8')
+
+          # site.css: bust only the changed part4 stylesheet
+          replace_once('site.css', 'css/part4.css?v=7.7.5', 'css/part4.css?v=7.7.10')
+
+          # part4.css: toggle styling + preview border variables
+          p = Path('css/part4.css')
+          s = p.read_text(encoding='utf-8')
+          old = '.font-size-block .maker-block-head>span{font-size:11px;color:#78858b}.font-size-block .maker-block-head>span b{font-size:13px;color:#34464f}.font-range input{width:100%;accent-color:#26343c}.range-scale{display:flex;justify-content:space-between;margin-top:5px;color:#98a2a7;font-size:10px}'
+          new = old + '.maker-toggle{position:relative;display:flex;align-items:center;gap:12px;min-height:54px;padding:10px 12px;border:1px solid #dfe5e7;border-radius:13px;background:#f8fafb;cursor:pointer}.maker-toggle input{position:absolute;opacity:0;pointer-events:none}.maker-toggle-ui{width:42px;height:24px;border-radius:999px;background:#d8dfe2;position:relative;flex:0 0 auto;transition:.16s}.maker-toggle-ui:before{content:"";position:absolute;width:18px;height:18px;border-radius:50%;left:3px;top:3px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:.16s}.maker-toggle input:checked+.maker-toggle-ui{background:#26343c}.maker-toggle input:checked+.maker-toggle-ui:before{transform:translateX(18px)}.maker-toggle-copy{display:flex;flex-direction:column;gap:2px}.maker-toggle-copy b{font-size:12px;color:#34464f}.maker-toggle-copy small{font-size:10px;color:#8a969c;font-weight:700}'
+          if old not in s:
+              raise SystemExit('part4.css: font controls block not found')
+          s = s.replace(old, new, 1)
+          s = s.replace('.zeta-message.me .preview-bubble{background:var(--accent);color:var(--theme-meText);border-radius:22px 8px 22px 22px}', '.zeta-message.me .preview-bubble{background:var(--accent);color:var(--theme-meText);border:var(--theme-border-width,0px) solid var(--theme-me-border,transparent);border-radius:22px 8px 22px 22px}', 1)
+          s = s.replace('.zeta-message.other .preview-bubble{width:min(90%,412px);background:var(--theme-other);color:var(--theme-otherText);border-radius:8px 22px 22px 22px}', '.zeta-message.other .preview-bubble{width:min(90%,412px);background:var(--theme-other);color:var(--theme-otherText);border:var(--theme-border-width,0px) solid var(--theme-other-border,transparent);border-radius:8px 22px 22px 22px}', 1)
+          p.write_text(s, encoding='utf-8')
+
+          # theme-maker.js
+          p = Path('theme-maker.js')
+          s = p.read_text(encoding='utf-8')
+          def r(old, new):
+              nonlocal_dummy = None
+              global s
+          # add checkbox reference
+          old = "const fontSize = $('#fontSize');"
+          new = old + "\nconst bubbleBorder = $('#bubbleBorder');"
+          if old not in s: raise SystemExit('theme-maker.js: fontSize ref not found')
+          s = s.replace(old, new, 1)
+
+          old = 'function themeRuntime(A, O, C, F, U, notify) {'
+          new = 'function themeRuntime(A, O, C, F, B, U, notify) {'
+          if old not in s: raise SystemExit('theme-maker.js: runtime signature not found')
+          s = s.replace(old, new, 1)
+
+          old = "aiSoft=mx(O,ai,.08),aiLine=mx(O,ai,.16);return '\\n\\n/* Zeta Theme Maker custom overrides */'"
+          new = "aiSoft=mx(O,ai,.08),aiLine=mx(O,ai,.16),meBorder=mx(A,me,.18),otherBorder=mx(O,ai,.18);return '\\n\\n/* Zeta Theme Maker custom overrides */'"
+          if old not in s: raise SystemExit('theme-maker.js: custom variables not found')
+          s = s.replace(old, new, 1)
+
+          old = "+'\\nhtml.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] .chat,html.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] p,html.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] em,html.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] li,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] .chat,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] p,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] em,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] li{font-size:'+F+'px!important}';};"
+          new = "+'\\nhtml.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] .chat,html.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] p,html.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] em,html.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"] li,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] .chat,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] p,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] em,html.kt-chat-theme-active [data-sentry-component=\"NarratorBubble\"] li{font-size:'+F+'px!important}'\n    +(B?'\\nhtml.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"].kt-me{border:1px solid '+meBorder+'!important}\\nhtml.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"].kt-other{border:1px solid '+otherBorder+'!important}':'');};"
+          if old not in s: raise SystemExit('theme-maker.js: custom css tail not found')
+          s = s.replace(old, new, 1)
+
+          old = 'const A=accentPicker.value.toUpperCase(), O=otherPicker.value.toUpperCase(), C=bgPicker.value.toUpperCase(), F=getFontSize();'
+          new = 'const A=accentPicker.value.toUpperCase(), O=otherPicker.value.toUpperCase(), C=bgPicker.value.toUpperCase(), F=getFontSize(), B=!!bubbleBorder?.checked;'
+          if old not in s: raise SystemExit('theme-maker.js: standalone vars not found')
+          s = s.replace(old, new, 1)
+          s = s.replace('// @version      1.2.6', '// @version      1.2.7', 1)
+          s = s.replace('// @description  Zeta Theme Maker 생성본 · 내 말풍선 ${A} · 캐릭터 말풍선 ${O} · 배경 ${C} · 글씨 ${F}px', '// @description  Zeta Theme Maker 생성본 · 내 말풍선 ${A} · 캐릭터 말풍선 ${O} · 배경 ${C} · 글씨 ${F}px · 외곽선 ${B?\'ON\':\'OFF\'}', 1)
+          old = '(${themeRuntime.toString()})(${JSON.stringify(A)},${JSON.stringify(O)},${JSON.stringify(C)},${F},${JSON.stringify(BASE_THEME_URL)},false);'
+          new = '(${themeRuntime.toString()})(${JSON.stringify(A)},${JSON.stringify(O)},${JSON.stringify(C)},${F},${B},${JSON.stringify(BASE_THEME_URL)},false);'
+          if old not in s: raise SystemExit('theme-maker.js: standalone call not found')
+          s = s.replace(old, new, 1)
+
+          old = "u.searchParams.set('fs',String(getFontSize()));\n  return u.href;"
+          new = "u.searchParams.set('fs',String(getFontSize()));\n  u.searchParams.set('border',bubbleBorder?.checked?'1':'0');\n  return u.href;"
+          if old not in s: raise SystemExit('theme-maker.js: install params not found')
+          s = s.replace(old, new, 1)
+
+          old = "function generateBookmarklet(){const A=accentPicker.value.toUpperCase(),O=otherPicker.value.toUpperCase(),C=bgPicker.value.toUpperCase(),F=getFontSize(),U=BASE_THEME_URL;return 'javascript:('+themeRuntime.toString()+')('+[A,O,C,F,U,true].map(v=>JSON.stringify(v)).join(',')+')';}"
+          new = "function generateBookmarklet(){const A=accentPicker.value.toUpperCase(),O=otherPicker.value.toUpperCase(),C=bgPicker.value.toUpperCase(),F=getFontSize(),B=!!bubbleBorder?.checked,U=BASE_THEME_URL;return 'javascript:('+themeRuntime.toString()+')('+[A,O,C,F,B,U,true].map(v=>JSON.stringify(v)).join(',')+')';}"
+          if old not in s: raise SystemExit('theme-maker.js: bookmarklet not found')
+          s = s.replace(old, new, 1)
+
+          old = "const p=new URLSearchParams(location.search),a=norm(p.get('bubble')||''),o=norm(p.get('other')||''),b=norm(p.get('bg')||''),f=Number(p.get('fs'));"
+          new = "const p=new URLSearchParams(location.search),a=norm(p.get('bubble')||''),o=norm(p.get('other')||''),b=norm(p.get('bg')||''),f=Number(p.get('fs')),br=p.get('border');"
+          if old not in s: raise SystemExit('theme-maker.js: apply params not found')
+          s = s.replace(old, new, 1)
+          old = "if(Number.isFinite(f)&&f>=12&&f<=20)fontSize.value=String(f);"
+          new = old + "\n  if(bubbleBorder&&(br==='1'||br==='0'))bubbleBorder.checked=br==='1';"
+          s = s.replace(old, new, 1)
+
+          old = "const accent=accentPicker.value.toUpperCase(),other=otherPicker.value.toUpperCase(),chat=bgPicker.value.toUpperCase(),fontPx=getFontSize();"
+          new = "const accent=accentPicker.value.toUpperCase(),other=otherPicker.value.toUpperCase(),chat=bgPicker.value.toUpperCase(),fontPx=getFontSize(),borderOn=!!bubbleBorder?.checked;"
+          if old not in s: raise SystemExit('theme-maker.js: render vars not found')
+          s = s.replace(old, new, 1)
+          old = "root.setProperty('--theme-text',textFor(surface));root.setProperty('--theme-font-size',fontPx+'px');"
+          new = "root.setProperty('--theme-text',textFor(surface));root.setProperty('--theme-font-size',fontPx+'px');root.setProperty('--theme-border-width',borderOn?'1px':'0px');root.setProperty('--theme-me-border',mix(accent,meText,.18));root.setProperty('--theme-other-border',mix(other,otherText,.18));"
+          if old not in s: raise SystemExit('theme-maker.js: render root vars not found')
+          s = s.replace(old, new, 1)
+
+          old = "accentPicker.addEventListener('input',render);otherPicker.addEventListener('input',render);bgPicker.addEventListener('input',render);fontSize.addEventListener('input',render);"
+          new = old + "bubbleBorder?.addEventListener('input',render);"
+          if old not in s: raise SystemExit('theme-maker.js: input listeners not found')
+          s = s.replace(old, new, 1)
+          old = "$('#resetTheme').addEventListener('click',()=>{fontSize.value='15';setColors('#FEE500','#FFFFFF','#B2C7D9')});"
+          new = "$('#resetTheme').addEventListener('click',()=>{fontSize.value='15';if(bubbleBorder)bubbleBorder.checked=false;setColors('#FEE500','#FFFFFF','#B2C7D9')});"
+          if old not in s: raise SystemExit('theme-maker.js: reset not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+
+          # direct-install userscript
+          p = Path('zeta-custom-theme.user.js')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('// @version      1.2.6', '// @version      1.2.7', 1)
+          old = "if(p.has('bubble')||p.has('other')||p.has('bg')||p.has('fs'))return p"
+          new = "if(p.has('bubble')||p.has('other')||p.has('bg')||p.has('fs')||p.has('border'))return p"
+          if old not in s: raise SystemExit('custom theme: source params not found')
+          s = s.replace(old, new, 1)
+          old = "const p=sourceParams(),ACCENT=norm(p.get('bubble'))||'#FEE500',OTHER=norm(p.get('other'))||'#FFFFFF',CHAT=norm(p.get('bg'))||'#B2C7D9',FONT_SIZE=clamp(Number(p.get('fs'))||15,12,20);"
+          new = "const p=sourceParams(),ACCENT=norm(p.get('bubble'))||'#FEE500',OTHER=norm(p.get('other'))||'#FFFFFF',CHAT=norm(p.get('bg'))||'#B2C7D9',FONT_SIZE=clamp(Number(p.get('fs'))||15,12,20),BORDER=p.get('border')==='1';"
+          if old not in s: raise SystemExit('custom theme: params const not found')
+          s = s.replace(old, new, 1)
+          old = "surface2=mix(surface,CHAT,.08),line=mix(surface,textFor(surface),.10),sub=mix(textFor(surface),CHAT,.45);"
+          new = "surface2=mix(surface,CHAT,.08),line=mix(surface,textFor(surface),.10),sub=mix(textFor(surface),CHAT,.45),meBorder=mix(ACCENT,meText,.18),otherBorder=mix(OTHER,aiText,.18);"
+          if old not in s: raise SystemExit('custom theme: transform vars not found')
+          s = s.replace(old, new, 1)
+          old = "    return out;\n  }"
+          new = "    if(BORDER)out+=`\\nhtml.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"].kt-me{border:1px solid ${meBorder}!important}\\nhtml.kt-chat-theme-active [data-sentry-component=\"ChatBubbleContainer\"].kt-other{border:1px solid ${otherBorder}!important}\\n`;\n    return out;\n  }"
+          if old not in s: raise SystemExit('custom theme: return out not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+          node --check theme-maker.js
+          node --check zeta-custom-theme.user.js
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add theme-maker.html theme-maker.js zeta-custom-theme.user.js site.css css/part4.css
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: add bubble border option to theme maker"
+          git push
