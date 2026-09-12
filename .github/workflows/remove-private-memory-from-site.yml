@@ -1,0 +1,47 @@
+name: Remove private memory from public site
+
+on:
+  push:
+    paths:
+      - '.github/workflows/remove-private-memory-from-site.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove private memory listing
+        shell: python
+        run: |
+          from pathlib import Path
+
+          # Home: remove private memory card only.
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          memory_card = '''<article class="tool-card"><div class="tool-title"><span class="tool-dot room-dot"></span><div class="tool-title-text"><h3>외장 장기기억</h3><span data-script-version>v1.5.5</span></div></div><p>방별 장기기억을 만들고 암호화 GitHub 동기화로 PC·폰에서 이어 씁니다.</p><div class="tool-actions" data-script-actions data-compact="1" data-script-name="외장 장기기억" data-script-url="https://raw.githubusercontent.com/e4493089-cmyk/zeta-memory-userscript/main/zeta-memory-tampermonkey.user.js"></div></article>'''
+          if memory_card not in s:
+              raise SystemExit('memory home card not found')
+          s = s.replace('\n' + memory_card, '', 1).replace(memory_card, '', 1)
+          p.write_text(s, encoding='utf-8')
+
+          # Scripts page: return public catalog to 5 scripts and remove memory nav/detail.
+          p = Path('scripts.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('Zeta userscript 6종을 설치합니다.', 'Zeta userscript 5종을 설치합니다.', 1)
+          s = s.replace('<a href="#full">Fullscreen</a><a href="#memory">장기기억</a>', '<a href="#full">Fullscreen</a>', 1)
+          memory_article = '''<article class="detail" id="memory"><div class="detail-head"><div><span class="section-label">MEMORY</span><h2>외장 장기기억</h2><p class="sub" data-script-version>v1.5.5</p></div><span class="version">자동 업데이트</span></div><p class="detail-desc">대화방별 장기기억을 만들고 암호화된 GitHub 파일로 PC와 휴대폰 사이에 동기화합니다.</p><div class="detail-actions" data-script-actions data-script-name="외장 장기기억" data-script-url="https://raw.githubusercontent.com/e4493089-cmyk/zeta-memory-userscript/main/zeta-memory-tampermonkey.user.js"></div><div class="notice blue"><strong>새 기기:</strong> 설치 후 OpenRouter 키, GitHub 토큰, 암호화 비밀번호를 기기별로 입력하고 Pull하면 됩니다.</div><div class="fileline"><code>zeta-memory-tampermonkey.user.js</code><button class="btn btn-light btn-sm" data-copy="https://raw.githubusercontent.com/e4493089-cmyk/zeta-memory-userscript/main/zeta-memory-tampermonkey.user.js">URL 복사</button></div></article>'''
+          if memory_article not in s:
+              raise SystemExit('memory scripts article not found')
+          s = s.replace('\n' + memory_article, '', 1).replace(memory_article, '', 1)
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit removal
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html scripts.html
+          git commit -m "Remove private long-memory tool from public site" || exit 0
+          git push
