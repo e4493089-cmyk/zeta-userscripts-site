@@ -137,6 +137,22 @@ function showInstallGuide(scriptName,url){
   sheet.hidden=false;document.body.classList.add('sheet-open');
 }
 
+const scriptVersionCache=new Map();
+async function syncScriptVersion(box,url){
+  const node=box.closest('article')?.querySelector('[data-script-version]');
+  if(!node||!url)return;
+  let pending=scriptVersionCache.get(url);
+  if(!pending){
+    pending=fetch(url+(url.includes('?')?'&':'?')+'zetaVersion='+Date.now(),{cache:'no-store'})
+      .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()})
+      .then(text=>text.match(/^\s*\/\/\s*@version\s+([^\s]+)\s*$/m)?.[1]||null)
+      .catch(()=>null);
+    scriptVersionCache.set(url,pending);
+  }
+  const version=await pending;
+  if(version)node.textContent=`v${version}`;
+}
+
 function installScript(url,name){
   const meta=platformInstallMeta();
   if(meta.copyFirst){
@@ -153,9 +169,15 @@ function renderScriptActions(root=document){
     const compact=box.dataset.compact==='1';
     const meta=platformInstallMeta();
     box.innerHTML='';
-    const primary=document.createElement('button');
-    primary.type='button';primary.className=`btn btn-primary${compact?' btn-sm':''}`;primary.textContent=meta.primary;
-    primary.addEventListener('click',()=>installScript(url,name));
+    const primary=document.createElement(meta.copyFirst?'button':'a');
+    primary.className=`btn btn-primary${compact?' btn-sm':''}`;primary.textContent=meta.primary;
+    if(meta.copyFirst){
+      primary.type='button';
+      primary.addEventListener('click',()=>installScript(url,name));
+    }else{
+      primary.href=url;
+      primary.setAttribute('data-userscript-install','1');
+    }
     box.appendChild(primary);
     const copy=document.createElement('button');
     copy.type='button';copy.className=`btn btn-light${compact?' btn-sm':''}`;copy.textContent='링크 복사';
@@ -164,6 +186,7 @@ function renderScriptActions(root=document){
     if(!compact && box.dataset.bookmark){
       const bm=document.createElement('a');bm.className='btn btn-soft';bm.href=box.dataset.bookmark;bm.textContent='북마클릿 버전';box.appendChild(bm);
     }
+    syncScriptVersion(box,url);
   });
 }
 
