@@ -4,17 +4,20 @@
   const stores = {
     accent: document.querySelector('#accentPicker'),
     other: document.querySelector('#otherPicker'),
-    bg: document.querySelector('#bgPicker')
+    bg: document.querySelector('#bgPicker'),
+    border: document.querySelector('#borderPicker')
   };
   const labels = {
     accent: '내 말풍선',
     other: '캐릭터 말풍선',
-    bg: '채팅 배경'
+    bg: '채팅 배경',
+    border: '외곽선'
   };
   const hexInputs = {
     accent: document.querySelector('#accentHex'),
     other: document.querySelector('#otherHex'),
-    bg: document.querySelector('#bgHex')
+    bg: document.querySelector('#bgHex'),
+    border: document.querySelector('#borderHex')
   };
 
   const sheet = document.querySelector('#colorPickerSheet');
