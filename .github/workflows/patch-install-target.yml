@@ -30,7 +30,7 @@ jobs:
           for name in ('index.html', 'scripts.html'):
               p = Path(name)
               s = p.read_text(encoding='utf-8')
-              s2, n = re.subn(r'site\\.js\\?v=[0-9.]+', 'site.js?v=7.8.1', s)
+              s2, n = re.subn(r'site\.js\?v=[0-9.]+', 'site.js?v=7.8.1', s)
               if not n:
                   raise SystemExit(f'{name}: site.js cache-bust reference not found')
               p.write_text(s2, encoding='utf-8')
