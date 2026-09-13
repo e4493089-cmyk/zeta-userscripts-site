@@ -20,13 +20,29 @@ jobs:
             echo "== node --check: $f =="
             node --check "$f"
           done
+      - name: Syntax check bookmarklets
+        run: |
+          set -e
+          for f in *.bookmarklet.txt; do
+            echo "== bookmarklet check: $f =="
+            python - "$f" <<'PY'
+          import sys
+          from pathlib import Path
+          p = Path(sys.argv[1])
+          s = p.read_text(encoding='utf-8').strip()
+          if not s.startswith('javascript:'):
+              raise SystemExit(f'{p}: missing javascript: prefix')
+          Path('/tmp/bookmarklet-check.js').write_text(s[len('javascript:'):], encoding='utf-8')
+          PY
+            node --check /tmp/bookmarklet-check.js
+          done
       - name: Non-behavior static audit
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
-          for p in sorted(Path('.').glob('*.js')):
+          for p in sorted(Path('.').glob('*.js')) + sorted(Path('.').glob('*.bookmarklet.txt')):
               s = p.read_text(encoding='utf-8')
               lines = s.splitlines()
               print(f'== {p.name} ==')
