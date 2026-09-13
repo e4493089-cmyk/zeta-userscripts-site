@@ -1,0 +1,50 @@
+name: Patch theme maker base 3.50.3
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-theme-maker-base-3503.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync theme maker base
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          base_sha = 'cb13adf3417e21fdd71f6dd29359982f7e6e7f34'
+          base_url = f'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/{base_sha}/zeta-kakaotalk-theme.user.js'
+
+          p = Path('theme-maker.js')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace("const BASE_THEME_VERSION = '3.50.1';", "const BASE_THEME_VERSION = '3.50.3';", 1)
+          s = s.replace("const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/3ab89847565202bf241b8ba49adb3c4d8c662334/zeta-kakaotalk-theme.user.js';", f"const BASE_THEME_URL = '{base_url}';", 1)
+          s = s.replace('// @version      1.2.8', '// @version      1.2.9', 1)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('zeta-custom-theme.user.js')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('// @version      1.2.8', '// @version      1.2.9', 1)
+          s = s.replace("const BASE='https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/3ab89847565202bf241b8ba49adb3c4d8c662334/zeta-kakaotalk-theme.user.js';", f"const BASE='{base_url}';", 1)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('theme-maker.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('<span class="version">base 3.50.1</span>', '<span class="version">base 3.50.3</span>', 1)
+          s = s.replace('theme-maker.js?v=7.7.11', 'theme-maker.js?v=7.7.12', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add theme-maker.js zeta-custom-theme.user.js theme-maker.html
+          git commit -m "fix: sync theme maker with theme 3.50.3"
+          git push
