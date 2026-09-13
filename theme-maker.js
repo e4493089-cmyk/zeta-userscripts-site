@@ -89,7 +89,7 @@ function themeRuntime(A, O, C, F, B, BC, BW, U, notify) {
     +'\nhtml.kt-chat-theme-active main#contents,html.kt-chat-theme-active [role="log"][aria-label="Chat messages"],html.kt-chat-theme-active .kt-chat-header-layer,html.kt-chat-theme-active .kt-top-spacer{background:'+C+'!important}'
     +'\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] .chat,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] p,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] em,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] li,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] .chat,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] p,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] em,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] li{font-size:'+F+'px!important}'
     +(B?'\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-me,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{border:'+BW+'px solid '+BC+'!important}':'');};
-  (async()=>{try{const res=await fetch(U+'?custom='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);let s=await res.text(),t='  const CSS = `',i=s.indexOf(t);if(i<0)throw Error('CSS start');let b=i+t.length,e=s.indexOf('\n  `;',b);if(e<0)throw Error('CSS end');let css=s.slice(b,e).replace(/#[0-9a-fA-F]{6}\b/g,rc)+custom();s=s.slice(0,b)+css+s.slice(e);s=s.replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");(0,eval)(s);if(notify)alert('커스텀 테마 적용됨\n새로고침하면 해제됨')}catch(e){console.error('[Zeta Custom Theme]',e);if(notify)alert('테마 실행 실패: '+e.message)}})();
+  (async()=>{try{const res=await fetch(U+'?custom='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);let s=await res.text(),t='  const CSS = `',i=s.indexOf(t);if(i<0)throw Error('CSS start');let b=i+t.length,e=s.indexOf('\n  `;',b);if(e<0)throw Error('CSS end');let css=s.slice(b,e).replace(/#[0-9a-fA-F]{6}\b/g,rc);const ac=h2r(A);css=css.replace(/rgba\(\s*254\s*,\s*229\s*,\s*0\s*,\s*([0-9.]+)\s*\)/gi,(_,a)=>'rgba('+ac.r+','+ac.g+','+ac.b+','+a+')').replace(/rgb\(\s*254\s*,\s*229\s*,\s*0\s*\)/gi,'rgb('+ac.r+','+ac.g+','+ac.b+')')+custom();s=s.slice(0,b)+css+s.slice(e);s=s.replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");(0,eval)(s);if(notify)alert('커스텀 테마 적용됨\n새로고침하면 해제됨')}catch(e){console.error('[Zeta Custom Theme]',e);if(notify)alert('테마 실행 실패: '+e.message)}})();
 }
 
 function buildStandaloneScript() {
@@ -97,7 +97,7 @@ function buildStandaloneScript() {
   return `// ==UserScript==
 // @name         Zeta Custom Theme (${A} · ${O} · ${C} · ${F}px)
 // @namespace    zeta-custom-theme-maker
-// @version      1.2.9
+// @version      1.2.10
 // @description  Zeta Theme Maker 생성본 · 내 말풍선 ${A} · 캐릭터 말풍선 ${O} · 배경 ${C} · 글씨 ${F}px · 외곽선 ${B?`${BC} ${BW}px`:'OFF'}
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
