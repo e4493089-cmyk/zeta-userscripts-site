@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Zeta Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.2.11
+// @version      1.2.12
 // @description  Zeta Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
@@ -10,7 +10,7 @@
 
 (() => {
   'use strict';
-  const BASE='https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/16507e3/zeta-kakaotalk-theme.user.js';
+  const BASE='https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
   const clamp=(v,min=0,max=255)=>Math.max(min,Math.min(max,v));
   const hexToRgb=hex=>{hex=hex.replace('#','');const n=parseInt(hex,16);return{r:n>>16&255,g:n>>8&255,b:n&255}};
   const rgbToHex=({r,g,b})=>'#'+[r,g,b].map(v=>clamp(Math.round(v)).toString(16).padStart(2,'0')).join('').toUpperCase();
