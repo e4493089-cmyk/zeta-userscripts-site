@@ -17,10 +17,11 @@
   const fs = () => String(Math.max(12, Math.min(20, Number(fontSize.value) || 15)));
   const bw = () => String(Math.max(.5, Math.min(5, Number(borderWidth?.value) || 1)));
   const isStayPlatform = () => {
-    const platform = window.ZetaSite?.getPlatform?.();
-    if (platform) return platform === 'ios-safari' || platform === 'ios-edge';
-    return /iPhone|iPad|iPod/i.test(navigator.userAgent || '') ||
+    const ua = navigator.userAgent || '';
+    const actualIOS = /iPhone|iPad|iPod/i.test(ua) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const platform = window.ZetaSite?.getPlatform?.();
+    return actualIOS || platform === 'ios-safari' || platform === 'ios-edge';
   };
   const settings = () => ({
     bubble: accent.value.slice(1).toUpperCase(),
