@@ -192,6 +192,13 @@ function renderScriptActions(root=document){
   });
 }
 
+function applyPlatformVisibility(platform=getPlatform()){
+  document.querySelectorAll('[data-platforms]').forEach(el=>{
+    const allowed=(el.dataset.platforms||'').split(/\s+/).filter(Boolean);
+    el.hidden=allowed.length>0&&!allowed.includes(platform);
+  });
+}
+
 function renderPlatformUI(){
   const detected=detectPlatform();
   const current=getPlatform();
@@ -209,6 +216,7 @@ function renderPlatformUI(){
   document.querySelectorAll('[data-platform-preview-note]').forEach(x=>{
     x.textContent=mode==='auto'?`자동 감지 중 · ${platformName(detected)}`:`수동 미리보기 · ${PLATFORM_OPTIONS[mode].label}`;
   });
+  applyPlatformVisibility(current);
   renderScriptActions();
 }
 
@@ -252,5 +260,5 @@ function getBookmarklets(){
 }
 
 window.ZetaSite={...ZETA,toast,copyText,bindCopies,detectPlatform,getPlatform,getPlatformMode,setPlatformMode,platformName,platformInstallMeta,renderScriptActions,showInstallGuide,getBookmarklets};
-document.addEventListener('DOMContentLoaded',()=>{mountPlatformBar();bindCopies();renderScriptActions()});
+document.addEventListener('DOMContentLoaded',()=>{mountPlatformBar();applyPlatformVisibility();bindCopies();renderScriptActions()});
 window.addEventListener('zeta:platformchange',()=>renderPlatformUI());
