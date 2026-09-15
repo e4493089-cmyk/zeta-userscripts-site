@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Zeta Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.2.12
+// @version      1.2.13
 // @description  Zeta Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
-// @grant        none
+// @grant        GM_info
 // ==/UserScript==
 
 (() => {
@@ -28,7 +28,21 @@
     }catch(_){}
     return new URLSearchParams(location.search);
   }
-  const p=sourceParams(),ACCENT=norm(p.get('bubble'))||'#FEE500',OTHER=norm(p.get('other'))||'#FFFFFF',CHAT=norm(p.get('bg'))||'#B2C7D9',FONT_SIZE=clamp(Number(p.get('fs'))||15,12,20),BORDER=p.get('border')==='1',BORDER_COLOR=norm(p.get('bc'))||'#53636C',BORDER_WIDTH=Math.max(.5,Math.min(5,Number(p.get('bw'))||1));
+  const SETTINGS_KEY='zeta-custom-theme:settings:v1';
+  let p=sourceParams();
+  const settingNames=['bubble','other','bg','fs','border','bc','bw'];
+  const hasInstallSettings=settingNames.some(key=>p.has(key));
+  try{
+    if(hasInstallSettings){
+      const saved=new URLSearchParams();
+      settingNames.forEach(key=>{if(p.has(key))saved.set(key,p.get(key))});
+      localStorage.setItem(SETTINGS_KEY,saved.toString());
+    }else{
+      const saved=localStorage.getItem(SETTINGS_KEY);
+      if(saved)p=new URLSearchParams(saved);
+    }
+  }catch(_){}
+  const ACCENT=norm(p.get('bubble'))||'#FEE500',OTHER=norm(p.get('other'))||'#FFFFFF',CHAT=norm(p.get('bg'))||'#B2C7D9',FONT_SIZE=clamp(Number(p.get('fs'))||15,12,20),BORDER=p.get('border')==='1',BORDER_COLOR=norm(p.get('bc'))||'#53636C',BORDER_WIDTH=Math.max(.5,Math.min(5,Number(p.get('bw'))||1));
   function recolorHex(source){const src=source.toUpperCase();if(src==='#FEE500')return ACCENT;if(src==='#F5DC00')return luminance(ACCENT)>.55?mix(ACCENT,'#000000',.08):mix(ACCENT,'#FFFFFF',.10);if(src==='#B2C7D9')return CHAT;const s=rgbToHsl(src),a=rgbToHsl(ACCENT),c=rgbToHsl(CHAT),redish=(s.h>=340||s.h<=18)&&s.s>.28;if(redish)return src;if(s.h>=28&&s.h<=82&&s.s>.12){let sat=Math.max(.10,Math.min(1,a.s*(.58+s.s*.42)));return hslToHex(a.h,sat,s.l)}const coolGray=s.s<.18||((s.h>=165&&s.h<=235)&&s.s<.48);if(coolGray){if(s.l>.975)return'#FFFFFF';if(s.l<.055)return hslToHex(c.h,Math.min(.12,c.s*.25),s.l);let strength=s.l>.82?.18:s.l<.30?.34:.28,sat=Math.min(.34,c.s*strength+s.s*.22);return hslToHex(c.h,sat,s.l)}return src}
   function transformCss(css){
     let out=css.replace(/#[0-9a-fA-F]{6}\b/g,recolorHex);
