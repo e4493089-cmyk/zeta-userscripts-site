@@ -16,13 +16,6 @@
   const RAW = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
   const fs = () => String(Math.max(12, Math.min(20, Number(fontSize.value) || 15)));
   const bw = () => String(Math.max(.5, Math.min(5, Number(borderWidth?.value) || 1)));
-  const isStayPlatform = () => {
-    const ua = navigator.userAgent || '';
-    const actualIOS = /iPhone|iPad|iPod/i.test(ua) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const platform = window.ZetaSite?.getPlatform?.();
-    return actualIOS || platform === 'ios-safari' || platform === 'ios-edge';
-  };
   const settings = () => ({
     bubble: accent.value.slice(1).toUpperCase(),
     other: other.value.slice(1).toUpperCase(),
@@ -50,7 +43,7 @@
   }
 
   function syncInstallLabel() {
-    installButton.textContent = isStayPlatform() ? 'Stay용 .js 다운로드' : 'Tampermonkey 설치';
+    installButton.textContent = 'Tampermonkey 설치';
   }
 
   installButton.addEventListener('click', event => {
@@ -58,10 +51,6 @@
     event.stopImmediatePropagation();
 
     try {
-      if (isStayPlatform()) {
-        downloadStayScript();
-        return;
-      }
       const url = new URL(RAW);
       const s = settings();
       Object.entries(s).forEach(([key, value]) => url.searchParams.set(key, value));
