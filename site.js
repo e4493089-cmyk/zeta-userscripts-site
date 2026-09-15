@@ -153,6 +153,24 @@ async function syncScriptVersion(box,url){
   if(version)node.textContent=`v${version}`;
 }
 
+async function downloadScript(url,name){
+  try{
+    const response=await fetch(url+(url.includes('?')?'&':'?')+'download='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const blob=await response.blob();
+    const objectUrl=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=objectUrl;
+    a.download=url.split('/').pop().split('?')[0]||'zeta-script.user.js';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+    toast(`${name} JS 파일을 다운로드했어요.`);
+  }catch(_){
+    window.open(url,'_blank','noopener');
+    toast('다운로드가 막혀 원본 JS를 열었어요.');
+  }
+}
+
 function installScript(url,name){
   const meta=platformInstallMeta();
   if(meta.copyFirst){
@@ -181,10 +199,16 @@ function renderScriptActions(root=document){
       primary.setAttribute('data-userscript-install','1');
     }
     box.appendChild(primary);
-    const copy=document.createElement('button');
-    copy.type='button';copy.className=`btn btn-light${compact?' btn-sm':''}`;copy.textContent='링크 복사';
-    copy.addEventListener('click',()=>copyText(url,`${name} 링크를 복사했어요.`));
-    box.appendChild(copy);
+    const secondary=document.createElement('button');
+    secondary.type='button';secondary.className=`btn btn-light${compact?' btn-sm':''}`;
+    if(meta.copyFirst){
+      secondary.textContent='JS 다운로드';
+      secondary.addEventListener('click',()=>downloadScript(url,name));
+    }else{
+      secondary.textContent='링크 복사';
+      secondary.addEventListener('click',()=>copyText(url,`${name} 링크를 복사했어요.`));
+    }
+    box.appendChild(secondary);
     if(!compact && box.dataset.bookmark){
       const bm=document.createElement('a');bm.className='btn btn-soft';bm.href=box.dataset.bookmark;bm.textContent='북마클릿 버전';box.appendChild(bm);
     }
