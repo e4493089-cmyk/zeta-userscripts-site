@@ -1,4 +1,4 @@
-const BASE_THEME_VERSION = '3.50.4';
+const BASE_THEME_VERSION = '3.50.5';
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 
 const $ = selector => document.querySelector(selector);
