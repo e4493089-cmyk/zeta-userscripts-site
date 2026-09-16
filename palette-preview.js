@@ -75,7 +75,6 @@
     const RAW = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
     downloadButton.textContent = '.user.js 저장 + 몽키 추가';
     downloadButton.addEventListener('click', () => {
-      if(window.ZetaThemeMaker?.getBackgroundImage?.())return;
       const url = new URL(RAW);
       url.searchParams.set('bubble', accent.value.slice(1).toUpperCase());
       url.searchParams.set('other', other.value.slice(1).toUpperCase());
