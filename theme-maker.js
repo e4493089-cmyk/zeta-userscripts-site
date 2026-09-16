@@ -9,11 +9,19 @@ const otherHex = $('#otherHex');
 const bgPicker = $('#bgPicker');
 const bgHex = $('#bgHex');
 const fontSize = $('#fontSize');
-const bubbleBorder = $('#bubbleBorder');
-const bubbleBorderControls = $('#bubbleBorderControls');
-const borderPicker = $('#borderPicker');
-const borderHex = $('#borderHex');
-const borderWidth = $('#borderWidth');
+const meBorder = $('#meBorder');
+const meBorderControls = $('#meBorderControls');
+const meBorderPicker = $('#meBorderPicker');
+const meBorderHex = $('#meBorderHex');
+const meBorderWidth = $('#meBorderWidth');
+const otherBorder = $('#otherBorder');
+const otherBorderControls = $('#otherBorderControls');
+const otherBorderPicker = $('#otherBorderPicker');
+const otherBorderHex = $('#otherBorderHex');
+const otherBorderWidth = $('#otherBorderWidth');
+const backgroundImageInput = $('#backgroundImage');
+const removeBackgroundImage = $('#removeBackgroundImage');
+let backgroundImage = '';
 
 function clamp(v, min = 0, max = 255) { return Math.max(min, Math.min(max, v)); }
 function hexToRgb(hex) {
@@ -64,9 +72,30 @@ function hslToHex(h, s, l) {
 }
 function norm(v) { return /^#?[0-9a-f]{6}$/i.test(v || '') ? ('#' + String(v).replace('#', '')).toUpperCase() : null; }
 function getFontSize() { return clamp(Number(fontSize?.value) || 15, 12, 20); }
-function getBorderWidth() { return Math.max(.5, Math.min(5, Number(borderWidth?.value) || 1)); }
+function getBorderWidth(input) { return Math.max(.5, Math.min(5, Number(input?.value) || 1)); }
+async function prepareBackgroundImage(file) {
+  if (!file || !file.type.startsWith('image/')) throw new Error('이미지 파일이 아니에요.');
+  const source = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('이미지를 읽지 못했어요.'));
+    reader.readAsDataURL(file);
+  });
+  const image = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('이미지를 열지 못했어요.'));
+    img.src = source;
+  });
+  const maxSide = 1600, scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/jpeg', .82);
+}
 
-function themeRuntime(A, O, C, F, B, BC, BW, U, notify) {
+function themeRuntime(A, O, C, F, MB, MBC, MBW, OB, OBC, OBW, BG, U, notify) {
   const cl=(v,a=0,b=255)=>Math.max(a,Math.min(b,v));
   const h2r=h=>{h=h.replace('#','');const n=parseInt(h,16);return{r:n>>16&255,g:n>>8&255,b:n&255}};
   const r2h=o=>'#'+[o.r,o.g,o.b].map(v=>cl(Math.round(v)).toString(16).padStart(2,'0')).join('').toUpperCase();
@@ -88,23 +117,27 @@ function themeRuntime(A, O, C, F, B, BC, BW, U, notify) {
     +'\nhtml.kt-chat-theme-active [data-testid="chat-send-button"],html.kt-chat-theme-active .kt-profile-select-button{background:'+A+'!important;color:'+me+'!important}'
     +'\nhtml.kt-chat-theme-active main#contents,html.kt-chat-theme-active [role="log"][aria-label="Chat messages"],html.kt-chat-theme-active .kt-chat-header-layer,html.kt-chat-theme-active .kt-top-spacer{background:'+C+'!important}'
     +'\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] .chat,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] p,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] em,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] li,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] .chat,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] p,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] em,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] li{font-size:'+F+'px!important}'
-    +(B?'\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-me,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{border:'+BW+'px solid '+BC+'!important}':'');};
+    +(MB?'\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-me{border:'+MBW+'px solid '+MBC+'!important}':'')
+    +(OB?'\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{border:'+OBW+'px solid '+OBC+'!important}':'')
+    +(BG?'\nhtml.kt-chat-theme-active main#contents,html.kt-chat-theme-active [role="log"][aria-label="Chat messages"]{background-color:'+C+'!important;background-image:url('+JSON.stringify(BG)+')!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;background-attachment:fixed!important}':'');};
   (async()=>{try{const res=await fetch(U+'?custom='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);let s=await res.text(),t='  const CSS = `',i=s.indexOf(t);if(i<0)throw Error('CSS start');let b=i+t.length,e=s.indexOf('\n  `;',b);if(e<0)throw Error('CSS end');let css=s.slice(b,e).replace(/#[0-9a-fA-F]{6}\b/g,rc);const ac=h2r(A);css=css.replace(/rgba\(\s*254\s*,\s*229\s*,\s*0\s*,\s*([0-9.]+)\s*\)/gi,(_,a)=>'rgba('+ac.r+','+ac.g+','+ac.b+','+a+')').replace(/rgb\(\s*254\s*,\s*229\s*,\s*0\s*\)/gi,'rgb('+ac.r+','+ac.g+','+ac.b+')')+custom();s=s.slice(0,b)+css+s.slice(e);s=s.replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");(0,eval)(s);if(notify)alert('커스텀 테마 적용됨\n새로고침하면 해제됨')}catch(e){console.error('[Zeta Custom Theme]',e);if(notify)alert('테마 실행 실패: '+e.message)}})();
 }
 
 function buildStandaloneScript() {
-  const A=accentPicker.value.toUpperCase(), O=otherPicker.value.toUpperCase(), C=bgPicker.value.toUpperCase(), F=getFontSize(), B=!!bubbleBorder?.checked, BC=(borderPicker?.value||'#53636C').toUpperCase(), BW=getBorderWidth();
+  const A=accentPicker.value.toUpperCase(), O=otherPicker.value.toUpperCase(), C=bgPicker.value.toUpperCase(), F=getFontSize();
+  const MB=!!meBorder?.checked, MBC=(meBorderPicker?.value||'#53636C').toUpperCase(), MBW=getBorderWidth(meBorderWidth);
+  const OB=!!otherBorder?.checked, OBC=(otherBorderPicker?.value||'#53636C').toUpperCase(), OBW=getBorderWidth(otherBorderWidth), BG=backgroundImage;
   return `// ==UserScript==
 // @name         Zeta Custom Theme (${A} · ${O} · ${C} · ${F}px)
 // @namespace    zeta-custom-theme-maker
-// @version      1.2.12
-// @description  Zeta Theme Maker 생성본 · 내 말풍선 ${A} · 캐릭터 말풍선 ${O} · 배경 ${C} · 글씨 ${F}px · 외곽선 ${B?`${BC} ${BW}px`:'OFF'}
+// @version      1.3.0
+// @description  Zeta Theme Maker 생성본 · 내 말풍선 ${A} · 캐릭터 말풍선 ${O} · 배경 ${C} · 글씨 ${F}px
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
 // @grant        none
 // ==/UserScript==
 
-(${themeRuntime.toString()})(${JSON.stringify(A)},${JSON.stringify(O)},${JSON.stringify(C)},${F},${B},${JSON.stringify(BC)},${BW},${JSON.stringify(BASE_THEME_URL)},false);
+(${themeRuntime.toString()})(${JSON.stringify(A)},${JSON.stringify(O)},${JSON.stringify(C)},${F},${MB},${JSON.stringify(MBC)},${MBW},${OB},${JSON.stringify(OBC)},${OBW},${JSON.stringify(BG)},${JSON.stringify(BASE_THEME_URL)},false);
 `;
 }
 
@@ -119,43 +152,61 @@ function customThemeInstallURL() {
   u.searchParams.set('other',otherPicker.value.slice(1).toUpperCase());
   u.searchParams.set('bg',bgPicker.value.slice(1).toUpperCase());
   u.searchParams.set('fs',String(getFontSize()));
-  u.searchParams.set('border',bubbleBorder?.checked?'1':'0');
-  u.searchParams.set('bc',(borderPicker?.value||'#53636C').slice(1).toUpperCase());
-  u.searchParams.set('bw',String(getBorderWidth()));
+  u.searchParams.set('mb',meBorder?.checked?'1':'0');
+  u.searchParams.set('mbc',(meBorderPicker?.value||'#53636C').slice(1).toUpperCase());
+  u.searchParams.set('mbw',String(getBorderWidth(meBorderWidth)));
+  u.searchParams.set('ob',otherBorder?.checked?'1':'0');
+  u.searchParams.set('obc',(otherBorderPicker?.value||'#53636C').slice(1).toUpperCase());
+  u.searchParams.set('obw',String(getBorderWidth(otherBorderWidth)));
   return u.href;
 }
-function installGeneratedTheme(){window.location.href=customThemeInstallURL();}
-function generateBookmarklet(){const A=accentPicker.value.toUpperCase(),O=otherPicker.value.toUpperCase(),C=bgPicker.value.toUpperCase(),F=getFontSize(),B=!!bubbleBorder?.checked,BC=(borderPicker?.value||'#53636C').toUpperCase(),BW=getBorderWidth(),U=BASE_THEME_URL;return 'javascript:('+themeRuntime.toString()+')('+[A,O,C,F,B,BC,BW,U,true].map(v=>JSON.stringify(v)).join(',')+')';}
+function installGeneratedTheme(){if(backgroundImage){downloadGeneratedScript();ZetaSite.toast('배경 이미지가 포함된 .user.js 파일을 만들었어요.');return}window.location.href=customThemeInstallURL();}
+function generateBookmarklet(){if(backgroundImage)throw new Error('배경 이미지는 JS 설치만 지원합니다.');const A=accentPicker.value.toUpperCase(),O=otherPicker.value.toUpperCase(),C=bgPicker.value.toUpperCase(),F=getFontSize(),MB=!!meBorder?.checked,MBC=(meBorderPicker?.value||'#53636C').toUpperCase(),MBW=getBorderWidth(meBorderWidth),OB=!!otherBorder?.checked,OBC=(otherBorderPicker?.value||'#53636C').toUpperCase(),OBW=getBorderWidth(otherBorderWidth),U=BASE_THEME_URL;return 'javascript:('+themeRuntime.toString()+')('+[A,O,C,F,MB,MBC,MBW,OB,OBC,OBW,'',U,true].map(v=>JSON.stringify(v)).join(',')+')';}
 
 function applyFromURL(){
-  const p=new URLSearchParams(location.search),a=norm(p.get('bubble')||''),o=norm(p.get('other')||''),b=norm(p.get('bg')||''),f=Number(p.get('fs')),br=p.get('border'),bc=norm(p.get('bc')||''),bw=Number(p.get('bw'));
+  const p=new URLSearchParams(location.search),a=norm(p.get('bubble')||''),o=norm(p.get('other')||''),b=norm(p.get('bg')||''),f=Number(p.get('fs'));
+  const legacy=p.get('border'),legacyColor=norm(p.get('bc')||''),legacyWidth=Number(p.get('bw'));
+  const mb=p.get('mb')??legacy,mbc=norm(p.get('mbc')||'')||legacyColor,mbw=Number(p.get('mbw')??legacyWidth);
+  const ob=p.get('ob')??legacy,obc=norm(p.get('obc')||'')||legacyColor,obw=Number(p.get('obw')??legacyWidth);
   if(a){accentPicker.value=a;accentHex.value=a}
   if(o){otherPicker.value=o;otherHex.value=o}
   if(b){bgPicker.value=b;bgHex.value=b}
   if(Number.isFinite(f)&&f>=12&&f<=20)fontSize.value=String(f);
-  if(bubbleBorder&&(br==='1'||br==='0'))bubbleBorder.checked=br==='1';
-  if(bc&&borderPicker){borderPicker.value=bc;if(borderHex)borderHex.value=bc}
-  if(Number.isFinite(bw)&&bw>=.5&&bw<=5&&borderWidth)borderWidth.value=String(bw);
+  if(meBorder&&(mb==='1'||mb==='0'))meBorder.checked=mb==='1';
+  if(otherBorder&&(ob==='1'||ob==='0'))otherBorder.checked=ob==='1';
+  if(mbc&&meBorderPicker){meBorderPicker.value=mbc;if(meBorderHex)meBorderHex.value=mbc}
+  if(obc&&otherBorderPicker){otherBorderPicker.value=obc;if(otherBorderHex)otherBorderHex.value=obc}
+  if(Number.isFinite(mbw)&&mbw>=.5&&mbw<=5&&meBorderWidth)meBorderWidth.value=String(mbw);
+  if(Number.isFinite(obw)&&obw>=.5&&obw<=5&&otherBorderWidth)otherBorderWidth.value=String(obw);
 }
 function render(){
-  const accent=accentPicker.value.toUpperCase(),other=otherPicker.value.toUpperCase(),chat=bgPicker.value.toUpperCase(),fontPx=getFontSize(),borderOn=!!bubbleBorder?.checked,borderColor=(borderPicker?.value||'#53636C').toUpperCase(),borderPx=getBorderWidth();
+  const accent=accentPicker.value.toUpperCase(),other=otherPicker.value.toUpperCase(),chat=bgPicker.value.toUpperCase(),fontPx=getFontSize();
+  const meBorderOn=!!meBorder?.checked,meBorderColor=(meBorderPicker?.value||'#53636C').toUpperCase(),meBorderPx=getBorderWidth(meBorderWidth);
+  const otherBorderOn=!!otherBorder?.checked,otherBorderColor=(otherBorderPicker?.value||'#53636C').toUpperCase(),otherBorderPx=getBorderWidth(otherBorderWidth);
   accentHex.value=accent;otherHex.value=other;bgHex.value=chat;
-  $('#accentValue').textContent=accent;$('#otherValue').textContent=other;$('#bgValue').textContent=chat;$('#fontSizeValue').textContent=fontPx;if(borderHex)borderHex.value=borderColor;if($('#borderValue'))$('#borderValue').textContent=borderColor;if($('#borderWidthValue'))$('#borderWidthValue').textContent=String(borderPx);if(bubbleBorderControls)bubbleBorderControls.hidden=!borderOn;
+  $('#accentValue').textContent=accent;$('#otherValue').textContent=other;$('#bgValue').textContent=chat;$('#fontSizeValue').textContent=fontPx;
+  if(meBorderHex)meBorderHex.value=meBorderColor;if($('#meBorderValue'))$('#meBorderValue').textContent=meBorderColor;if($('#meBorderWidthValue'))$('#meBorderWidthValue').textContent=String(meBorderPx);if(meBorderControls)meBorderControls.hidden=!meBorderOn;
+  if(otherBorderHex)otherBorderHex.value=otherBorderColor;if($('#otherBorderValue'))$('#otherBorderValue').textContent=otherBorderColor;if($('#otherBorderWidthValue'))$('#otherBorderWidthValue').textContent=String(otherBorderPx);if(otherBorderControls)otherBorderControls.hidden=!otherBorderOn;
   const root=document.documentElement.style,surface=luminance(chat)<.28?mix(chat,'#FFFFFF',.86):'#FFFFFF',surface2=mix(surface,chat,.08),line=mix(surface,textFor(surface),.10),sub=mix(textFor(surface),chat,.45),otherText=textFor(other),meText=textFor(accent),accentHover=luminance(accent)>.55?mix(accent,'#000000',.08):mix(accent,'#FFFFFF',.10);
-  root.setProperty('--accent',accent);root.setProperty('--chat',chat);root.setProperty('--theme-surface',surface);root.setProperty('--theme-surface2',surface2);root.setProperty('--theme-line',line);root.setProperty('--theme-sub',sub);root.setProperty('--theme-other',other);root.setProperty('--theme-otherText',otherText);root.setProperty('--theme-meText',meText);root.setProperty('--theme-accentHover',accentHover);root.setProperty('--theme-text',textFor(surface));root.setProperty('--theme-font-size',fontPx+'px');root.setProperty('--theme-border-width',borderOn?(borderPx+'px'):'0px');root.setProperty('--theme-border-color',borderColor);
+  root.setProperty('--accent',accent);root.setProperty('--chat',chat);root.setProperty('--theme-surface',surface);root.setProperty('--theme-surface2',surface2);root.setProperty('--theme-line',line);root.setProperty('--theme-sub',sub);root.setProperty('--theme-other',other);root.setProperty('--theme-otherText',otherText);root.setProperty('--theme-meText',meText);root.setProperty('--theme-accentHover',accentHover);root.setProperty('--theme-text',textFor(surface));root.setProperty('--theme-font-size',fontPx+'px');root.setProperty('--theme-me-border-width',meBorderOn?(meBorderPx+'px'):'0px');root.setProperty('--theme-me-border-color',meBorderColor);root.setProperty('--theme-other-border-width',otherBorderOn?(otherBorderPx+'px'):'0px');root.setProperty('--theme-other-border-color',otherBorderColor);root.setProperty('--theme-bg-image',backgroundImage?'url('+JSON.stringify(backgroundImage)+')':'none');
+  const imageStatus=$('#backgroundImageStatus');if(imageStatus)imageStatus.textContent=backgroundImage?'배경 이미지 적용됨':'선택한 이미지 없음';if(removeBackgroundImage)removeBackgroundImage.hidden=!backgroundImage;
   document.querySelectorAll('.quick-swatches').forEach(group=>{const target=group.dataset.target,current=target==='accent'?accent:target==='other'?other:chat;group.querySelectorAll('button[data-color]').forEach(btn=>btn.classList.toggle('active',btn.dataset.color.toUpperCase()===current));});
 }
 function setColors(a,o,b){accentPicker.value=a;otherPicker.value=o;bgPicker.value=b;render();}
 function bindHex(input,picker){input.addEventListener('change',()=>{const v=norm(input.value);if(v){picker.value=v;render()}else input.value=picker.value.toUpperCase()});input.addEventListener('keydown',e=>{if(e.key==='Enter'){input.blur()}});}
 
-accentPicker.addEventListener('input',render);otherPicker.addEventListener('input',render);bgPicker.addEventListener('input',render);fontSize.addEventListener('input',render);bubbleBorder?.addEventListener('input',render);borderPicker?.addEventListener('input',render);borderWidth?.addEventListener('input',render);
-bindHex(accentHex,accentPicker);bindHex(otherHex,otherPicker);bindHex(bgHex,bgPicker);if(borderHex&&borderPicker)bindHex(borderHex,borderPicker);
+accentPicker.addEventListener('input',render);otherPicker.addEventListener('input',render);bgPicker.addEventListener('input',render);fontSize.addEventListener('input',render);
+[meBorder,meBorderPicker,meBorderWidth,otherBorder,otherBorderPicker,otherBorderWidth].filter(Boolean).forEach(x=>x.addEventListener('input',render));
+bindHex(accentHex,accentPicker);bindHex(otherHex,otherPicker);bindHex(bgHex,bgPicker);if(meBorderHex&&meBorderPicker)bindHex(meBorderHex,meBorderPicker);if(otherBorderHex&&otherBorderPicker)bindHex(otherBorderHex,otherBorderPicker);
+backgroundImageInput?.addEventListener('change',async()=>{const file=backgroundImageInput.files?.[0];if(!file)return;try{backgroundImage=await prepareBackgroundImage(file);render();ZetaSite.toast('배경 이미지를 적용했어요.')}catch(e){console.error(e);ZetaSite.toast(e.message||'이미지를 처리하지 못했어요.')}});
+removeBackgroundImage?.addEventListener('click',()=>{backgroundImage='';if(backgroundImageInput)backgroundImageInput.value='';render();});
 document.querySelectorAll('.quick-swatches').forEach(group=>group.addEventListener('click',e=>{const btn=e.target.closest('button[data-color]');if(!btn)return;const picker=group.dataset.target==='accent'?accentPicker:group.dataset.target==='other'?otherPicker:bgPicker;picker.value=btn.dataset.color;render();}));
 document.querySelectorAll('.preset').forEach(btn=>btn.addEventListener('click',()=>setColors(btn.dataset.a,btn.dataset.o,btn.dataset.b)));
-$('#resetTheme').addEventListener('click',()=>{fontSize.value='15';if(bubbleBorder)bubbleBorder.checked=false;if(borderPicker)borderPicker.value='#53636C';if(borderWidth)borderWidth.value='1';setColors('#FEE500','#FFFFFF','#B2C7D9')});
+$('#resetTheme').addEventListener('click',()=>{fontSize.value='15';backgroundImage='';if(backgroundImageInput)backgroundImageInput.value='';if(meBorder)meBorder.checked=false;if(otherBorder)otherBorder.checked=false;if(meBorderPicker)meBorderPicker.value='#53636C';if(otherBorderPicker)otherBorderPicker.value='#53636C';if(meBorderWidth)meBorderWidth.value='1';if(otherBorderWidth)otherBorderWidth.value='1';setColors('#FEE500','#FFFFFF','#B2C7D9')});
 $('#downloadScript').addEventListener('click',()=>{try{downloadGeneratedScript()}catch(e){console.error(e);ZetaSite.toast('스크립트 생성에 실패했어요.')}});
 $('#installScript').addEventListener('click',()=>{try{installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast('설치 링크를 열지 못했어요.')}});
 $('#copyBookmarklet').addEventListener('click',()=>{try{ZetaSite.copyText(generateBookmarklet(),'북마클릿 링크를 복사했어요.')}catch(e){console.error(e);ZetaSite.toast('북마클릿 생성에 실패했어요.')}});
 
+window.ZetaThemeMaker={getBackgroundImage:()=>backgroundImage,downloadGeneratedScript};
 applyFromURL();
 render();
