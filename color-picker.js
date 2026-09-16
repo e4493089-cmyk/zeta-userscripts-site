@@ -5,19 +5,22 @@
     accent: document.querySelector('#accentPicker'),
     other: document.querySelector('#otherPicker'),
     bg: document.querySelector('#bgPicker'),
-    border: document.querySelector('#borderPicker')
+    meBorder: document.querySelector('#meBorderPicker'),
+    otherBorder: document.querySelector('#otherBorderPicker')
   };
   const labels = {
     accent: '내 말풍선',
     other: '캐릭터 말풍선',
     bg: '채팅 배경',
-    border: '외곽선'
+    meBorder: '내 말풍선 외곽선',
+    otherBorder: '캐릭터 말풍선 외곽선'
   };
   const hexInputs = {
     accent: document.querySelector('#accentHex'),
     other: document.querySelector('#otherHex'),
     bg: document.querySelector('#bgHex'),
-    border: document.querySelector('#borderHex')
+    meBorder: document.querySelector('#meBorderHex'),
+    otherBorder: document.querySelector('#otherBorderHex')
   };
 
   const sheet = document.querySelector('#colorPickerSheet');
