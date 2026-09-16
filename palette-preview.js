@@ -75,11 +75,16 @@
     const RAW = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
     downloadButton.textContent = '.user.js 저장 + 몽키 추가';
     downloadButton.addEventListener('click', () => {
+      if(window.ZetaThemeMaker?.getBackgroundImage?.())return;
       const url = new URL(RAW);
       url.searchParams.set('bubble', accent.value.slice(1).toUpperCase());
       url.searchParams.set('other', other.value.slice(1).toUpperCase());
       url.searchParams.set('bg', chat.value.slice(1).toUpperCase());
       url.searchParams.set('fs', String(Math.max(12, Math.min(20, Number(fontSize.value) || 15))));
+      const meBorder=document.querySelector('#meBorder'),meBorderPicker=document.querySelector('#meBorderPicker'),meBorderWidth=document.querySelector('#meBorderWidth');
+      const otherBorder=document.querySelector('#otherBorder'),otherBorderPicker=document.querySelector('#otherBorderPicker'),otherBorderWidth=document.querySelector('#otherBorderWidth');
+      url.searchParams.set('mb',meBorder?.checked?'1':'0');url.searchParams.set('mbc',(meBorderPicker?.value||'#53636C').slice(1).toUpperCase());url.searchParams.set('mbw',String(Number(meBorderWidth?.value)||1));
+      url.searchParams.set('ob',otherBorder?.checked?'1':'0');url.searchParams.set('obc',(otherBorderPicker?.value||'#53636C').slice(1).toUpperCase());url.searchParams.set('obw',String(Number(otherBorderWidth?.value)||1));
       setTimeout(() => { location.href = url.href; }, 450);
     }, true);
   }
