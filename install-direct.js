@@ -8,22 +8,28 @@
   const other = document.querySelector('#otherPicker');
   const bg = document.querySelector('#bgPicker');
   const fontSize = document.querySelector('#fontSize');
-  const bubbleBorder = document.querySelector('#bubbleBorder');
-  const borderPicker = document.querySelector('#borderPicker');
-  const borderWidth = document.querySelector('#borderWidth');
+  const meBorder = document.querySelector('#meBorder');
+  const meBorderPicker = document.querySelector('#meBorderPicker');
+  const meBorderWidth = document.querySelector('#meBorderWidth');
+  const otherBorder = document.querySelector('#otherBorder');
+  const otherBorderPicker = document.querySelector('#otherBorderPicker');
+  const otherBorderWidth = document.querySelector('#otherBorderWidth');
   if (!installButton || !copyButton || !downloadButton || !accent || !other || !bg || !fontSize) return;
 
   const RAW = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
   const fs = () => String(Math.max(12, Math.min(20, Number(fontSize.value) || 15)));
-  const bw = () => String(Math.max(.5, Math.min(5, Number(borderWidth?.value) || 1)));
+  const bw = input => String(Math.max(.5, Math.min(5, Number(input?.value) || 1)));
   const settings = () => ({
     bubble: accent.value.slice(1).toUpperCase(),
     other: other.value.slice(1).toUpperCase(),
     bg: bg.value.slice(1).toUpperCase(),
     fs: fs(),
-    border: bubbleBorder?.checked ? '1' : '0',
-    bc: (borderPicker?.value || '#53636C').slice(1).toUpperCase(),
-    bw: bw()
+    mb: meBorder?.checked ? '1' : '0',
+    mbc: (meBorderPicker?.value || '#53636C').slice(1).toUpperCase(),
+    mbw: bw(meBorderWidth),
+    ob: otherBorder?.checked ? '1' : '0',
+    obc: (otherBorderPicker?.value || '#53636C').slice(1).toUpperCase(),
+    obw: bw(otherBorderWidth)
   });
 
   function downloadStayScript() {
@@ -51,6 +57,7 @@
     event.stopImmediatePropagation();
 
     try {
+      if(window.ZetaThemeMaker?.getBackgroundImage?.()){downloadStayScript();return}
       const url = new URL(RAW);
       const s = settings();
       Object.entries(s).forEach(([key, value]) => url.searchParams.set(key, value));
@@ -68,6 +75,7 @@
     event.stopImmediatePropagation();
 
     try {
+      if(window.ZetaThemeMaker?.getBackgroundImage?.()){window.ZetaSite?.toast?.('배경 이미지는 .js 다운로드로 설치해 주세요.');return}
       const params = new URLSearchParams(settings()).toString();
       const original = 'return new URLSearchParams(location.search);';
       const replacement = `return new URLSearchParams(${JSON.stringify(params)});`;
