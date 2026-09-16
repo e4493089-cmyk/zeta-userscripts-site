@@ -57,7 +57,6 @@
     event.stopImmediatePropagation();
 
     try {
-      if(window.ZetaThemeMaker?.getBackgroundImage?.()){downloadStayScript();return}
       const url = new URL(RAW);
       const s = settings();
       Object.entries(s).forEach(([key, value]) => url.searchParams.set(key, value));
@@ -75,7 +74,6 @@
     event.stopImmediatePropagation();
 
     try {
-      if(window.ZetaThemeMaker?.getBackgroundImage?.()){window.ZetaSite?.toast?.('배경 이미지는 .js 다운로드로 설치해 주세요.');return}
       const params = new URLSearchParams(settings()).toString();
       const original = 'return new URLSearchParams(location.search);';
       const replacement = `return new URLSearchParams(${JSON.stringify(params)});`;
