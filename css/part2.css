@@ -6,7 +6,7 @@
 .book-grid{display:grid;gap:12px}.book-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:19px}.book-card.recommended{border-color:#daca38;box-shadow:0 10px 28px rgba(110,98,0,.06)}.book-card h2{font-size:21px;margin:2px 0 0;letter-spacing:-.03em}.book-card p{margin:5px 0 0;color:var(--sub);font-size:13px}.pill{display:inline-flex;padding:4px 7px;border-radius:999px;background:#fff6a8;color:#655900;font-size:10px;font-weight:950;margin-left:6px;vertical-align:middle}.book-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.book-actions.clean .btn{min-width:120px}.drag{background:#26343c;color:#fff;font-size:0}.drag::after{content:'PC: 드래그';font-size:13px}
 
 /* Bookmarklet browser guidance */
-.browser-guide{margin-top:18px;background:#fff;border:1px solid #d8e0e3;border-radius:16px;overflow:hidden}
+.browser-guide{margin-top:10px;background:#fff;border:1px solid #d8e0e3;border-radius:16px;overflow:hidden}
 .browser-guide>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 18px;color:#26343c;font-size:18px;font-weight:750;line-height:1.45;letter-spacing:0;cursor:pointer;list-style:none}
 .browser-guide>summary::-webkit-details-marker{display:none}
 .browser-guide>summary::after{content:'+';flex:none;color:#475861;font-size:24px;font-weight:400;line-height:1}
@@ -21,3 +21,8 @@
 .browser-row p{margin:0;color:#34454e;font-size:16px;line-height:1.7;letter-spacing:0;word-break:keep-all}
 .browser-row strong{color:#1c2b33}
 @media(max-width:620px){.browser-guide>summary{padding:16px;font-size:17px}.browser-guide-content{padding:3px 16px 17px}}
+
+/* Keep the bookmarklet guide and list on the same spacing rhythm. */
+.bookmarklet-guide-section{padding-bottom:0}
+.bookmarklet-list-section{padding-top:24px}
+@media(max-width:620px){.bookmarklet-guide-section{padding-bottom:0}.bookmarklet-list-section{padding-top:24px}}
