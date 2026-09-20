@@ -26,3 +26,6 @@
 .bookmarklet-guide-section{padding-bottom:0}
 .bookmarklet-list-section{padding-top:24px}
 @media(max-width:620px){.bookmarklet-guide-section{padding-bottom:0}.bookmarklet-list-section{padding-top:24px}}
+
+/* Keep script info cards separate from the following notice on desktop too. */
+.detail .info-grid+.notice{margin-top:10px}
