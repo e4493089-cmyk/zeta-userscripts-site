@@ -7,13 +7,11 @@ const ZETA={
   tampermonkey:'https://www.tampermonkey.net/'
 };
 
-const PLATFORM_KEY='zeta-tools:platform-mode:v1';
+const PLATFORM_KEY='zeta-tools:platform-mode:v2';
 const PLATFORM_OPTIONS={
   auto:{label:'자동'},
-  'ios-safari':{label:'iPhone Safari'},
-  'ios-edge':{label:'iPhone Edge'},
-  android:{label:'Android'},
-  pc:{label:'PC'}
+  ios:{label:'iOS'},
+  monkey:{label:'몽키'}
 };
 
 function detectBrowser(){
@@ -30,11 +28,7 @@ function detectPlatform(){
   const ua=navigator.userAgent||'';
   const iPadDesktop=navigator.platform==='MacIntel' && navigator.maxTouchPoints>1;
   const isIOS=/iPhone|iPad|iPod/i.test(ua)||iPadDesktop;
-  const isAndroid=/Android/i.test(ua);
-  if(isIOS && /EdgiOS/i.test(ua))return 'ios-edge';
-  if(isIOS)return 'ios-safari';
-  if(isAndroid)return 'android';
-  return 'pc';
+  return isIOS?'ios':'monkey';
 }
 
 function getPlatformMode(){
@@ -53,40 +47,31 @@ function setPlatformMode(mode){
 }
 
 function platformName(platform=getPlatform()){
-  if(platform==='ios-safari')return 'iPhone · Safari';
-  if(platform==='ios-edge')return 'iPhone · Edge';
-  if(platform==='android')return 'Android · '+detectBrowser();
-  return 'PC · '+detectBrowser();
+  if(platform==='ios')return 'iOS · '+detectBrowser();
+  return '몽키 · '+detectBrowser();
 }
 
 function platformInstallMeta(platform=getPlatform()){
-  if(platform==='ios-safari')return {
-    manager:'Stay for Safari',
-    managerUrl:ZETA.staySafari,
-    primary:'Stay용 링크 복사',
-    copyFirst:true,
-    badge:'Stay for Safari 추천',
-    summary:'링크를 복사해 Stay for Safari의 + → Link에 붙여넣습니다.',
-    steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Stay for Safari를 열고 + → Link를 선택합니다.','복사된 .user.js 주소를 붙여넣고 저장/활성화합니다.','Safari 확장에서 Stay를 허용한 뒤 Zeta를 새로고침합니다.']
-  };
-  if(platform==='ios-edge')return {
-    manager:'Stay for Mobile',
-    managerUrl:ZETA.stayEdge,
-    primary:'Stay용 링크 복사',
-    copyFirst:true,
-    badge:'Stay for Mobile 추천',
-    summary:'링크를 복사해 Stay for Mobile에 등록합니다.',
-    steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Edge의 Stay for Mobile을 열어 새 스크립트/Link 추가를 선택합니다.','복사된 .user.js 주소를 붙여넣고 저장/활성화합니다.','Zeta 탭을 새로고침해 적용 여부를 확인합니다.']
-  };
-  if(platform==='android')return {
-    manager:'Tampermonkey',
-    managerUrl:ZETA.tampermonkey,
-    primary:'Tampermonkey로 설치',
-    copyFirst:false,
-    badge:'Tampermonkey 추천',
-    summary:'노란 설치 버튼을 누르면 Tampermonkey 설치 화면이 열립니다.',
-    steps:['Tampermonkey를 설치/활성화합니다.','원하는 스크립트의 설치 버튼을 누릅니다.','Tampermonkey 설치 화면에서 설치를 확인합니다.','Zeta를 새로고침합니다.']
-  };
+  if(platform==='ios'){
+    const edge=detectBrowser()==='Edge';
+    return edge?{
+      manager:'Stay for Mobile',
+      managerUrl:ZETA.stayEdge,
+      primary:'Stay용 링크 복사',
+      copyFirst:true,
+      badge:'Stay for Mobile 추천',
+      summary:'링크를 복사해 Stay for Mobile에 등록합니다.',
+      steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Edge의 Stay for Mobile을 열어 새 스크립트/Link 추가를 선택합니다.','복사된 .user.js 주소를 붙여넣고 저장/활성화합니다.','Zeta 탭을 새로고침해 적용 여부를 확인합니다.']
+    }:{
+      manager:'Stay for Safari',
+      managerUrl:ZETA.staySafari,
+      primary:'Stay용 링크 복사',
+      copyFirst:true,
+      badge:'Stay for Safari 추천',
+      summary:'링크를 복사해 Stay for Safari의 + → Link에 붙여넣습니다.',
+      steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Stay for Safari를 열고 + → Link를 선택합니다.','복사된 .user.js 주소를 붙여넣고 저장/활성화합니다.','Safari 확장에서 Stay를 허용한 뒤 Zeta를 새로고침합니다.']
+    };
+  }
   return {
     manager:'Tampermonkey',
     managerUrl:ZETA.tampermonkey,
@@ -278,7 +263,7 @@ function getBookmarklets(){
     theme:`javascript:(async()=>{const k="__zetaKakaoBookmarklet",u="${RAW.theme}",n="Zeta 카톡 테마";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text());alert(n+" 적용됨\\n새로고침하면 해제됨")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();`,
     mask:`javascript:(async()=>{const k="__zetaMaskBookmarklet",u="${RAW.mask}",n="캡처 이름 가리기";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text());alert(n+" 적용됨\\n새로고침하면 해제됨")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();`,
     both:`javascript:(async()=>{if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");const L=async(k,u)=>{if(window[k])return true;window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok){delete window[k];throw Error("HTTP "+r.status)};(0,eval)(await r.text())};try{await L("__zetaKakaoBookmarklet","${RAW.theme}");await L("__zetaMaskBookmarklet","${RAW.mask}");alert("테마 + 이름 가리기 적용됨\\n새로고침하면 해제됨")}catch(e){alert("실행 실패: "+e.message)}})();`,
-    room:`javascript:(async()=>{const k="__zetaRoomManagerBookmarklet",u="${RAW.room}",n="Room Manager (Android/PC)";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text());alert(n+" 적용됨\\n새로고침하면 다시 실행해야 함")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();`,
+    room:`javascript:(async()=>{const k="__zetaRoomManagerBookmarklet",u="${RAW.room}",n="Room Manager (몽키)";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text());alert(n+" 적용됨\\n새로고침하면 다시 실행해야 함")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();`,
     roomIos:`javascript:(async()=>{const k="__zetaRoomManagerIosBookmarklet",u="${RAW.roomIos}",n="Room Manager (iOS)";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text());alert(n+" 적용됨\\n새로고침하면 다시 실행해야 함")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();`,
     full:`javascript:(async()=>{const k="__zetaFullscreenBookmarklet",u="${RAW.full}",n="Zeta Fullscreen";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text());alert(n+" 버튼 준비됨\\n화면의 ⛶ 버튼을 눌러줘")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();`,
     chatExport:`javascript:(async()=>{const k="__zetaFullChatExportBookmarklet",u="${RAW.chatExport}",b="zeta-full-chat-export-button",n="대화 전체 저장";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 채팅방에서 실행해줘");const s=()=>setTimeout(()=>{const x=document.getElementById(b);x?x.click():alert(n+" 버튼을 찾지 못했어요")},120);if(window[k])return s();try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text());s()}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();`
