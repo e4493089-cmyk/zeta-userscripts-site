@@ -8,7 +8,7 @@
 <div class="browser-row"><h3>iOS · Safari 권장</h3><p>Safari에서 북마크를 만든 뒤 주소(URL)를 복사한 북마클릿 링크로 바꾸고, 제타 페이지에서 해당 북마크를 누르세요. iOS용 Chrome·Edge·Firefox·웨일도 있지만 북마클릿 실행 방식은 브라우저마다 다를 수 있습니다.</p></div>
 </div></details></div></section>
 <section class="section bookmarklet-list-section"><div class="wrap"><div class="section-head"><div><h2>북마클릿</h2><p>새로고침하면 다시 실행해야 합니다.</p></div></div><div class="book-grid" id="bookmark-grid"></div></div></section>
-</main><footer class="footer"><div class="wrap footer-in"><div>ZETA Tools · 제타용 개인 도구</div><div><a href="scripts.html">스크립트</a> · <a href="bookmarklets.html">북마클릿</a> · <a href="theme-maker.html">테마 만들기</a></div></div></footer><div class="toast" id="toast"></div><script src="site.js?v=7.9.0"></script><script>
+</main><footer class="footer"><div class="wrap footer-in"><div>ZETA Tools · 제타용 개인 도구</div><div><a href="scripts.html">스크립트</a> · <a href="bookmarklets.html">북마클릿</a> · <a href="theme-maker.html">테마 만들기</a></div></div></footer><div class="toast" id="toast"></div><script src="site.js?v=7.9.1"></script><script>
 const B=ZetaSite.getBookmarklets();
 const OOC='javascript:(async()=>{const k="__zetaOocHideBookmarklet",u="https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-capture-ooc-hide.user.js",n="캡처 OOC 제거";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const c=await r.text();(0,eval)(c);alert(n+" 적용됨\\n새로고침하면 다시 실행해야 함")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();';
 const items=[
@@ -17,7 +17,7 @@ const items=[
  {key:'theme',title:'카카오톡 테마',desc:'카카오톡 테마만 적용.',file:'zeta-theme.bookmarklet.txt'},
  {key:'mask',title:'캡처 이름 가리기',desc:'캡처 이름 가리기만 적용.',file:'zeta-user-mask.bookmarklet.txt'},
  {key:'ooc',title:'캡처 OOC 제거',desc:'캡처 미리보기에서 선택한 OOC만 숨깁니다.',file:'zeta-ooc-hide.bookmarklet.txt',href:OOC},
- {key:'room',title:'Room Manager (몽키)',desc:'길게 눌러 별명을 바꾸고 검색합니다.',file:'zeta-room-manager.bookmarklet.txt'},
+ {key:'room',title:'Room Manager',desc:'길게 눌러 별명을 바꾸고 검색합니다.',file:'zeta-room-manager.bookmarklet.txt'},
  {key:'roomIos',title:'Room Manager (iOS)',desc:'대화방을 왼쪽으로 밀어 별명을 바꾸고 검색합니다.',file:'zeta-room-manager-ios.bookmarklet.txt'},
  {key:'chatExport',title:'대화 전체 저장',desc:'MD는 기록·정리용, TXT는 제타식 읽기·복사용입니다.',file:'zeta-full-chat-export.bookmarklet.txt'},
  {key:'full',title:'Fullscreen',desc:'전체화면 버튼을 불러옵니다.',file:'zeta-fullscreen.bookmarklet.txt'}
