@@ -18,7 +18,7 @@
     {
       name: 'Room Manager ' + (ios ? '(iOS)' : '(AOS / PC)'),
       file: ios ? 'zeta-room-manager-ios.user.js' : 'zeta-room-manager.user.js',
-      key: ios ? '__zetaRoomManagerIosBookmarklet' : '__zetaRoomManagerBookmarklet'
+      key: ios ? '__zetaRoomManagerIosBookmarkletV2' : '__zetaRoomManagerBookmarklet'
     },
     { name: '대화 전체 저장', file: 'zeta-full-chat-export.user.js', key: '__zetaFullChatExportBookmarklet', action: true },
     { name: 'Fullscreen', file: 'zeta-fullscreen.user.js', key: '__zetaFullscreenBookmarklet' }
