@@ -41,8 +41,8 @@
     @media(min-width:700px){.panel{top:50%;bottom:auto;transform:translateY(-50%)}}
   </style>
   <div class="veil"></div>
-  <section class="panel" role="dialog" aria-modal="true" aria-label="ZETA Tools 런처">
-    <div class="head"><b>ZETA Tools 런처</b><button class="close" aria-label="닫기">×</button></div>
+  <section class="panel" role="dialog" aria-modal="true" aria-label="ZETA Tools Launcher">
+    <div class="head"><b>ZETA Tools Launcher</b><button class="close" aria-label="닫기">×</button></div>
     <div class="list"></div>
     <div class="foot">
       <div class="actions"><button class="preset">전체 선택</button><button class="run">선택 실행</button></div>
