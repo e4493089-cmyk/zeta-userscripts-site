@@ -21,6 +21,7 @@
       key: ios ? '__zetaRoomManagerIosBookmarkletV3' : '__zetaRoomManagerBookmarklet'
     },
     { name: '대화 전체 저장', file: 'zeta-full-chat-export.user.js', key: '__zetaFullChatExportBookmarklet', action: true },
+    { name: '대화 검색', file: 'zeta-chat-search.user.js', key: '__zetaChatSearchBookmarklet' },
     { name: 'Fullscreen', file: 'zeta-fullscreen.user.js', key: '__zetaFullscreenBookmarklet' }
   ];
 
