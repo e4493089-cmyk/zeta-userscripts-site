@@ -8,7 +8,7 @@
 <div class="browser-row"><h3>iOS · Safari 권장</h3><p>Safari에서 북마크를 만든 뒤 주소(URL)를 복사한 북마클릿 링크로 바꾸고, Zeta를 연 상태에서 해당 북마크를 누르세요. iOS용 Chrome·Edge·Firefox·웨일도 있지만 북마클릿 실행 방식은 브라우저마다 다를 수 있습니다.</p></div>
 </div></details></div></section>
 <section class="section bookmarklet-list-section"><div class="wrap"><div class="section-head"><div><h2>북마클릿</h2><p>페이지를 새로고침하면 다시 실행해야 합니다.</p></div></div><div class="book-grid" id="bookmark-grid"></div></div></section>
-</main><footer class="footer"><div class="wrap footer-in"><div>Zeta Tools · Zeta용 개인 도구</div><div><a href="scripts.html">스크립트</a> · <a href="bookmarklets.html">북마클릿</a> · <a href="theme-maker.html">테마 만들기</a></div></div></footer><div class="toast" id="toast"></div><script src="site.js?v=7.9.5"></script><script>
+</main><footer class="footer"><div class="wrap footer-in"><div>Zeta Tools · Zeta용 개인 도구</div><div><a href="scripts.html">스크립트</a> · <a href="bookmarklets.html">북마클릿</a> · <a href="theme-maker.html">테마 만들기</a></div></div></footer><div class="toast" id="toast"></div><script src="site.js?v=7.9.6"></script><script>
 const B=ZetaSite.getBookmarklets();
 const OOC='javascript:(async()=>{const k="__zetaOocHideBookmarklet",u="https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-capture-ooc-hide.user.js",n="캡처 OOC 제거";if(location.hostname!=="zeta-ai.io"&&!location.hostname.endsWith(".zeta-ai.io"))return alert("제타 페이지에서 실행해줘");if(window[k])return alert(n+" 이미 실행 중");try{window[k]=1;const r=await fetch(u+"?bm="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const c=await r.text();(0,eval)(c);alert(n+" 적용됨\\n새로고침하면 다시 실행해야 함")}catch(e){delete window[k];alert(n+" 실행 실패: "+e.message)}})();';
 const items=[
