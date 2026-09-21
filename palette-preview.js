@@ -50,11 +50,11 @@
     const line = mix(surface, textFor(surface), .10);
 
     palette.innerHTML = [
-      ['Accent', a],
-      ['Hover', hover],
-      ['Chat', c],
-      ['Surface', surface],
-      ['Line', line]
+      ['포인트', a],
+      ['호버', hover],
+      ['채팅', c],
+      ['기본 배경', surface],
+      ['구분선', line]
     ].map(([name, color]) => (
       `<div style="background:${color};color:${textFor(color)}"><span>${name}<br>${color}</span></div>`
     )).join('');
