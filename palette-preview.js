@@ -73,7 +73,7 @@
   const fontSize = document.querySelector('#fontSize');
   if (downloadButton && fontSize) {
     const RAW = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
-    downloadButton.textContent = '.user.js 저장 + 몽키 추가';
+    downloadButton.textContent = 'Stay용 .js 다운로드';
     downloadButton.addEventListener('click', () => {
       const url = new URL(RAW);
       url.searchParams.set('bubble', accent.value.slice(1).toUpperCase());
