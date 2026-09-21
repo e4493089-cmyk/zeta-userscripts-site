@@ -8,7 +8,6 @@
   const shadow = root.attachShadow({ mode: 'open' });
 
   const raw = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/';
-  const controllerRaw = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-room-manager-bookmarklet-controller.js';
   const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
@@ -19,8 +18,7 @@
     {
       name: 'Room Manager ' + (ios ? '(iOS)' : '(AOS / PC)'),
       file: ios ? 'zeta-room-manager-ios.user.js' : 'zeta-room-manager.user.js',
-      key: ios ? '__zetaRoomManagerIosBookmarklet' : '__zetaRoomManagerBookmarklet',
-      room: true
+      key: ios ? '__zetaRoomManagerIosBookmarklet' : '__zetaRoomManagerBookmarklet'
     },
     { name: '대화 전체 저장', file: 'zeta-full-chat-export.user.js', key: '__zetaFullChatExportBookmarklet', action: true },
     { name: 'Fullscreen', file: 'zeta-fullscreen.user.js', key: '__zetaFullscreenBookmarklet' }
@@ -72,52 +70,7 @@
   const buttons = [shadow.querySelector('.run'), shadow.querySelector('.preset')];
   let busy = false;
 
-  function openRoomHelper() {
-    try {
-      const helper = window.open('', 'zeta-room-manager-auto-resume', 'popup,width=390,height=260');
-      if (!helper) return null;
-      helper.document.open();
-      helper.document.write(
-        '<!doctype html><meta charset="utf-8"><title>Room Manager 자동 이어받기</title>' +
-        '<body style="font-family:sans-serif;padding:24px">자동 이어받기 준비 중…</body>'
-      );
-      helper.document.close();
-      try { window.focus(); } catch (_) {}
-      return helper;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  async function installRoomController(helper, tool, source) {
-    if (!helper || helper.closed) return false;
-    try {
-      const response = await fetch(controllerRaw + '?bm=' + Date.now(), { cache: 'no-store' });
-      if (!response.ok) throw Error('controller HTTP ' + response.status);
-      (0, eval)(await response.text());
-
-      const ready = Boolean(
-        window.__zrmBookmarkletControllerInstall &&
-        window.__zrmBookmarkletControllerInstall(helper, {
-          key: tool.key,
-          name: tool.name,
-          source
-        })
-      );
-      window.__zrmBookmarkletControllerReady = ready;
-      if (!ready && !helper.closed) {
-        try { helper.close(); } catch (_) {}
-      }
-      return ready;
-    } catch (error) {
-      window.__zrmBookmarkletControllerReady = false;
-      try { if (!helper.closed) helper.close(); } catch (_) {}
-      console.error('[ZETA Tools Room Manager controller]', error);
-      return false;
-    }
-  }
-
-  async function launch(index, roomHelper = null) {
+  async function launch(index) {
     const tool = tools[index];
 
     if (tool.action && window[tool.key]) {
@@ -135,9 +88,6 @@
       if (!response.ok) throw Error('HTTP ' + response.status);
       const source = await response.text();
 
-      if (tool.room) {
-        await installRoomController(roomHelper, tool, source);
-      }
 
       (0, eval)(source);
 
@@ -161,25 +111,15 @@
     busy = true;
     buttons.forEach(button => button.disabled = true);
 
-    const roomIndex = indices.find(index => tools[index].room && !window[tools[index].key]);
-    const roomHelper = roomIndex === undefined ? null : openRoomHelper();
-
     let ok = 0;
     try {
       for (const index of indices) {
         msg.textContent = tools[index].name + ' 실행 중…';
-        await launch(index, index === roomIndex ? roomHelper : null);
+        await launch(index);
         ok++;
       }
-
-      const roomReady = roomIndex !== undefined && window.__zrmBookmarkletControllerReady;
-      msg.textContent = roomReady
-        ? ok + '개 도구 실행 완료 · Room Manager 자동 이어받기 준비됨'
-        : ok + '개 도구 실행 완료';
+      msg.textContent = ok + '개 도구 실행 완료';
     } catch (error) {
-      if (roomHelper && !roomHelper.closed && !window.__zrmBookmarkletControllerReady) {
-        try { roomHelper.close(); } catch (_) {}
-      }
       msg.textContent = '실행 실패: ' + error.message;
     } finally {
       buttons.forEach(button => button.disabled = false);
