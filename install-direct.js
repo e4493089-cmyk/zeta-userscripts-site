@@ -45,7 +45,7 @@
     link.click();
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
-    window.ZetaSite?.toast?.('선택한 색이 포함된 Stay용 .js 파일을 저장했어요.');
+    window.ZetaSite?.toast?.('선택한 설정이 포함된 Stay용 .js 파일을 저장했어요.');
   }
 
   function syncInstallLabel() {
@@ -63,7 +63,7 @@
       location.href = url.href;
     } catch (error) {
       console.error('[Zeta Theme Maker install]', error);
-      window.ZetaSite?.toast?.('커스텀 테마를 만들지 못했어요.');
+      window.ZetaSite?.toast?.('커스텀 테마 설치 링크를 만들지 못했어요.');
     }
   }, true);
 
@@ -88,7 +88,7 @@
     }
   }, true);
 
-  downloadButton.textContent = '.js 다운로드 (Stay용)';
+  downloadButton.textContent = 'Stay용 .js 다운로드';
   downloadButton.addEventListener('click', event => {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -97,7 +97,7 @@
       downloadStayScript();
     } catch (error) {
       console.error('[Zeta Theme Maker download]', error);
-      window.ZetaSite?.toast?.('스크립트 파일 생성에 실패했어요.');
+      window.ZetaSite?.toast?.('Stay용 .js 파일을 만들지 못했어요.');
     }
   }, true);
 
