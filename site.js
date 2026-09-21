@@ -223,7 +223,7 @@ function renderPlatformUI(){
   const manager=platformInstallMeta(current);
   document.querySelectorAll('[data-manager-link]').forEach(a=>{a.href=manager.managerUrl;a.textContent=`${manager.manager} 열기 ↗`});
   document.querySelectorAll('[data-platform-preview-note]').forEach(x=>{
-    x.textContent=mode==='auto'?`자동 감지 중 · ${platformName(detected)}`:`수동 미리보기 · ${PLATFORM_OPTIONS[mode].label}`;
+    x.textContent=mode==='auto'?'자동 선택':`수동 선택 · ${PLATFORM_OPTIONS[mode].label}`;
   });
   applyPlatformVisibility(current);
   renderScriptActions();
