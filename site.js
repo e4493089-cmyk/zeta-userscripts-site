@@ -10,8 +10,8 @@ const ZETA={
 const PLATFORM_KEY='zeta-tools:platform-mode:v2';
 const PLATFORM_OPTIONS={
   auto:{label:'자동'},
-  ios:{label:'iOS / Stay'},
-  monkey:{label:'AOS, PC / Tampermonkey'}
+  ios:{label:'iOS · Stay'},
+  monkey:{label:'Android / PC · Tampermonkey'}
 };
 
 function detectBrowser(){
@@ -47,8 +47,8 @@ function setPlatformMode(mode){
 }
 
 function platformName(platform=getPlatform()){
-  if(platform==='ios')return 'iOS / Stay';
-  return 'AOS, PC / Tampermonkey';
+  if(platform==='ios')return 'iOS · Stay';
+  return 'Android / PC · Tampermonkey';
 }
 
 function platformInstallMeta(platform=getPlatform()){
@@ -232,7 +232,7 @@ function renderPlatformUI(){
 function mountPlatformBar(){
   const mount=document.getElementById('platform-mount');
   if(!mount)return;
-  mount.innerHTML=`<div class="platform-card"><div class="platform-top"><div><span class="platform-label">현재 설치 환경</span><div class="platform-current"><strong data-platform-name></strong><span data-platform-badge></span></div><p data-platform-summary></p></div><a class="manager-link" data-manager-link target="_blank" rel="noopener"></a></div><div class="platform-switch" aria-label="설치 환경 선택">${Object.entries(PLATFORM_OPTIONS).map(([key,v])=>`<button type="button" data-platform-option="${key}">${v.label}</button>`).join('')}</div><div class="platform-foot"><span><b>감지:</b> <span data-platform-detected></span></span><span data-platform-preview-note></span><span>현재 환경과 다르면 직접 선택하세요.</span></div></div>`;
+  mount.innerHTML=`<div class="platform-card"><div class="platform-top"><div><span class="platform-label">현재 설치 환경</span><div class="platform-current"><strong data-platform-name></strong><span data-platform-badge></span></div><p data-platform-summary></p></div><a class="manager-link" data-manager-link target="_blank" rel="noopener"></a></div><div class="platform-switch" aria-label="설치 환경 선택">${Object.entries(PLATFORM_OPTIONS).map(([key,v])=>`<button type="button" data-platform-option="${key}">${v.label}</button>`).join('')}</div><div class="platform-foot"><span><b>자동 감지:</b> <span data-platform-detected></span></span><span data-platform-preview-note></span><span>현재 환경과 다르면 직접 선택하세요.</span></div></div>`;
   mount.querySelectorAll('[data-platform-option]').forEach(btn=>btn.addEventListener('click',()=>setPlatformMode(btn.dataset.platformOption)));
   renderPlatformUI();
 }
