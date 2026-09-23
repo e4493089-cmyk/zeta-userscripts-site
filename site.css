@@ -3,3 +3,35 @@
 @import url("css/part3.css?v=7.7.5");
 @import url("css/part4.css?v=7.7.12");
 @import url("css/part5.css?v=7.8.1");
+/* Updates */
+.update-hero{padding-bottom:20px}
+.update-section{padding-top:22px}
+.update-list{display:grid;gap:14px}
+.update-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.update-card>summary{list-style:none}
+.update-card>summary::-webkit-details-marker{display:none}
+.update-summary{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:22px;cursor:pointer}
+.update-summary-main{min-width:0}
+.update-date{font-size:11px;font-weight:950;letter-spacing:.04em;color:#7f8b90}
+.update-summary h3{margin:3px 0 5px;font-size:24px;line-height:1.25;letter-spacing:-.04em}
+.update-summary p{margin:0;color:var(--sub);font-size:13px;line-height:1.55}
+.update-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.update-tags span{padding:5px 8px;border-radius:999px;background:#f1f4f5;color:#5e6d74;font-size:10px;font-weight:850}
+.update-toggle{flex:0 0 auto;min-width:88px;text-align:center;padding:9px 11px;border:1px solid #dce3e6;border-radius:10px;background:#f7f9fa;color:#475861;font-size:11px;font-weight:900}
+.update-card[open] .update-toggle{font-size:0}
+.update-card[open] .update-toggle:after{content:"접기";font-size:11px}
+.update-body{padding:0 22px 22px;border-top:1px solid #edf0f1}
+.update-group{padding:20px 0;border-bottom:1px solid #edf0f1}
+.update-group:last-of-type{border-bottom:0}
+.update-group h4{margin:0 0 10px;font-size:17px;letter-spacing:-.025em}
+.update-group ul{margin:0;padding-left:19px;color:#596970;font-size:13px;line-height:1.75}
+.update-group li+li{margin-top:3px}
+.update-footnote{margin-top:4px;padding:14px 15px;border-radius:14px;background:#f6f8f9;color:#6a777d;font-size:12px;line-height:1.65}
+@media(max-width:620px){
+  .update-summary{display:block;padding:17px}
+  .update-summary h3{font-size:21px}
+  .update-toggle{display:inline-flex;margin-top:14px;min-width:0}
+  .update-body{padding:0 17px 17px}
+  .update-group{padding:17px 0}
+  .update-group ul{font-size:12.5px;padding-left:18px}
+}
