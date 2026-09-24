@@ -1,7 +1,7 @@
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 const CUSTOM_THEME_LOADER_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
 const CUSTOM_THEME_SETTINGS_KEY = 'zeta-custom-theme:settings:v1';
-const CUSTOM_THEME_LOADER_VERSION = '1.4.0';
+const CUSTOM_THEME_LOADER_VERSION = '1.4.1';
 
 const $ = selector => document.querySelector(selector);
 const accentPicker = $('#accentPicker');
