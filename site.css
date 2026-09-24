@@ -16,8 +16,8 @@
 .update-summary h3{margin:3px 0 5px;font-size:24px;line-height:1.25;letter-spacing:-.04em}
 .update-summary p{margin:0;color:var(--sub);font-size:13px;line-height:1.55}
 .update-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.update-tags span{padding:5px 8px;border-radius:999px;background:#f1f4f5;color:#5e6d74;font-size:10px;font-weight:850}
-.update-toggle{flex:0 0 auto;min-width:88px;text-align:center;padding:9px 11px;border:1px solid #dce3e6;border-radius:10px;background:#f7f9fa;color:#475861;font-size:11px;font-weight:900}
+.update-tags span:not(.update-chevron){padding:5px 8px;border-radius:999px;background:#f1f4f5;color:#5e6d74;font-size:10px;font-weight:850}
+.update-toggle{flex:0 0 auto;min-width:88px;text-align:center;padding:9px 11px;border:1px solid #dce3e6;border-radius:10px;background:#f7f9fa;color:#475861;font-size:11px;font-weight:900}.update-chevron{display:none}
 .update-card[open] .update-toggle{font-size:0}
 .update-card[open] .update-toggle:after{content:"접기";font-size:11px}
 .update-body{padding:0 22px 22px;border-top:1px solid #edf0f1}
@@ -30,7 +30,11 @@
 @media(max-width:620px){
   .update-summary{display:block;padding:17px}
   .update-summary h3{font-size:21px}
-  .update-toggle{display:inline-flex;margin-top:14px;min-width:0}
+  .update-toggle{display:none}
+  .update-tags{align-items:center;gap:6px}
+  .update-tags span:not(.update-chevron){padding:5px 7px}
+  .update-chevron{display:block;width:9px;height:9px;margin-left:auto;margin-right:4px;border-right:2px solid #7b878c;border-bottom:2px solid #7b878c;transform:rotate(45deg);transition:transform .18s ease;flex:0 0 auto}
+  .update-card[open] .update-chevron{transform:rotate(225deg)}
   .update-body{padding:0 17px 17px}
   .update-group{padding:17px 0}
   .update-group ul{font-size:12.5px;padding-left:18px}
