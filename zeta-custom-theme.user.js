@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.4.0
+// @version      1.4.1
 // @description  ZETA Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
 // @run-at       document-start
 // @grant        GM_info
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 (() => {
@@ -37,9 +39,13 @@
     if(hasInstallSettings){
       const saved=new URLSearchParams();
       settingNames.forEach(key=>{if(p.has(key))saved.set(key,p.get(key))});
-      localStorage.setItem(SETTINGS_KEY,saved.toString());
+      const value=saved.toString();
+      if(typeof GM_setValue==='function')GM_setValue(SETTINGS_KEY,value);
+      localStorage.setItem(SETTINGS_KEY,value);
     }else{
-      const saved=localStorage.getItem(SETTINGS_KEY);
+      let saved='';
+      if(typeof GM_getValue==='function')saved=GM_getValue(SETTINGS_KEY,'')||'';
+      if(!saved)saved=localStorage.getItem(SETTINGS_KEY)||'';
       if(saved)p=new URLSearchParams(saved);
     }
   }catch(_){}
