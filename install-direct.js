@@ -62,7 +62,7 @@
       Object.entries(s).forEach(([key, value]) => url.searchParams.set(key, value));
       location.href = url.href;
     } catch (error) {
-      console.error('[Zeta Theme Maker install]', error);
+      console.error('[ZETA Theme Maker install]', error);
       window.ZetaSite?.toast?.('커스텀 테마 설치 링크를 만들지 못했어요.');
     }
   }, true);
@@ -83,7 +83,7 @@
       if (bookmarklet.includes('#')) throw new Error('bookmarklet contains unsafe #');
       ZetaSite.copyText(bookmarklet, '북마클릿 링크를 복사했어요.');
     } catch (error) {
-      console.error('[Zeta Theme Maker bookmarklet]', error);
+      console.error('[ZETA Theme Maker bookmarklet]', error);
       window.ZetaSite?.toast?.('북마클릿 생성에 실패했어요.');
     }
   }, true);
@@ -96,7 +96,7 @@
     try {
       downloadStayScript();
     } catch (error) {
-      console.error('[Zeta Theme Maker download]', error);
+      console.error('[ZETA Theme Maker download]', error);
       window.ZetaSite?.toast?.('Stay용 .js 파일을 만들지 못했어요.');
     }
   }, true);
