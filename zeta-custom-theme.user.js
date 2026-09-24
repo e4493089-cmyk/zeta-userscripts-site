@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Zeta Custom Theme
+// @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
 // @version      1.3.1
-// @description  Zeta Theme Maker에서 만든 커스텀 테마
+// @description  ZETA Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
 // @grant        GM_info
@@ -58,5 +58,5 @@
     if(OTHER_BORDER)out+=`\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{border:${OTHER_BORDER_WIDTH}px solid ${OTHER_BORDER_COLOR}!important}\n`;
     return out;
   }
-  (async()=>{try{const res=await fetch(BASE+'?custom='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);let script=await res.text();const token='  const CSS = `',start=script.indexOf(token);if(start<0)throw Error('CSS start');const cssStart=start+token.length,end=script.indexOf('\n  `;',cssStart);if(end<0)throw Error('CSS end');script=script.slice(0,cssStart)+transformCss(script.slice(cssStart,end))+script.slice(end);script=script.replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");(0,eval)(script)}catch(e){console.error('[Zeta Custom Theme]',e)}})();
+  (async()=>{try{const res=await fetch(BASE+'?custom='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);let script=await res.text();const token='  const CSS = `',start=script.indexOf(token);if(start<0)throw Error('CSS start');const cssStart=start+token.length,end=script.indexOf('\n  `;',cssStart);if(end<0)throw Error('CSS end');script=script.slice(0,cssStart)+transformCss(script.slice(cssStart,end))+script.slice(end);script=script.replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");(0,eval)(script)}catch(e){console.error('[ZETA Custom Theme]',e)}})();
 })();
