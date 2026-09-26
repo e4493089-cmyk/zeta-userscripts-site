@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.4.1
+// @version      1.4.2
 // @description  ZETA Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
@@ -19,7 +19,8 @@
   const rgbToHex=({r,g,b})=>'#'+[r,g,b].map(v=>clamp(Math.round(v)).toString(16).padStart(2,'0')).join('').toUpperCase();
   const mix=(a,b,t)=>{const x=hexToRgb(a),y=hexToRgb(b);return rgbToHex({r:x.r+(y.r-x.r)*t,g:x.g+(y.g-x.g)*t,b:x.b+(y.b-x.b)*t})};
   const luminance=hex=>{const{r,g,b}=hexToRgb(hex),f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)};return .2126*f(r)+.7152*f(g)+.0722*f(b)};
-  const textFor=bg=>luminance(bg)>.48?'#191919':'#FFFFFF';
+  const contrast=(a,b)=>{const x=luminance(a),y=luminance(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+  const textFor=bg=>{const dark='#191919',light='#FFFFFF',darkRatio=contrast(bg,dark),lightRatio=contrast(bg,light);if(Math.max(darkRatio,lightRatio)>=4.5)return darkRatio>=lightRatio?dark:light;return'#000000'};
   const rgbToHsl=hex=>{const{r,g,b}=hexToRgb(hex);let R=r/255,G=g/255,B=b/255;const max=Math.max(R,G,B),min=Math.min(R,G,B);let h=0,s=0,l=(max+min)/2,d=max-min;if(d){s=d/(1-Math.abs(2*l-1));if(max===R)h=60*(((G-B)/d)%6);else if(max===G)h=60*((B-R)/d+2);else h=60*((R-G)/d+4);if(h<0)h+=360}return{h,s,l}};
   const hslToHex=(h,s,l)=>{h=((h%360)+360)%360;s=Math.max(0,Math.min(1,s));l=Math.max(0,Math.min(1,l));const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return rgbToHex({r:(r+m)*255,g:(g+m)*255,b:(b+m)*255})};
   const norm=v=>/^#?[0-9a-f]{6}$/i.test(v||'')?('#'+String(v).replace('#','')).toUpperCase():null;

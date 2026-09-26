@@ -1,7 +1,7 @@
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 const CUSTOM_THEME_LOADER_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
 const CUSTOM_THEME_SETTINGS_KEY = 'zeta-custom-theme:settings:v1';
-const CUSTOM_THEME_LOADER_VERSION = '1.4.1';
+const CUSTOM_THEME_LOADER_VERSION = '1.4.2';
 
 const $ = selector => document.querySelector(selector);
 const accentPicker = $('#accentPicker');
@@ -40,7 +40,16 @@ function luminance(hex) {
   const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); };
   return .2126 * f(r) + .7152 * f(g) + .0722 * f(b);
 }
-function textFor(bg) { return luminance(bg) > .48 ? '#191919' : '#FFFFFF'; }
+function contrast(a, b) {
+  const x = luminance(a), y = luminance(b);
+  return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
+}
+function textFor(bg) {
+  const dark = '#191919', light = '#FFFFFF';
+  const darkRatio = contrast(bg, dark), lightRatio = contrast(bg, light);
+  if (Math.max(darkRatio, lightRatio) >= 4.5) return darkRatio >= lightRatio ? dark : light;
+  return '#000000';
+}
 function rgbToHsl(hex) {
   const { r, g, b } = hexToRgb(hex);
   let R = r / 255, G = g / 255, B = b / 255;
