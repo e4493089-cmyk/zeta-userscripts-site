@@ -7,6 +7,16 @@
 .update-hero{padding-bottom:20px}
 .update-section{padding-top:22px}
 .update-list{display:grid;gap:14px}
+.update-list:focus{outline:none}
+.update-list:not([data-updates-ready])>.update-card:nth-of-type(n+11),.update-card[hidden]{display:none}
+.update-pagination{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:24px 0 18px}
+.update-pagination[hidden]{display:none}
+.update-pagination button{min-width:40px;height:40px;padding:0 13px;border:1px solid #dce3e6;border-radius:10px;background:#fff;color:#475861;font-family:inherit;font-size:13px;font-weight:800;line-height:1;cursor:pointer}
+.update-pagination button:hover:not(:disabled){background:#f1f4f5}
+.update-pagination button[aria-current="page"],.update-pagination button[aria-current="page"]:hover{background:#FEE500;border-color:#FEE500;color:#202428}
+.update-pagination button:disabled{opacity:.38;cursor:default}
+.update-pagination button:focus-visible{outline:2px solid #475861;outline-offset:3px}
+.update-page-status{flex-basis:100%;text-align:center;color:#7f8b90;font-size:11px;margin-top:4px}
 .update-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
 .update-card>summary{list-style:none}
 .update-card>summary::-webkit-details-marker{display:none}
