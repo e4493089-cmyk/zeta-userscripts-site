@@ -26,11 +26,6 @@
     button(String(index + 1), index + 1, (index + 1) + '페이지')
   );
   const next = button('다음', () => currentPage + 1, '다음 페이지');
-  const status = document.createElement('span');
-  status.className = 'update-page-status';
-  status.setAttribute('role', 'status');
-  status.setAttribute('aria-live', 'polite');
-  nav.appendChild(status);
 
   function showPage(page, moveToList = false) {
     currentPage = Math.min(pageCount, Math.max(1, page));
@@ -42,7 +37,6 @@
       if (index + 1 === currentPage) node.setAttribute('aria-current', 'page');
       else node.removeAttribute('aria-current');
     });
-    status.textContent = currentPage + ' / ' + pageCount + ' 페이지';
     list.dataset.updatesReady = 'true';
     nav.hidden = pageCount <= 1;
     if (moveToList) {
