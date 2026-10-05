@@ -5,11 +5,11 @@
 @import url("css/part5.css?v=7.8.1");
 /* Updates */
 .update-hero{padding-bottom:20px}
-.update-section{padding-top:22px}
+.update-section{padding-top:22px;padding-bottom:24px}
 .update-list{display:grid;gap:14px}
 .update-list:focus{outline:none}
 .update-list:not([data-updates-ready])>.update-card:nth-of-type(n+11),.update-card[hidden]{display:none}
-.update-pagination{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:24px 0 18px}
+.update-pagination{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:20px 0 6px}
 .update-pagination[hidden]{display:none}
 .update-pagination button{min-width:40px;height:40px;padding:0 13px;border:1px solid #dce3e6;border-radius:10px;background:#fff;color:#475861;font-family:inherit;font-size:13px;font-weight:800;line-height:1;cursor:pointer}
 .update-pagination button:hover:not(:disabled){background:#f1f4f5}
@@ -35,8 +35,14 @@
 .update-group h4{margin:0 0 10px;font-size:17px;letter-spacing:-.025em}
 .update-group ul{margin:0;padding-left:19px;color:#596970;font-size:13px;line-height:1.75}
 .update-group li+li{margin-top:3px}
-.update-footnote{margin-top:4px;padding:14px 15px;border-radius:14px;background:#f6f8f9;color:#6a777d;font-size:12px;line-height:1.65}
-.footer .update-footnote{margin:18px 0 0}
+.footer-stack{display:flex;flex-direction:column;gap:12px}
+.footer-brand{font-weight:700;color:#78868c}
+.footer-links{display:flex;flex-wrap:wrap;gap:0}
+.footer-links a{text-decoration:none;color:#7d898f}
+.footer-links a+a::before{content:"·";margin:0 7px;color:#a6afb3}
+.update-footnote{margin:0;padding:12px 0 0;border-top:1px solid #e2e6e8;background:transparent;color:#89959a;font-size:11px;line-height:1.6}
+.update-footnote p{margin:0}
+.update-footnote p+p{margin-top:3px}
 @media(max-width:620px){
   .update-summary{display:block;padding:17px}
   .update-summary h3{font-size:21px}
@@ -48,4 +54,11 @@
   .update-body{padding:0 17px 17px}
   .update-group{padding:17px 0}
   .update-group ul{font-size:12.5px;padding-left:18px}
+  .update-section{padding-bottom:14px}
+  .update-pagination{margin:18px 0 2px}
+  .footer{margin-top:0;padding:18px 0 max(22px,env(safe-area-inset-bottom))}
+  .footer-in{display:block}
+  .footer-in>div+nav,.footer-in>div+div{margin-top:5px}
+  .footer-links{line-height:1.8}
+  .update-footnote{padding-top:10px;font-size:10.5px;line-height:1.55}
 }
