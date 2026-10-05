@@ -16,7 +16,6 @@
 .update-pagination button[aria-current="page"],.update-pagination button[aria-current="page"]:hover{background:#FEE500;border-color:#FEE500;color:#202428}
 .update-pagination button:disabled{opacity:.38;cursor:default}
 .update-pagination button:focus-visible{outline:2px solid #475861;outline-offset:3px}
-.update-page-status{flex-basis:100%;text-align:center;color:#7f8b90;font-size:11px;margin-top:4px}
 .update-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
 .update-card>summary{list-style:none}
 .update-card>summary::-webkit-details-marker{display:none}
@@ -37,6 +36,7 @@
 .update-group ul{margin:0;padding-left:19px;color:#596970;font-size:13px;line-height:1.75}
 .update-group li+li{margin-top:3px}
 .update-footnote{margin-top:4px;padding:14px 15px;border-radius:14px;background:#f6f8f9;color:#6a777d;font-size:12px;line-height:1.65}
+.footer .update-footnote{margin:18px 0 0}
 @media(max-width:620px){
   .update-summary{display:block;padding:17px}
   .update-summary h3{font-size:21px}
