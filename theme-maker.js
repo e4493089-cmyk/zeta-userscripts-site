@@ -1,7 +1,7 @@
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 const CUSTOM_THEME_LOADER_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
 const CUSTOM_THEME_SETTINGS_KEY = 'zeta-custom-theme:settings:v1';
-const CUSTOM_THEME_LOADER_VERSION = '1.4.2';
+const CUSTOM_THEME_LOADER_VERSION = '1.4.3';
 
 const $ = selector => document.querySelector(selector);
 const accentPicker = $('#accentPicker');
@@ -102,7 +102,7 @@ function currentSettingsQuery() {
 
 function remoteLoaderBody(cacheKey) {
   const params = currentSettingsQuery();
-  return `(async()=>{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)});const u=${JSON.stringify(CUSTOM_THEME_LOADER_URL)},r=await fetch(u+"?${cacheKey}="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);(0,eval)(await r.text())}catch(e){console.error("[ZETA Custom Theme Loader]",e)}})();`;
+  return `(async()=>{try{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)})}catch(_){}const u=${JSON.stringify(CUSTOM_THEME_LOADER_URL)},k="zeta-custom-theme:loader:1.4.3";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(k)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<86400000)return}const r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid loader");if(!ran)(0,eval)(source);try{localStorage.setItem(k,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme Loader]",e)}})();`;
 }
 
 function buildStandaloneScript() {

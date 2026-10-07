@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.4.2
+// @version      1.4.3
 // @description  ZETA Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
@@ -66,5 +66,48 @@
     if(OTHER_BORDER)out+=`\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{border:${OTHER_BORDER_WIDTH}px solid ${OTHER_BORDER_COLOR}!important}\n`;
     return out;
   }
-  (async()=>{try{const res=await fetch(BASE+'?custom='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);let script=await res.text();const token='  const CSS = `',start=script.indexOf(token);if(start<0)throw Error('CSS start');const cssStart=start+token.length,end=script.indexOf('\n  `;',cssStart);if(end<0)throw Error('CSS end');script=script.slice(0,cssStart)+transformCss(script.slice(cssStart,end))+script.slice(end);script=script.replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");(0,eval)(script)}catch(e){console.error('[ZETA Custom Theme]',e)}})();
+  // First-run paint does not wait for GitHub. Full rules replace this small bridge.
+  const boot=document.createElement('style');
+  boot.id='zeta-custom-theme-bootstrap';
+  const chat=/^\/[^/]+\/rooms\/[^/]+\/?$/.test(location.pathname);
+  const rooms=/^\/[^/]+\/rooms\/?$/.test(location.pathname);
+  if(chat||rooms){
+    boot.textContent=`html,body,main#contents{background:${chat?CHAT:'#F4F5F6'}!important;color:${chat?textFor(CHAT):'#191919'}!important;color-scheme:light!important}`;
+    (document.head||document.documentElement).appendChild(boot);
+  }
+  const CACHE_KEY='zeta-custom-theme:base-source:v1';
+  const CACHE_AGE=24*60*60*1000;
+  function activate(source){
+    const token='  const CSS = `',start=source.indexOf(token);
+    if(start<0)throw Error('CSS start');
+    const cssStart=start+token.length,end=source.indexOf('\n  `;',cssStart);
+    if(end<0)throw Error('CSS end');
+    let css=transformCss(source.slice(cssStart,end));
+    // Custom bubble colors also apply before the deferred marker pass.
+    for(const [marker,side] of [['kt-other','LeftTextContent'],['kt-me','RightTextContent']]){
+      const old=`[data-sentry-component="ChatBubbleContainer"].${marker}`;
+      css=css.split(old).join(`:is(${old}, [data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"])`);
+    }
+    let script=source.slice(0,cssStart)+css+source.slice(end);
+    script=script.replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");
+    (0,eval)(script);
+    boot.remove();
+  }
+  (async()=>{
+    let cached=null,activated=false;
+    try{cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'null')}catch(_){}
+    if(cached&&typeof cached.source==='string'){
+      try{activate(cached.source);activated=true}catch(_){}
+      if(activated&&Date.now()-cached.savedAt>=0&&Date.now()-cached.savedAt<CACHE_AGE)return;
+    }
+    try{
+      const res=await fetch(BASE,{cache:'no-cache'});
+      if(!res.ok)throw Error('HTTP '+res.status);
+      const source=await res.text();
+      if(!source.includes("const STYLE_ID = 'zeta-kakaotalk-theme-style';")||!source.includes('  const CSS = `'))throw Error('Invalid theme source');
+      if(!activated)activate(source);
+      // An already-running runtime keeps its matching CSS; refreshed source is used next visit.
+      try{localStorage.setItem(CACHE_KEY,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}
+    }catch(e){boot.remove();console.error('[ZETA Custom Theme]',e)}
+  })();
 })();
