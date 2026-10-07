@@ -1,1 +1,18 @@
-.feature-guide{margin:16px 0;color:var(--sub,#53636c);font-size:14px;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}.feature-guide h3{margin:18px 0 9px;font-size:14px;color:var(--text,#26343c);font-weight:800}.feature-guide h3:first-child{margin-top:0}.feature-guide ul{margin:0;padding-left:19px}.feature-guide li{margin:0 0 9px;padding-left:2px}.feature-guide li b{display:block;color:var(--text,#26343c);font-weight:750}.feature-guide li span{display:block}.feature-guide p{margin:0}.book-card details.feature-guide{margin:14px 0 0;border-top:1px solid var(--line,#e2e7e9);padding-top:12px;font-size:13px}.feature-guide summary{cursor:pointer;color:var(--text,#26343c);font-weight:750;list-style-position:inside}.feature-guide summary:focus-visible{outline:2px solid #53636c;outline-offset:4px}.feature-guide[open]>div{padding-top:14px}.book-card .feature-guide p{font-size:13px;line-height:1.7}@media(max-width:600px){.feature-guide{font-size:13px}.feature-guide li{margin-bottom:11px}}
+/* Native disclosures keep instructions available without background handlers. */
+.feature-guide{margin:16px 0 0;border-top:1px solid var(--line);color:var(--sub);font-size:14px;line-height:1.75;word-break:keep-all;overflow-wrap:anywhere}
+.feature-guide summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:12px 0;color:var(--ink);font-weight:750;cursor:pointer;list-style:none}
+.feature-guide summary::-webkit-details-marker{display:none}
+.feature-guide summary::after{content:'＋';font-size:20px;font-weight:500;flex:none}
+.feature-guide[open]>summary::after{content:'−'}
+.feature-guide summary:focus-visible{outline:2px solid var(--dark);outline-offset:3px;border-radius:6px}
+.feature-guide>div{padding:4px 0 16px}
+.feature-guide h3{margin:20px 0 8px;font-size:14px;color:var(--ink);font-weight:800}
+.feature-guide h3:first-child{margin-top:0}
+.feature-guide ul{margin:0;padding-left:19px}
+.feature-guide li{margin:0 0 12px;padding-left:2px}
+.feature-guide li b{display:block;color:var(--ink);font-weight:750}
+.feature-guide li span{display:block}
+.feature-guide p,.book-card .feature-guide p{margin:0;font-size:inherit;line-height:inherit}
+.feature-guide+.feature-guide{margin-top:0}
+.storage-guide .notice:first-child{margin-top:0}
+@media(max-width:620px){.feature-guide{font-size:13px}}
