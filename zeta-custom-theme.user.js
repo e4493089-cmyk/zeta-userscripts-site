@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.4.3
+// @version      1.4.4
 // @description  ZETA Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
@@ -64,17 +64,28 @@
     out+=`\n\n:root{--kt-yellow:${ACCENT};--kt-yellow-hover:${hover};--kt-chat:${CHAT};--kt-chat-text:${chatText};--kt-chat-sub:${chatSub};--kt-chat-muted:${chatMuted};--kt-chat-glass:${chatGlass};--kt-chat-line:${chatLine};--kt-white:${surface};--kt-soft:${surface2};--kt-soft2:${mix(surface2,CHAT,.08)};--kt-text:${textFor(surface)};--kt-sub:${sub};--kt-muted:${mix(textFor(surface),surface,.55)};--kt-line:${line};--kt-user-dialogue:${meText};--kt-user-action:${userAction};--kt-user-soft:${userSoft};--kt-user-line:${userLine};--kt-ai-dialogue:${aiText};--kt-ai-action:${aiAction};--kt-ai-soft:${aiSoft};--kt-ai-line:${aiLine};}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-me{background:${ACCENT}!important;color:${meText}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{background:${OTHER}!important;color:${aiText}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other p,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat strong,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat b,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat .font-bold{color:${aiText}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other em,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other em [class*="text-primary-"],html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other em [data-placeholder]{color:${aiAction}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat code{color:${aiText}!important;background:${aiSoft}!important;border-color:${aiLine}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat blockquote,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat blockquote p{color:${aiText}!important;background:${aiSoft}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat a{color:${aiText}!important;text-decoration:underline!important}\nhtml.kt-chat-theme-active [data-testid="chat-send-button"],html.kt-chat-theme-active .kt-profile-select-button{background:${ACCENT}!important;color:${meText}!important}\nhtml.kt-chat-theme-active main#contents,html.kt-chat-theme-active [role="log"][aria-label="Chat messages"],html.kt-chat-theme-active .kt-chat-header-layer,html.kt-chat-theme-active .kt-top-spacer{background:${CHAT}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] .chat,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] p,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] em,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] li,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] .chat,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] p,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] em,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] li{font-size:${FONT_SIZE}px!important}\n`;
     if(ME_BORDER)out+=`\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-me{border:${ME_BORDER_WIDTH}px solid ${ME_BORDER_COLOR}!important}\n`;
     if(OTHER_BORDER)out+=`\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{border:${OTHER_BORDER_WIDTH}px solid ${OTHER_BORDER_COLOR}!important}\n`;
+    out+=firstPaintCss(ACCENT,OTHER,CHAT,FONT_SIZE,ME_BORDER,ME_BORDER_COLOR,ME_BORDER_WIDTH,OTHER_BORDER,OTHER_BORDER_COLOR,OTHER_BORDER_WIDTH);
     return out;
   }
-  // First-run paint does not wait for GitHub. Full rules replace this small bridge.
-  const boot=document.createElement('style');
-  boot.id='zeta-custom-theme-bootstrap';
-  const chat=/^\/[^/]+\/rooms\/[^/]+\/?$/.test(location.pathname);
-  const rooms=/^\/[^/]+\/rooms\/?$/.test(location.pathname);
-  if(chat||rooms){
-    boot.textContent=`html,body,main#contents{background:${chat?CHAT:'#F4F5F6'}!important;color:${chat?textFor(CHAT):'#191919'}!important;color-scheme:light!important}`;
-    (document.head||document.documentElement).appendChild(boot);
+function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
+  const me=textFor(accent), ai=textFor(other), ct=textFor(chat);
+  const scope='html.kt-chat-theme-active';
+  let css=`${scope},${scope} body,${scope} main#contents,${scope} [role="log"][aria-label="Chat messages"]{background:${chat}!important;color:${ct}!important;color-scheme:light!important}`;
+  for(const [side,bg,fg,border,bc,bw] of [['RightTextContent',accent,me,mb,mbc,mbw],['LeftTextContent',other,ai,ob,obc,obw]]) {
+    const bubble=`${scope} [data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"]`;
+    css+=`${bubble}{background:${bg}!important;color:${fg}!important;border:${border?bw+'px solid '+bc:'0'}!important}`;
+    css+=`${bubble} .chat,${bubble} p,${bubble} strong,${bubble} b,${bubble} a{color:${fg}!important}`;
+    css+=`${bubble} em,${bubble} em [class*="text-primary-"],${bubble} em [data-placeholder]{color:${mix(fg,bg,side==='RightTextContent'?.28:.34)}!important}`;
   }
+  css+=`${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{color:${mix(ct,chat,.28)}!important}`;
+  css+=`${scope} [data-sentry-component="ChatBubbleContainer"] .chat,${scope} [data-sentry-component="ChatBubbleContainer"] p,${scope} [data-sentry-component="ChatBubbleContainer"] em,${scope} [data-sentry-component="ChatBubbleContainer"] li,${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{font-size:${fs}px!important}`;
+  return css;
+}
+  // Apply chosen colors synchronously, before any network request or marker pass.
+  let boot=document.getElementById('zeta-custom-theme-bootstrap');
+  if(!boot){boot=document.createElement('style');boot.id='zeta-custom-theme-bootstrap';(document.head||document.documentElement).appendChild(boot)}
+  boot.textContent=firstPaintCss(ACCENT,OTHER,CHAT,FONT_SIZE,ME_BORDER,ME_BORDER_COLOR,ME_BORDER_WIDTH,OTHER_BORDER,OTHER_BORDER_COLOR,OTHER_BORDER_WIDTH);
+  document.documentElement.classList.toggle('kt-chat-theme-active',/^\/[^/]+\/rooms\/[^/]+\/?$/.test(location.pathname));
   const CACHE_KEY='zeta-custom-theme:base-source:v1';
   const CACHE_AGE=24*60*60*1000;
   function activate(source){
@@ -108,6 +119,6 @@
       if(!activated)activate(source);
       // An already-running runtime keeps its matching CSS; refreshed source is used next visit.
       try{localStorage.setItem(CACHE_KEY,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}
-    }catch(e){boot.remove();console.error('[ZETA Custom Theme]',e)}
+    }catch(e){console.error('[ZETA Custom Theme]',e)}
   })();
 })();

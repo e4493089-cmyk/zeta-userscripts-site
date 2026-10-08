@@ -1,7 +1,7 @@
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 const CUSTOM_THEME_LOADER_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
 const CUSTOM_THEME_SETTINGS_KEY = 'zeta-custom-theme:settings:v1';
-const CUSTOM_THEME_LOADER_VERSION = '1.4.3';
+const CUSTOM_THEME_LOADER_VERSION = '1.4.4';
 
 const $ = selector => document.querySelector(selector);
 const accentPicker = $('#accentPicker');
@@ -100,9 +100,27 @@ function currentSettingsQuery() {
   return new URLSearchParams(currentSettings()).toString();
 }
 
+function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
+  const me=textFor(accent), ai=textFor(other), ct=textFor(chat);
+  const scope='html.kt-chat-theme-active';
+  let css=`${scope},${scope} body,${scope} main#contents,${scope} [role="log"][aria-label="Chat messages"]{background:${chat}!important;color:${ct}!important;color-scheme:light!important}`;
+  for(const [side,bg,fg,border,bc,bw] of [['RightTextContent',accent,me,mb,mbc,mbw],['LeftTextContent',other,ai,ob,obc,obw]]) {
+    const bubble=`${scope} [data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"]`;
+    css+=`${bubble}{background:${bg}!important;color:${fg}!important;border:${border?bw+'px solid '+bc:'0'}!important}`;
+    css+=`${bubble} .chat,${bubble} p,${bubble} strong,${bubble} b,${bubble} a{color:${fg}!important}`;
+    css+=`${bubble} em,${bubble} em [class*="text-primary-"],${bubble} em [data-placeholder]{color:${mix(fg,bg,side==='RightTextContent'?.28:.34)}!important}`;
+  }
+  css+=`${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{color:${mix(ct,chat,.28)}!important}`;
+  css+=`${scope} [data-sentry-component="ChatBubbleContainer"] .chat,${scope} [data-sentry-component="ChatBubbleContainer"] p,${scope} [data-sentry-component="ChatBubbleContainer"] em,${scope} [data-sentry-component="ChatBubbleContainer"] li,${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{font-size:${fs}px!important}`;
+  return css;
+}
+
 function remoteLoaderBody(cacheKey) {
-  const params = currentSettingsQuery();
-  return `(async()=>{try{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)})}catch(_){}const u=${JSON.stringify(CUSTOM_THEME_LOADER_URL)},k="zeta-custom-theme:loader:1.4.3";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(k)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<86400000)return}const r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid loader");if(!ran)(0,eval)(source);try{localStorage.setItem(k,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme Loader]",e)}})();`;
+  const params = currentSettingsQuery(), s=currentSettings();
+  const css=firstPaintCss('#'+s.bubble,'#'+s.other,'#'+s.bg,s.fs,s.mb==='1','#'+s.mbc,s.mbw,s.ob==='1','#'+s.obc,s.obw);
+  const firstPaint=`(()=>{const id="zeta-custom-theme-bootstrap";let style=document.getElementById(id);if(!style){style=document.createElement("style");style.id=id;(document.head||document.documentElement).appendChild(style)}style.textContent=${JSON.stringify(css)};document.documentElement.classList.toggle("kt-chat-theme-active",/^\\/[^/]+\\/rooms\\/[^/]+\\/?$/.test(location.pathname))})();`;
+
+  return `${firstPaint}(async()=>{try{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)})}catch(_){}const u=${JSON.stringify(CUSTOM_THEME_LOADER_URL)},k="zeta-custom-theme:loader:1.4.4";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(k)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<86400000)return}const r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid loader");if(!ran)(0,eval)(source);try{localStorage.setItem(k,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme Loader]",e)}})();`;
 }
 
 function buildStandaloneScript() {
@@ -145,8 +163,7 @@ function installGeneratedTheme() {
 
 function generateBookmarklet() {
   const body=remoteLoaderBody('bm');
-  if(body.includes('#'))throw new Error('bookmarklet contains unsafe #');
-  return 'javascript:'+body;
+  return 'javascript:'+encodeURIComponent(body);
 }
 
 async function syncBaseThemeVersion() {
@@ -187,7 +204,7 @@ function render(){
   $('#accentValue').textContent=accent;$('#otherValue').textContent=other;$('#bgValue').textContent=chat;$('#fontSizeValue').textContent=fontPx;
   if(meBorderHex)meBorderHex.value=meBorderColor;if($('#meBorderValue'))$('#meBorderValue').textContent=meBorderColor;if($('#meBorderWidthValue'))$('#meBorderWidthValue').textContent=String(meBorderPx);if(meBorderControls)meBorderControls.hidden=!meBorderOn;
   if(otherBorderHex)otherBorderHex.value=otherBorderColor;if($('#otherBorderValue'))$('#otherBorderValue').textContent=otherBorderColor;if($('#otherBorderWidthValue'))$('#otherBorderWidthValue').textContent=String(otherBorderPx);if(otherBorderControls)otherBorderControls.hidden=!otherBorderOn;
-  const root=document.documentElement.style,surface=luminance(chat)<.28?mix(chat,'#FFFFFF',.86):'#FFFFFF',surface2=mix(surface,chat,.08),line=mix(surface,textFor(surface),.10),sub=mix(textFor(surface),chat,.45),otherText=textFor(other),meText=textFor(accent),accentHover=luminance(accent)>.55?mix(accent,'#000000',.08):mix(accent,'#FFFFFF',.10);
+  const root=document.documentElement.style,surface=luminance(chat)<.28?mix(chat,'#FFFFFF',.86):mix('#FFFFFF',chat,.025),surface2=mix(surface,chat,.08),line=mix(surface,textFor(surface),.10),sub=mix(textFor(surface),chat,.45),otherText=textFor(other),meText=textFor(accent),accentHover=luminance(accent)>.55?mix(accent,'#000000',.08):mix(accent,'#FFFFFF',.10);
   root.setProperty('--accent',accent);root.setProperty('--chat',chat);root.setProperty('--theme-surface',surface);root.setProperty('--theme-surface2',surface2);root.setProperty('--theme-line',line);root.setProperty('--theme-sub',sub);root.setProperty('--theme-other',other);root.setProperty('--theme-otherText',otherText);root.setProperty('--theme-meText',meText);root.setProperty('--theme-accentHover',accentHover);root.setProperty('--theme-text',textFor(surface));root.setProperty('--theme-font-size',fontPx+'px');root.setProperty('--theme-me-border-width',meBorderOn?(meBorderPx+'px'):'0px');root.setProperty('--theme-me-border-color',meBorderColor);root.setProperty('--theme-other-border-width',otherBorderOn?(otherBorderPx+'px'):'0px');root.setProperty('--theme-other-border-color',otherBorderColor);
   document.querySelectorAll('.quick-swatches').forEach(group=>{const target=group.dataset.target,current=target==='accent'?accent:target==='other'?other:chat;group.querySelectorAll('button[data-color]').forEach(btn=>btn.classList.toggle('active',btn.dataset.color.toUpperCase()===current));});
 }

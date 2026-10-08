@@ -31,7 +31,12 @@
     };
     return .2126 * f(r) + .7152 * f(g) + .0722 * f(b);
   };
-  const textFor = bg => luminance(bg) > .48 ? '#191919' : '#FFFFFF';
+  const textFor = bg => {
+    const dark='#191919',light='#FFFFFF',lum=luminance(bg);
+    const ratio=color=>{const x=luminance(color);return(Math.max(lum,x)+.05)/(Math.min(lum,x)+.05)};
+    const d=ratio(dark),l=ratio(light);
+    return Math.max(d,l)>=4.5?(d>=l?dark:light):'#000000';
+  };
 
   function removeDuplicatePresets() {
     const seen = new Set();
@@ -46,7 +51,7 @@
     const a = accent.value.toUpperCase();
     const c = chat.value.toUpperCase();
     const hover = luminance(a) > .55 ? mix(a, '#000000', .08) : mix(a, '#FFFFFF', .10);
-    const surface = luminance(c) < .28 ? mix(c, '#FFFFFF', .86) : '#FFFFFF';
+    const surface = luminance(c) < .28 ? mix(c, '#FFFFFF', .86) : mix('#FFFFFF', c, .025);
     const line = mix(surface, textFor(surface), .10);
 
     palette.innerHTML = [
@@ -70,23 +75,7 @@
   });
 
   const downloadButton = document.querySelector('#downloadScript');
-  const fontSize = document.querySelector('#fontSize');
-  if (downloadButton && fontSize) {
-    const RAW = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
-    downloadButton.textContent = 'Stay용 .js 다운로드';
-    downloadButton.addEventListener('click', () => {
-      const url = new URL(RAW);
-      url.searchParams.set('bubble', accent.value.slice(1).toUpperCase());
-      url.searchParams.set('other', other.value.slice(1).toUpperCase());
-      url.searchParams.set('bg', chat.value.slice(1).toUpperCase());
-      url.searchParams.set('fs', String(Math.max(12, Math.min(20, Number(fontSize.value) || 15))));
-      const meBorder=document.querySelector('#meBorder'),meBorderPicker=document.querySelector('#meBorderPicker'),meBorderWidth=document.querySelector('#meBorderWidth');
-      const otherBorder=document.querySelector('#otherBorder'),otherBorderPicker=document.querySelector('#otherBorderPicker'),otherBorderWidth=document.querySelector('#otherBorderWidth');
-      url.searchParams.set('mb',meBorder?.checked?'1':'0');url.searchParams.set('mbc',(meBorderPicker?.value||'#53636C').slice(1).toUpperCase());url.searchParams.set('mbw',String(Number(meBorderWidth?.value)||1));
-      url.searchParams.set('ob',otherBorder?.checked?'1':'0');url.searchParams.set('obc',(otherBorderPicker?.value||'#53636C').slice(1).toUpperCase());url.searchParams.set('obw',String(Number(otherBorderWidth?.value)||1));
-      setTimeout(() => { location.href = url.href; }, 450);
-    }, true);
-  }
+  if (downloadButton) downloadButton.textContent = 'Stay용 .js 다운로드';
 
   removeDuplicatePresets();
   renderPalette();
