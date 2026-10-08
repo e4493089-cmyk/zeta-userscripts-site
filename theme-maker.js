@@ -1,7 +1,7 @@
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 const CUSTOM_THEME_LOADER_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
 const CUSTOM_THEME_SETTINGS_KEY = 'zeta-custom-theme:settings:v1';
-const CUSTOM_THEME_LOADER_VERSION = '1.4.5';
+const CUSTOM_THEME_LOADER_VERSION = '1.4.6';
 
 const $ = selector => document.querySelector(selector);
 const accentPicker = $('#accentPicker');
@@ -117,15 +117,19 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
   css+=`${composer},${composer}>div:last-child{background:${surface}!important;color:${ink}!important;border-top-color:${line}!important}`;
   css+=`${box}{background:${soft}!important;border:1px solid ${line}!important}`;
   css+=`${input}{background:transparent!important;color:${ink}!important;caret-color:${ink}!important;border:0!important}${input}::placeholder{color:${muted}!important;opacity:1!important}`;
+  const rooms='html.kt-room-list-active';
+  css+=`${rooms},${rooms} body,${rooms} main#contents,${rooms} [data-sentry-component="RoomList"],${rooms} [data-sentry-component="RoomList"]>[data-sentry-component="WrappedDiv"]{background:#F4F5F6!important;color:#191919!important;color-scheme:light!important}`;
+  css+=`${rooms} header[data-sentry-component="Header"],${rooms} [data-sentry-component="ScrappedPlotsPreview"],${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]){background:#FFFFFF!important;color:#191919!important;border-color:#E7E9EB!important}`;
+  css+=`${rooms} header[data-sentry-component="Header"] :is(nav,span,button,a,svg){color:#2B3136!important}${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]) :is(.body1,.font-medium){color:#252A2E!important}${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]) [class*="text-white/"]{color:#7D878E!important;opacity:1!important}${rooms} [testid="room-highlight-card"]{display:none!important}`;
   return css;
 }
 
 function remoteLoaderBody(cacheKey) {
   const params = currentSettingsQuery(), s=currentSettings();
   const css=firstPaintCss('#'+s.bubble,'#'+s.other,'#'+s.bg,s.fs,s.mb==='1','#'+s.mbc,s.mbw,s.ob==='1','#'+s.obc,s.obw);
-  const firstPaint=`(()=>{const id="zeta-custom-theme-bootstrap";let style=document.getElementById(id);if(!style){style=document.createElement("style");style.id=id;(document.head||document.documentElement).appendChild(style)}style.textContent=${JSON.stringify(css)};document.documentElement.classList.toggle("kt-chat-theme-active",/^\\/[^/]+\\/rooms\\/[^/]+\\/?$/.test(location.pathname))})();`;
+  const firstPaint=`(()=>{const id="zeta-custom-theme-bootstrap";let style=document.getElementById(id);if(!style){style=document.createElement("style");style.id=id;(document.head||document.documentElement).appendChild(style)}style.textContent=${JSON.stringify(css)};document.documentElement.classList.toggle("kt-chat-theme-active",/^\\/[^/]+\\/rooms\\/[^/]+\\/?$/.test(location.pathname));document.documentElement.classList.toggle("kt-room-list-active",/^\\/[^/]+\\/rooms\\/?$/.test(location.pathname))})();`;
 
-  return `${firstPaint}(async()=>{try{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)})}catch(_){}const u=${JSON.stringify(CUSTOM_THEME_LOADER_URL)},k="zeta-custom-theme:loader:1.4.5";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(k)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<86400000)return}const r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid loader");if(!ran)(0,eval)(source);try{localStorage.setItem(k,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme Loader]",e)}})();`;
+  return `${firstPaint}(async()=>{try{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)})}catch(_){}const u=${JSON.stringify(CUSTOM_THEME_LOADER_URL)},k="zeta-custom-theme:loader:1.4.6";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(k)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<86400000)return}const r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid loader");if(!ran)(0,eval)(source);try{localStorage.setItem(k,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme Loader]",e)}})();`;
 }
 
 function buildStandaloneScript() {

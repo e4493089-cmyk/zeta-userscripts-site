@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.4.5
+// @version      1.4.6
 // @description  ZETA Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
@@ -56,6 +56,9 @@
   const OTHER_BORDER=p.has('ob')?p.get('ob')==='1':LEGACY_BORDER,OTHER_BORDER_COLOR=norm(p.get('obc'))||LEGACY_COLOR,OTHER_BORDER_WIDTH=Math.max(.5,Math.min(5,Number(p.get('obw'))||LEGACY_WIDTH));
   function recolorHex(source){const src=source.toUpperCase();if(src==='#FEE500')return ACCENT;if(src==='#F5DC00')return luminance(ACCENT)>.55?mix(ACCENT,'#000000',.08):mix(ACCENT,'#FFFFFF',.10);if(src==='#B2C7D9')return CHAT;const s=rgbToHsl(src),a=rgbToHsl(ACCENT),c=rgbToHsl(CHAT),redish=(s.h>=340||s.h<=18)&&s.s>.28;if(redish)return src;if(s.h>=28&&s.h<=82&&s.s>.12){let sat=Math.max(.10,Math.min(1,a.s*(.58+s.s*.42)));return hslToHex(a.h,sat,s.l)}const coolGray=s.s<.18||((s.h>=165&&s.h<=235)&&s.s<.48);if(coolGray){if(s.l>.975)return'#FFFFFF';if(s.l<.055)return hslToHex(c.h,Math.min(.12,c.s*.25),s.l);let strength=s.l>.82?.18:s.l<.30?.34:.28,sat=Math.min(.34,c.s*strength+s.s*.22);return hslToHex(c.h,sat,s.l)}return src}
   function transformCss(css){
+    const fixedStart=css.indexOf('    html.${ROOM_LIST_ACTIVE},');
+    const fixed=fixedStart>=0?css.slice(fixedStart):'';
+    if(fixedStart>=0)css=css.slice(0,fixedStart);
     let out=css.replace(/#[0-9a-fA-F]{6}\b/g,recolorHex);
     const accentRgb=hexToRgb(ACCENT);
     out=out.replace(/rgba\(\s*254\s*,\s*229\s*,\s*0\s*,\s*([0-9.]+)\s*\)/gi,(_,a)=>`rgba(${accentRgb.r},${accentRgb.g},${accentRgb.b},${a})`);
@@ -64,6 +67,7 @@
     out+=`\n\n:root{--kt-yellow:${ACCENT};--kt-yellow-hover:${hover};--kt-chat:${CHAT};--kt-chat-text:${chatText};--kt-chat-sub:${chatSub};--kt-chat-muted:${chatMuted};--kt-chat-glass:${chatGlass};--kt-chat-line:${chatLine};--kt-white:${surface};--kt-soft:${surface2};--kt-soft2:${mix(surface2,CHAT,.08)};--kt-text:${textFor(surface)};--kt-sub:${sub};--kt-muted:${mix(textFor(surface),surface,.55)};--kt-line:${line};--kt-user-dialogue:${meText};--kt-user-action:${userAction};--kt-user-soft:${userSoft};--kt-user-line:${userLine};--kt-ai-dialogue:${aiText};--kt-ai-action:${aiAction};--kt-ai-soft:${aiSoft};--kt-ai-line:${aiLine};}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-me{background:${ACCENT}!important;color:${meText}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{background:${OTHER}!important;color:${aiText}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other p,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat strong,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat b,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat .font-bold{color:${aiText}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other em,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other em [class*="text-primary-"],html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other em [data-placeholder]{color:${aiAction}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat code{color:${aiText}!important;background:${aiSoft}!important;border-color:${aiLine}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat blockquote,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat blockquote p{color:${aiText}!important;background:${aiSoft}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other .chat a{color:${aiText}!important;text-decoration:underline!important}\nhtml.kt-chat-theme-active [data-testid="chat-send-button"],html.kt-chat-theme-active .kt-profile-select-button{background:${ACCENT}!important;color:${meText}!important}\nhtml.kt-chat-theme-active main#contents,html.kt-chat-theme-active [role="log"][aria-label="Chat messages"],html.kt-chat-theme-active .kt-chat-header-layer,html.kt-chat-theme-active .kt-top-spacer{background:${CHAT}!important}\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] .chat,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] p,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] em,html.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"] li,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] .chat,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] p,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] em,html.kt-chat-theme-active [data-sentry-component="NarratorBubble"] li{font-size:${FONT_SIZE}px!important}\n`;
     if(ME_BORDER)out+=`\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-me{border:${ME_BORDER_WIDTH}px solid ${ME_BORDER_COLOR}!important}\n`;
     if(OTHER_BORDER)out+=`\nhtml.kt-chat-theme-active [data-sentry-component="ChatBubbleContainer"].kt-other{border:${OTHER_BORDER_WIDTH}px solid ${OTHER_BORDER_COLOR}!important}\n`;
+    out+=fixed;
     out+=firstPaintCss(ACCENT,OTHER,CHAT,FONT_SIZE,ME_BORDER,ME_BORDER_COLOR,ME_BORDER_WIDTH,OTHER_BORDER,OTHER_BORDER_COLOR,OTHER_BORDER_WIDTH);
     return out;
   }
@@ -84,6 +88,10 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
   css+=`${composer},${composer}>div:last-child{background:${surface}!important;color:${ink}!important;border-top-color:${line}!important}`;
   css+=`${box}{background:${soft}!important;border:1px solid ${line}!important}`;
   css+=`${input}{background:transparent!important;color:${ink}!important;caret-color:${ink}!important;border:0!important}${input}::placeholder{color:${muted}!important;opacity:1!important}`;
+  const rooms='html.kt-room-list-active';
+  css+=`${rooms},${rooms} body,${rooms} main#contents,${rooms} [data-sentry-component="RoomList"],${rooms} [data-sentry-component="RoomList"]>[data-sentry-component="WrappedDiv"]{background:#F4F5F6!important;color:#191919!important;color-scheme:light!important}`;
+  css+=`${rooms} header[data-sentry-component="Header"],${rooms} [data-sentry-component="ScrappedPlotsPreview"],${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]){background:#FFFFFF!important;color:#191919!important;border-color:#E7E9EB!important}`;
+  css+=`${rooms} header[data-sentry-component="Header"] :is(nav,span,button,a,svg){color:#2B3136!important}${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]) :is(.body1,.font-medium){color:#252A2E!important}${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]) [class*="text-white/"]{color:#7D878E!important;opacity:1!important}${rooms} [testid="room-highlight-card"]{display:none!important}`;
   return css;
 }
   // Apply chosen colors synchronously, before any network request or marker pass.
@@ -91,6 +99,7 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
   if(!boot){boot=document.createElement('style');boot.id='zeta-custom-theme-bootstrap';(document.head||document.documentElement).appendChild(boot)}
   boot.textContent=firstPaintCss(ACCENT,OTHER,CHAT,FONT_SIZE,ME_BORDER,ME_BORDER_COLOR,ME_BORDER_WIDTH,OTHER_BORDER,OTHER_BORDER_COLOR,OTHER_BORDER_WIDTH);
   document.documentElement.classList.toggle('kt-chat-theme-active',/^\/[^/]+\/rooms\/[^/]+\/?$/.test(location.pathname));
+  document.documentElement.classList.toggle('kt-room-list-active',/^\/[^/]+\/rooms\/?$/.test(location.pathname));
   const CACHE_KEY='zeta-custom-theme:base-source:v1';
   const CACHE_AGE=24*60*60*1000;
   function activate(source){
