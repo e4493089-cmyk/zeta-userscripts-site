@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      1.4.4
+// @version      1.4.5
 // @description  ZETA Theme Maker에서 만든 커스텀 테마
 // @match        https://zeta-ai.io/*
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
@@ -79,6 +79,11 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
   }
   css+=`${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{color:${mix(ct,chat,.28)}!important}`;
   css+=`${scope} [data-sentry-component="ChatBubbleContainer"] .chat,${scope} [data-sentry-component="ChatBubbleContainer"] p,${scope} [data-sentry-component="ChatBubbleContainer"] em,${scope} [data-sentry-component="ChatBubbleContainer"] li,${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{font-size:${fs}px!important}`;
+  const surface=luminance(chat)<.28?mix(chat,'#FFFFFF',.86):mix('#FFFFFF',chat,.025), soft=mix(surface,chat,.08), ink=textFor(surface), line=mix(surface,ink,.10), muted=mix(ink,surface,.55);
+  const composer=`${scope} [data-sentry-component="ChatComposer"]`, box=`${composer} div:has(> textarea[aria-label="내용 입력하기"])`, input=`${composer} textarea[aria-label="내용 입력하기"]`;
+  css+=`${composer},${composer}>div:last-child{background:${surface}!important;color:${ink}!important;border-top-color:${line}!important}`;
+  css+=`${box}{background:${soft}!important;border:1px solid ${line}!important}`;
+  css+=`${input}{background:transparent!important;color:${ink}!important;caret-color:${ink}!important;border:0!important}${input}::placeholder{color:${muted}!important;opacity:1!important}`;
   return css;
 }
   // Apply chosen colors synchronously, before any network request or marker pass.
