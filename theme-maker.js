@@ -130,7 +130,12 @@ async function downloadGeneratedScript(forTampermonkey=false) {
   document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   ZetaSite.toast(forTampermonkey?'완성된 .user.js 파일입니다. Tampermonkey 대시보드의 유틸리티에서 가져오세요.':'Stay용 완성본 .js 파일을 만들었어요.');
 }
-async function installGeneratedTheme(){return downloadGeneratedScript(true)}
+function customThemeInstallURL() {
+  const url=new URL(CUSTOM_THEME_LOADER_URL);
+  Object.entries(currentSettings()).forEach(([key,value])=>url.searchParams.set(key,value));
+  return url.href;
+}
+function installGeneratedTheme(){window.location.href=customThemeInstallURL()}
 async function generateBookmarklet() {
   // A full inline bookmarklet would exceed mobile bookmark URL limits.
   // Seed the compiled code in the current Zeta origin through the existing short loader.
