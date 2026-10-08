@@ -1,7 +1,6 @@
 const BASE_THEME_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
 const CUSTOM_THEME_LOADER_URL = 'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js';
 const CUSTOM_THEME_SETTINGS_KEY = 'zeta-custom-theme:settings:v1';
-const CUSTOM_THEME_LOADER_VERSION = '1.4.6';
 
 const $ = selector => document.querySelector(selector);
 const accentPicker = $('#accentPicker');
@@ -100,79 +99,43 @@ function currentSettingsQuery() {
   return new URLSearchParams(currentSettings()).toString();
 }
 
-function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
-  const me=textFor(accent), ai=textFor(other), ct=textFor(chat);
-  const scope='html.kt-chat-theme-active';
-  let css=`${scope},${scope} body,${scope} main#contents,${scope} [role="log"][aria-label="Chat messages"]{background:${chat}!important;color:${ct}!important;color-scheme:light!important}`;
-  for(const [side,bg,fg,border,bc,bw] of [['RightTextContent',accent,me,mb,mbc,mbw],['LeftTextContent',other,ai,ob,obc,obw]]) {
-    const bubble=`${scope} [data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"]`;
-    css+=`${bubble}{background:${bg}!important;color:${fg}!important;border:${border?bw+'px solid '+bc:'0'}!important}`;
-    css+=`${bubble} .chat,${bubble} p,${bubble} strong,${bubble} b,${bubble} a{color:${fg}!important}`;
-    css+=`${bubble} em,${bubble} em [class*="text-primary-"],${bubble} em [data-placeholder]{color:${mix(fg,bg,side==='RightTextContent'?.28:.34)}!important}`;
-  }
-  css+=`${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{color:${mix(ct,chat,.28)}!important}`;
-  css+=`${scope} [data-sentry-component="ChatBubbleContainer"] .chat,${scope} [data-sentry-component="ChatBubbleContainer"] p,${scope} [data-sentry-component="ChatBubbleContainer"] em,${scope} [data-sentry-component="ChatBubbleContainer"] li,${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{font-size:${fs}px!important}`;
-  const surface=luminance(chat)<.28?mix(chat,'#FFFFFF',.86):mix('#FFFFFF',chat,.025), soft=mix(surface,chat,.08), ink=textFor(surface), line=mix(surface,ink,.10), muted=mix(ink,surface,.55);
-  const composer=`${scope} [data-sentry-component="ChatComposer"]`, box=`${composer} div:has(> textarea[aria-label="내용 입력하기"])`, input=`${composer} textarea[aria-label="내용 입력하기"]`;
-  css+=`${composer},${composer}>div:last-child{background:${surface}!important;color:${ink}!important;border-top-color:${line}!important}`;
-  css+=`${box}{background:${soft}!important;border:1px solid ${line}!important}`;
-  css+=`${input}{background:transparent!important;color:${ink}!important;caret-color:${ink}!important;border:0!important}${input}::placeholder{color:${muted}!important;opacity:1!important}`;
-  const rooms='html.kt-room-list-active';
-  css+=`${rooms},${rooms} body,${rooms} main#contents,${rooms} [data-sentry-component="RoomList"],${rooms} [data-sentry-component="RoomList"]>[data-sentry-component="WrappedDiv"]{background:#F4F5F6!important;color:#191919!important;color-scheme:light!important}`;
-  css+=`${rooms} header[data-sentry-component="Header"],${rooms} [data-sentry-component="ScrappedPlotsPreview"],${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]){background:#FFFFFF!important;color:#191919!important;border-color:#E7E9EB!important}`;
-  css+=`${rooms} header[data-sentry-component="Header"] :is(nav,span,button,a,svg){color:#2B3136!important}${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]) :is(.body1,.font-medium){color:#252A2E!important}${rooms} :is([testid^="room-list-item-"],[data-testid^="room-list-item-"]) [class*="text-white/"]{color:#7D878E!important;opacity:1!important}${rooms} [testid="room-highlight-card"]{display:none!important}`;
-  return css;
+let generationSource=null;
+async function prepareThemeSource() {
+  if(!generationSource)generationSource=fetch(BASE_THEME_URL,{cache:'no-cache'}).then(async res=>{if(!res.ok)throw Error('HTTP '+res.status);return res.text()}).catch(e=>{generationSource=null;throw e});
+  return generationSource;
 }
-
-function remoteLoaderBody(cacheKey) {
-  const params = currentSettingsQuery(), s=currentSettings();
-  const css=firstPaintCss('#'+s.bubble,'#'+s.other,'#'+s.bg,s.fs,s.mb==='1','#'+s.mbc,s.mbw,s.ob==='1','#'+s.obc,s.obw);
-  const firstPaint=`(()=>{const id="zeta-custom-theme-bootstrap";let style=document.getElementById(id);if(!style){style=document.createElement("style");style.id=id;(document.head||document.documentElement).appendChild(style)}style.textContent=${JSON.stringify(css)};document.documentElement.classList.toggle("kt-chat-theme-active",/^\\/[^/]+\\/rooms\\/[^/]+\\/?$/.test(location.pathname));document.documentElement.classList.toggle("kt-room-list-active",/^\\/[^/]+\\/rooms\\/?$/.test(location.pathname))})();`;
-
-  return `${firstPaint}(async()=>{try{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)})}catch(_){}const u=${JSON.stringify(CUSTOM_THEME_LOADER_URL)},k="zeta-custom-theme:loader:1.4.6";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(k)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<86400000)return}const r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid loader");if(!ran)(0,eval)(source);try{localStorage.setItem(k,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme Loader]",e)}})();`;
-}
-
-function buildStandaloneScript() {
-  const s=currentSettings();
+async function buildStandaloneScript() {
+  const query=currentSettingsQuery(),s=currentSettings();
+  const source=await prepareThemeSource(), compiled=compileCustomTheme(source,query);
+  const baseVersion=source.match(/^\s*\/\/\s*@version\s+([^\s]+)\s*$/m)?.[1];
+  if(!baseVersion)throw Error('테마 버전을 확인할 수 없습니다.');
   return `// ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      ${CUSTOM_THEME_LOADER_VERSION}
-// @description  ZETA Theme Maker 생성본 · 내 말풍선 #${s.bubble} · 캐릭터 말풍선 #${s.other} · 배경 #${s.bg} · 글씨 ${s.fs}px
+// @version      2.0.0
+// @description  완성본 · 내 말풍선 #${s.bubble} · 캐릭터 말풍선 #${s.other} · 배경 #${s.bg} · 글씨 ${s.fs}px · base ${baseVersion}
 // @match        https://zeta-ai.io/*
 // @run-at       document-start
+// @downloadURL  none
 // @grant        none
 // ==/UserScript==
 
-${remoteLoaderBody('stay')}
+(${runCompiledCustomTheme.toString()})(${JSON.stringify(compiled)},${JSON.stringify(query)},${JSON.stringify(baseVersion)},${compileCustomTheme.toString()});
 `;
 }
-
-function downloadGeneratedScript() {
-  const script=buildStandaloneScript(),s=currentSettings();
+async function downloadGeneratedScript(forTampermonkey=false) {
+  const script=await buildStandaloneScript(),s=currentSettings();
   const blob=new Blob([script],{type:'text/javascript;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
-  link.href=url;
-  link.download=`zeta-custom-theme-${s.bubble.toLowerCase()}-${s.other.toLowerCase()}-${s.bg.toLowerCase()}-${s.fs}px.js`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-  ZetaSite.toast('Stay용 .js 파일을 만들었어요.');
+  link.href=url;link.download=`zeta-custom-theme-${s.bubble.toLowerCase()}-${s.other.toLowerCase()}-${s.bg.toLowerCase()}-${s.fs}px.${forTampermonkey?'user.js':'js'}`;
+  document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  ZetaSite.toast(forTampermonkey?'완성된 .user.js 파일입니다. Tampermonkey 대시보드의 유틸리티에서 가져오세요.':'Stay용 완성본 .js 파일을 만들었어요.');
 }
-
-function customThemeInstallURL() {
-  const u=new URL(CUSTOM_THEME_LOADER_URL);
-  Object.entries(currentSettings()).forEach(([key,value])=>u.searchParams.set(key,value));
-  return u.href;
-}
-
-function installGeneratedTheme() {
-  window.location.href=customThemeInstallURL();
-}
-
-function generateBookmarklet() {
-  const body=remoteLoaderBody('bm');
-  return 'javascript:'+encodeURIComponent(body);
+async function installGeneratedTheme(){return downloadGeneratedScript(true)}
+async function generateBookmarklet() {
+  // A full inline bookmarklet would exceed mobile bookmark URL limits.
+  // Seed the compiled code in the current Zeta origin through the existing short loader.
+  const params=currentSettingsQuery();
+  return 'javascript:'+encodeURIComponent(`(async()=>{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)});const key="zeta-custom-theme:bundle:2.0.0";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(key)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<86400000)return}const r=await fetch(${JSON.stringify(CUSTOM_THEME_LOADER_URL)},{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid theme");if(!ran)(0,eval)(source);try{localStorage.setItem(key,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme]",e)}})();`);
 }
 
 async function syncBaseThemeVersion() {
@@ -226,9 +189,9 @@ bindHex(accentHex,accentPicker);bindHex(otherHex,otherPicker);bindHex(bgHex,bgPi
 document.querySelectorAll('.quick-swatches').forEach(group=>group.addEventListener('click',e=>{const btn=e.target.closest('button[data-color]');if(!btn)return;const picker=group.dataset.target==='accent'?accentPicker:group.dataset.target==='other'?otherPicker:bgPicker;picker.value=btn.dataset.color;render();}));
 document.querySelectorAll('.preset').forEach(btn=>btn.addEventListener('click',()=>setColors(btn.dataset.a,btn.dataset.o,btn.dataset.b)));
 $('#resetTheme').addEventListener('click',()=>{fontSize.value='15';if(meBorder)meBorder.checked=false;if(otherBorder)otherBorder.checked=false;if(meBorderPicker)meBorderPicker.value='#53636C';if(otherBorderPicker)otherBorderPicker.value='#53636C';if(meBorderWidth)meBorderWidth.value='1';if(otherBorderWidth)otherBorderWidth.value='1';setColors('#FEE500','#FFFFFF','#B2C7D9')});
-$('#downloadScript').addEventListener('click',()=>{try{downloadGeneratedScript()}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 파일을 만들지 못했어요.')}});
-$('#installScript').addEventListener('click',()=>{try{installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 설치 링크를 열지 못했어요.')}});
-$('#copyBookmarklet').addEventListener('click',()=>{try{ZetaSite.copyText(generateBookmarklet(),'북마클릿 링크를 복사했어요.')}catch(e){console.error(e);ZetaSite.toast('북마클릿 링크를 만들지 못했어요.')}});
+$('#downloadScript').addEventListener('click',async()=>{try{await downloadGeneratedScript()}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 파일을 만들지 못했어요.')}});
+$('#installScript').addEventListener('click',async()=>{try{await installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 설치 링크를 열지 못했어요.')}});
+$('#copyBookmarklet').addEventListener('click',async()=>{try{ZetaSite.copyText(await generateBookmarklet(),'북마클릿 링크를 복사했어요.')}catch(e){console.error(e);ZetaSite.toast('북마클릿 링크를 만들지 못했어요.')}});
 
 applyFromURL();
 render();
