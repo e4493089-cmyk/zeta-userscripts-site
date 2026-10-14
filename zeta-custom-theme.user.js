@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      2.0.1
+// @version      2.0.2
 // @description  전체 테마 내장 · 선택 색 유지 · 하루 간격 백그라운드 업데이트
 // @match        https://zeta-ai.io/*
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
@@ -86,7 +86,7 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
 function runCompiledCustomTheme(fallback, query, baseVersion, compile) {
   const BASE='https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
   const key='zeta-custom-theme:compiled:v2:'+query;
-  const AGE=86400000;
+  const AGE=3600000;
   const read=()=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
   const write=value=>{try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}};
   const version=source=>source.match(/^\s*\/\/\s*@version\s+([^\s]+)\s*$/m)?.[1]||'';
