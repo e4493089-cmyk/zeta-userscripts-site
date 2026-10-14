@@ -1,7 +1,7 @@
 function runCompiledCustomTheme(fallback, query, baseVersion, compile) {
   const BASE='https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/zeta-kakaotalk-theme.user.js';
   const key='zeta-custom-theme:compiled:v2:'+query;
-  const AGE=86400000;
+  const AGE=3600000;
   const read=()=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
   const write=value=>{try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}};
   const version=source=>source.match(/^\s*\/\/\s*@version\s+([^\s]+)\s*$/m)?.[1]||'';
