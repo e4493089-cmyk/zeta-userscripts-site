@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#111127" />
+<title>한 명은 몰라 — 실시간 라이어 파티게임</title>
+<style>
+:root{color-scheme:dark;--bg:#0e0e20;--pane:#191a31;--pane2:#23243c;--stroke:#ffffff18;--text:#f8f8ff;--muted:#aaaac5;--violet:#b5a0ff;--hot:#ffb4a6;--mint:#92efd5;--shade:0 24px 70px #0606116e}
+*{box-sizing:border-box}html{min-height:100%}body{margin:0;min-height:100vh;font-family:Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:var(--text);background:radial-gradient(ellipse 700px 560px at 15% -15%,#43357c65,transparent 68%),radial-gradient(ellipse 740px 540px at 105% 80%,#62325344,transparent 68%),var(--bg);line-height:1.6}
+button,input,textarea{font:inherit}button{cursor:pointer;border:0}button:disabled{cursor:not-allowed;opacity:.45}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--violet);outline-offset:3px}button:active:not(:disabled){transform:translateY(1px)}input,textarea{width:100%;padding:15px 16px;border:1px solid #ffffff26;border-radius:14px;background:#121328;color:var(--text);outline:0}input::placeholder,textarea::placeholder{color:#8183a3}textarea{resize:vertical;min-height:92px}
+.wrap{width:min(1040px,calc(100% - 32px));margin:0 auto;padding:24px 0 60px}.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:38px}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.8px;font-size:18px}.mark{height:36px;width:36px;display:grid;place-items:center;background:var(--violet);color:#1b1537;border-radius:12px;font-size:22px;transform:rotate(-7deg)}.nav-tag{font-size:12px;color:#c9c7e8;border:1px solid #ffffff20;padding:7px 11px;border-radius:999px}.hero{margin:0 0 24px}.eyebrow{font-size:12px;font-weight:850;letter-spacing:3px;color:var(--violet);margin-bottom:10px}.hero h1{margin:0;font-size:clamp(32px,6vw,57px);letter-spacing:-2.5px;line-height:1.2}.hero h1 em{font-style:normal;color:var(--violet)}.hero p{margin:15px 0 0;color:var(--muted);font-size:15px}.home-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:18px}.panel{background:linear-gradient(155deg,#21213c 0%,#18192e 100%);border:1px solid var(--stroke);box-shadow:var(--shade);border-radius:25px;padding:28px}.panel h2{font-size:20px;letter-spacing:-.6px;margin:0 0 6px}.panel .desc{margin:0 0 24px;color:var(--muted);font-size:13px}.fieldlabel{display:block;color:#e0def2;font-size:13px;font-weight:800;margin:18px 0 9px}.btn{border:1px solid transparent;background:#30314b;color:var(--text);font-weight:800;border-radius:14px;padding:14px 18px;min-height:48px;transition:transform .15s,background .15s}.btn.primary{background:var(--violet);color:#20173c}.btn.primary:hover:not(:disabled){background:#c4b3ff}.btn.secondary{background:#ffffff0c;border-color:#ffffff28}.btn.secondary:hover:not(:disabled){background:#ffffff17}.btn.hot{background:var(--hot);color:#3c202d}.btn.mint{background:var(--mint);color:#16362f}.btn.small{padding:9px 12px;min-height:35px;font-size:12px;border-radius:10px}.wide{width:100%}.actions{display:flex;gap:10px;flex-wrap:wrap}.actions>.btn{flex:1}.divide{display:flex;align-items:center;gap:12px;color:#9191ad;font-size:12px;margin:22px 0}.divide:before,.divide:after{content:'';height:1px;background:#ffffff20;flex:1}.help{color:var(--muted);font-size:12px;margin:10px 0 0}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:20px}.chip{font-size:12px;color:#c6c5de;border-radius:20px;border:1px solid #ffffff21;padding:6px 11px;background:#ffffff09}.pitch{min-height:100%;position:relative;overflow:hidden}.pitch:before{content:'?';position:absolute;font-size:260px;font-weight:1000;color:#ffffff0a;line-height:1;right:-17px;top:60px;transform:rotate(15deg);pointer-events:none}.pitch .big{font-size:30px;font-weight:950;letter-spacing:-1.3px;line-height:1.3;position:relative;margin:10px 0 23px}.steps{display:grid;gap:19px;position:relative}.step{display:flex;gap:15px;align-items:flex-start}.step-idx{width:34px;height:34px;border-radius:11px;background:#b4a0ff28;border:1px solid #b4a0ff50;display:grid;place-items:center;color:var(--violet);font-size:13px;font-weight:850;flex:0 0 auto}.step strong{display:block;font-size:14px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:3px}.foot{color:#777993;text-align:center;font-size:12px;margin:27px auto 0}.offline-box{margin-top:18px}.offline-box summary{cursor:pointer;color:#d8d0ff;font-size:13px;font-weight:800;list-style:none}.offline-box summary:before{content:'＋';margin-right:8px}.offline-box[open] summary:before{content:'−'}
+.room-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}.room-title{font-size:26px;letter-spacing:-1px;font-weight:950;line-height:1.2}.room-sub{font-size:13px;color:var(--muted);margin-top:5px}.roundtag{display:inline-block;margin-bottom:7px;color:var(--violet);font-size:11px;font-weight:900;letter-spacing:2px}.room-code{display:flex;gap:7px;align-items:center}.codebox{letter-spacing:2px;border:1px solid #ffffff2c;padding:10px 13px;background:#ffffff0d;border-radius:12px;font-size:15px;font-weight:900}.room-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(270px,.75fr);gap:18px}.scene{min-height:380px}.stage-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.phase{font-size:12px;font-weight:900;color:#bcaeff;background:#bba1ff22;border-radius:12px;padding:6px 10px}.tiny{font-size:12px;color:var(--muted)}.scene h2{font-size:clamp(23px,4vw,32px);line-height:1.3;margin:8px 0 12px;letter-spacing:-1px}.scene .lead{color:var(--muted);font-size:14px;margin:0 0 22px}.big-icon{width:66px;height:66px;border-radius:20px;background:#b1a1ff25;display:grid;place-items:center;font-size:32px;margin-bottom:17px}.rolecard{padding:23px;border-radius:20px;background:linear-gradient(130deg,#39315e,#242544);border:1px solid #a98eff60;margin:17px 0 22px;min-height:165px}.rolecard.liar{background:linear-gradient(130deg,#5b3348,#28213c);border-color:#ffb4a674}.role-label{font-size:12px;color:#e1d8ff;font-weight:800}.role-word{font-size:clamp(30px,7vw,46px);font-weight:950;margin:4px 0 8px;line-height:1.2;letter-spacing:-1.5px}.rolecard.liar .role-word{color:#ffc4b7}.role-foot{font-size:13px;color:#d5cde7}.secretcover{padding:24px 20px;text-align:center;border:1px dashed #b5a0ff80;border-radius:20px;background:#aa9eff0c;margin-bottom:20px}.secretcover strong{display:block;margin-bottom:8px;font-size:17px}.secretcover span{display:block;font-size:12px;color:var(--muted);margin-bottom:17px}.info-row{border-top:1px solid #ffffff19;padding-top:19px;margin-top:21px}.avatars{display:flex;flex-wrap:wrap;gap:9px}.avatar{display:flex;align-items:center;gap:8px;border-radius:12px;padding:9px 10px;background:#ffffff0a;border:1px solid #ffffff16;font-size:13px;font-weight:700;min-width:0}.avatar .face,.circle{height:29px;width:29px;background:#8980d84b;display:grid;place-items:center;border-radius:9px;color:#dfd7ff;font-size:13px;font-weight:900;flex:0 0 auto}.avatar small{color:#9ba0bd;font-weight:500}.avatar.off{opacity:.45}.avatar.me{border-color:#b5a0ff76}.pill{font-size:10px;font-weight:800;white-space:nowrap;padding:3px 6px;border-radius:8px;background:#ffffff13;color:#cecfea}.list{display:grid;gap:8px}.player-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:11px 12px;background:#ffffff0a;border-radius:12px;border:1px solid #ffffff16}.who{display:flex;align-items:center;gap:10px;min-width:0}.who .name{font-weight:800;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank{font-weight:950;color:var(--violet);font-size:15px}.sidepanel h3{font-size:16px;margin:0 0 16px;letter-spacing:-.3px}.side-note{font-size:12px;color:var(--muted);margin-bottom:16px}.sep{margin:20px 0;height:1px;background:#ffffff1b}.btn.voteopt{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:#ffffff0a;border:1px solid #ffffff26;padding:13px 14px}.btn.voteopt:hover:not(:disabled){border-color:var(--violet);background:#b6a0ff1c}.btn.voteopt.selected{border-color:var(--mint);background:#92efd51c}.vote-list{display:grid;gap:9px;margin:20px 0}.ballot{font-size:24px}.result-box{text-align:center;padding:21px 12px}.result-icon{font-size:54px;margin-bottom:10px}.result-title{font-size:34px;line-height:1.18;font-weight:950;letter-spacing:-1.5px}.result-text{font-size:14px;color:var(--muted);margin:13px auto 18px;max-width:420px}.result-word{background:#ffffff10;border:1px solid #ffffff20;border-radius:13px;padding:13px 18px;display:inline-block;font-size:13px}.result-word b{font-size:20px;color:var(--violet)}.result-scores{margin-top:23px;text-align:left}.result-scores strong{font-size:14px}.minor{font-size:12px;color:var(--muted)}.msg{margin-top:16px;padding:12px 14px;border:1px solid #ffb5b344;background:#ffb5b31c;border-radius:12px;font-size:13px;color:#ffc2bd}.notice{padding:13px 14px;background:#92efd50d;border:1px solid #92efd540;color:#b5f3e2;font-size:13px;border-radius:12px;margin:16px 0}.mute{opacity:.7}.room-exit{display:block;text-decoration:underline;border:0;background:transparent;color:#8685a4;font-size:12px;margin:18px auto}.offline-ready{background:#ffffff0e;border-radius:16px;padding:17px;margin-bottom:17px;color:#d9d7ed;font-size:14px}.offline-ready b{color:var(--violet)}.dots{display:flex;gap:6px;margin:12px 0}.dots i{width:23px;height:5px;border-radius:4px;background:#ffffff25}.dots i.done{background:var(--mint)}.dots i.current{background:var(--violet)}.vote-prompt{border:1px solid #b5a0ff55;background:#b5a0ff12;padding:14px;border-radius:14px;margin-bottom:15px;font-size:14px}
+/* Room chat is separate from the once-per-round hint board. */
+.room-sidebar{display:flex;flex-direction:column;gap:16px;min-width:0}.ai-controls{padding:14px 15px;margin:15px 0;border:1px solid #b5a0ff55;background:#b5a0ff0a;border-radius:15px}.ai-heading{font-size:14px;font-weight:850;display:flex;align-items:center;gap:7px}.ai-controls .help{margin:5px 0 12px}.ai-controls .actions .btn{flex:1}.ai-badge{background:#b5a0ff2d;color:#e2d8ff}
+.chat-panel{padding:20px;min-width:0}
+.chat-panel h3{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:16px;letter-spacing:-.3px;margin:0 0 5px}
+.chat-live{font-size:11px;color:var(--mint);font-weight:800}
+.chat-help{font-size:11px;color:var(--muted);margin:0 0 13px}
+.chat-feed{height:286px;max-height:45vh;overflow-y:auto;overscroll-behavior:contain;padding:12px;border:1px solid #ffffff17;background:#1011258c;border-radius:14px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:#585079 transparent}
+.chat-empty{margin:auto;text-align:center;font-size:12px;color:var(--muted)}
+.room-chat-msg{max-width:94%;min-width:0;align-self:flex-start}
+.room-chat-msg.mine{align-self:flex-end}
+.room-chat-msg .chat-meta{font-size:11px;color:#b8b6d6;margin:0 2px 4px;display:flex;justify-content:space-between;gap:14px}
+.room-chat-msg.mine .chat-meta{flex-direction:row-reverse}
+.room-chat-msg .chat-bubble{font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;padding:9px 12px;background:#30314e;border:1px solid #ffffff14;border-radius:13px 13px 13px 4px}
+.room-chat-msg.mine .chat-bubble{background:#55498a;color:#fff;border-radius:13px 13px 4px 13px}
+.chat-compose{display:flex;gap:8px;margin-top:11px;align-items:stretch}
+.chat-compose input{min-width:0;min-height:44px;padding:11px 12px;font-size:13px}
+.chat-compose button{flex:0 0 auto;min-height:44px;padding:10px 14px}
+.chat-locked{margin-top:8px;font-size:11px;color:#f0c6b4}
+@media(max-width:750px){.wrap{padding-top:15px}.nav{margin-bottom:29px}.home-grid,.room-layout{grid-template-columns:1fr}.panel{padding:22px;border-radius:21px}.hero h1{font-size:37px}.pitch .big{font-size:25px}.pitch:before{font-size:220px}.room-layout{gap:12px}.chat-panel{padding:17px}.chat-feed{height:240px;max-height:38vh}.room-code{width:100%;justify-content:flex-start}.scene{min-height:0}.room-head{margin-bottom:15px}.foot{margin-top:18px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js" defer></script>
+</head>
+<body>
+<div class="wrap"><div class="nav"><div class="brand"><div class="mark">?</div><span>한 명은 몰라</span></div><span class="nav-tag">FRIENDS ONLY · 3~12명</span></div><main id="app"></main><div class="foot">말은 자유롭게, 정체는 끝까지 숨기기 · 온라인 게임은 인터넷 연결 필요</div></div>
+<script>
+(()=>{'use strict';
+const $=s=>document.querySelector(s);const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const WORDS={
+'음식':['떡볶이','김치찌개','마라탕','치킨','초밥','붕어빵','삼겹살','피자','아이스크림','라면','샌드위치','계란찜'],
+'장소':['학교','편의점','놀이공원','공항','찜질방','노래방','동물원','영화관','수영장','도서관','병원','캠핑장'],
+'동물':['고양이','펭귄','기린','고슴도치','햄스터','악어','돌고래','너구리','토끼','판다','앵무새','문어'],
+'물건':['우산','칫솔','보조배터리','슬리퍼','거울','이어폰','리모컨','캐리어','쿠션','선풍기','손전등','인형'],
+'상황':['지각','소개팅','시험','이사','면접','생일파티','첫눈','여행','야근','고백','길 잃기','알바'],
+'취미':['독서','사진 촬영','낚시','뜨개질','등산','노래 부르기','게임','요리','영화 감상','그림 그리기','보드게임','달리기']};
+const CATS=Object.keys(WORDS), MAX=12;
+// AI guests are host-controlled scripted players. No external AI API or private key is used.
+const AI_NAMES=['루나','모카','제이','다온','리오','노아'];
+const AI_HINTS={
+'떡볶이':['매콤한 편이지','학교 앞에서 자주 보지','빨간색이 떠올라'],
+'김치찌개':['끓을 때 제일 좋아','집밥 생각나','뜨끈한 게 땡겨'],
+'마라탕':['맵기 조절이 핵심','재료 고르는 재미','얼얼한 느낌'],
+'치킨':['배달의 단골','손으로 먹기 좋아','바삭할 때 최고'],
+'초밥':['한 입씩 먹는 편','신선함이 중요해','간장이 필요할 때도'],
+'붕어빵':['추운 날 생각나','속이 두 종류지','길거리에서 만날 수 있어'],
+'삼겹살':['불판이 필요해','함께 먹기 좋지','기름이 좀 튀어'],
+'피자':['조각으로 나눠 먹어','토핑이 중요해','치즈가 늘어나'],
+'아이스크림':['더울 때 최고야','녹기 전에 먹어야지','달콤하고 차가워'],
+'라면':['금방 만들 수 있어','국물이 생각나','끓이는 시간이 중요해'],
+'샌드위치':['간단한 한 끼','속 재료가 중요해','들고 먹기 좋아'],
+'계란찜':['식감이 부드러워','뜨거울 때 조심','포슬포슬한 느낌'],
+'학교':['종소리가 익숙해','정해진 시간표','친구가 생각나'],
+'편의점':['늦게도 갈 수 있어','작지만 다 있어','간식 고르기 좋아'],
+'놀이공원':['줄을 오래 서기도','소리를 지르게 돼','하루가 짧아'],
+'공항':['기다리는 시간이 길어','가방 검사가 있어','설레기도 해'],
+'찜질방':['푹 쉬기 좋아','뜨끈하네','수건이 필요해'],
+'노래방':['마이크가 필요해','점수가 나오기도','목이 쉴 때도 있어'],
+'동물원':['구경하러 가는 곳','소리가 다양해','밖에서 걷는 일이 많아'],
+'영화관':['조용히 해야지','팝콘 생각나','어두워지면 시작'],
+'수영장':['젖는 건 피할 수 없어','준비물이 필요해','물속에 들어가'],
+'도서관':['조용해야 좋아','오래 앉아 있어','책이 가득해'],
+'병원':['기다리는 사람이 많아','소독 냄새가 날 듯','아플 때 가게 돼'],
+'캠핑장':['밤하늘을 볼 수 있어','짐이 꽤 많아','밖에서 하루를 보내'],
+'고양이':['조용히 다가오기도','귀가 쫑긋해','자기 마음대로'],
+'펭귄':['뒤뚱뒤뚱 움직여','추운 곳이 어울려','무리 지어 있어'],
+'기린':['눈높이가 다르지','목이 길어','멀리서도 보여'],
+'고슴도치':['손대면 조심해','몸을 둥글게','작지만 무장했어'],
+'햄스터':['작고 바빠','밤에 활동적이야','볼이 인상적이지'],
+'악어':['물 근처에 있어','입을 조심해야지','느긋해 보이지만'],
+'돌고래':['소리를 잘 써','물속에서 빨라','무리 지어 움직여'],
+'너구리':['밤에 만날 것 같아','눈 주변이 특징','숲이 떠올라'],
+'토끼':['깡충깡충','긴 귀가 먼저 보여','당근이 생각나'],
+'판다':['둥글둥글해','식성이 독특해','흑백이 떠올라'],
+'앵무새':['말을 따라 하기도','색이 화려해','부리가 눈에 띄어'],
+'문어':['다리가 정말 많아','바다에 살아','머리가 좋다더라'],
+'우산':['날씨에 따라 필요','접었다 펴는 물건','안 들고 오면 후회'],
+'칫솔':['매일 쓰는 물건','물과 함께 써','교체할 때가 와'],
+'보조배터리':['외출할 때 챙겨','충전이 중요해','작지만 든든해'],
+'슬리퍼':['편한 신발','실내에서 자주 신어','발이 시원해'],
+'거울':['앞에 서서 확인해','빛이 비쳐','아침에 자주 봐'],
+'이어폰':['귀에 꽂아','작아서 잃어버리기 쉬워','소리가 핵심'],
+'리모컨':['어디 갔지 찾게 돼','버튼이 많지','멀리서 조작해'],
+'캐리어':['바퀴 달린 짐','여행 때 필요해','끌고 다니지'],
+'쿠션':['푹신푹신해','소파 위에 있어','안으면 편안해'],
+'선풍기':['여름에 자주 써','바람이 불어','돌아가는 소리가 나'],
+'손전등':['어두울 때 켜','배터리가 중요해','앞을 비춰'],
+'인형':['가만히 있어','선물 받기도 해','꼭 안고 싶어'],
+'지각':['시계를 자꾸 봐','뛰어야 할 때야','늦었다 싶지'],
+'소개팅':['처음 만나서 어색해','첫인상이 중요해','대화가 중요하지'],
+'시험':['시간제한이 있어','준비할 게 많아','끝나면 후련해'],
+'이사':['짐이 정말 많아','하루가 바빠','새로운 곳으로 가'],
+'면접':['긴장하게 돼','질문에 대답해야지','옷도 신경 써'],
+'생일파티':['축하할 일이야','케이크가 생각나','사람들이 모여'],
+'첫눈':['하늘을 올려다봐','기분이 묘해','겨울이구나 싶어'],
+'여행':['가방부터 챙겨','새로운 곳에 가','사진도 많이 찍어'],
+'야근':['집에 늦게 가','피곤해져','일이 안 끝났어'],
+'고백':['말하기까지 용기가 필요해','심장이 빨라져','대답이 궁금해'],
+'길 잃기':['지도가 필요해','주변을 둘러봐','어디로 가야 하지'],
+'알바':['시간 약속이 중요해','돈을 벌 수 있어','일하는 날이 정해져'],
+'독서':['조용한 취미지','한 장씩 넘겨','집중하면 시간이 빨라'],
+'사진 촬영':['순간을 남겨','빛이 중요해','각도를 고민해'],
+'낚시':['기다리는 게 반','물가에서 하는 편','장비를 챙겨'],
+'뜨개질':['손을 계속 움직여','실이 필요해','시간이 꽤 걸려'],
+'등산':['오르막길이 힘들어','신발이 중요해','정상에 오르면 뿌듯해'],
+'노래 부르기':['목소리가 필요해','음정이 중요해','혼자 해도 재밌어'],
+'게임':['승패가 갈릴 수도','시간이 순식간에 가','규칙을 알아야 해'],
+'요리':['재료 준비부터','맛을 봐야지','불 조절이 중요해'],
+'영화 감상':['두 시간쯤 훌쩍','결말이 궁금해','몰입하면 좋아'],
+'그림 그리기':['손을 써서 표현해','색을 고르기도','오래 집중할 수 있어'],
+'보드게임':['여럿이 하면 좋아','차례를 기다려','규칙이 많기도 해'],
+'달리기':['숨이 차오르지','속도가 중요해','운동화가 필요해']};
+const AI_VAGUE={음식:['맛은 취향 차이지','친구랑 먹기 좋아','생각하니까 배고프네'],장소:['사람이 많을 때도 있어','가본 적 있어','상황에 따라 달라'],동물:['귀엽다고 하는 사람 많아','움직임이 특징적이야','사진으로 봤어'],물건:['없으면 불편해','집에 하나쯤 있지','생각보다 자주 써'],상황:['생각만 해도 떨리네','누구나 겪을 법해','기억에 남을 듯'],취미:['시간 가는 줄 몰라','혼자 해도 괜찮아','취향을 타지']};
+let aiSequence=0,aiReplyLock=0;
+function getBot(id){return players.find(p=>p.id===id&&p.bot&&p.online)}
+function botCount(){return players.filter(p=>p.bot&&p.online).length}
+function addBot(){if(mode!=='online-host'||g.phase!=='lobby')return;if(players.length>=MAX||botCount()>=6){toast('AI는 최대 6명, 전체는 최대 12명까지 가능해.');return}const taken=new Set(players.map(p=>p.name));const name=AI_NAMES.find(n=>!taken.has(n));if(!name){toast('AI 자리가 모두 찼어.');return}players.push({id:'ai-'+(++aiSequence),name,online:true,score:0,bot:true});publish()}
+function removeBot(){if(mode!=='online-host'||g.phase!=='lobby')return;const i=players.findLastIndex(p=>p.bot);if(i>=0){players.splice(i,1);publish()}}
+function botClue(id){const p=getBot(id);if(!p||g.phase!=='clue'||!g.roundIds.includes(id)||g.clues.some(c=>c.id===id))return;
+ const choices=id===g.liarId?AI_VAGUE[g.category]:(AI_HINTS[g.word]||AI_VAGUE[g.category]);
+ doAction(id,{type:'clue',clue:rand(choices)});
+}
+function botVote(id){if(!getBot(id)||g.phase!=='vote'||g.votes[id])return;
+ const options=active().filter(p=>p.id!==id),mineLiar=id===g.liarId;let chosen=rand(options);
+ if(!mineLiar&&Math.random()<.72){const clues=g.clues.filter(c=>c.id!==id),known=AI_HINTS[g.word]||[];
+  const ranked=options.map(p=>{const hint=clues.find(c=>c.id===p.id)?.text||'';const matched=known.some(h=>h===hint);const generic=(AI_VAGUE[g.category]||[]).some(h=>h===hint);return {p,score:(generic?3:0)+(hint&&!matched?1.5:0)+Math.random()*1.1}}).sort((a,b)=>b.score-a.score);
+  if(ranked.length&&ranked[0].score>=1.5)chosen=ranked[0].p;
+ }
+ if(chosen)doAction(id,{type:'vote',target:chosen.id});
+}
+function botGuess(id){if(!getBot(id)||g.phase!=='guess'||g.liarId!==id)return;
+ const candidates=WORDS[g.category]||[],clues=g.clues.filter(c=>c.id!==id).map(c=>c.text),ranked=candidates.map(word=>({word,score:(AI_HINTS[word]||[]).reduce((s,h)=>s+(clues.includes(h)?4:0),0)+Math.random()*1.8})).sort((a,b)=>b.score-a.score);
+ doAction(id,{type:'guess',guess:ranked[0]?.word||'잘 모르겠어'});
+}
+function scheduleBots(phase){if(mode!=='online-host')return;const round=g.round;
+ players.filter(p=>p.bot&&p.online&&g.roundIds.includes(p.id)).forEach((p,i)=>{setTimeout(()=>{if(mode!=='online-host'||g.round!==round||g.phase!==phase)return;
+ if(phase==='clue')botClue(p.id);else if(phase==='vote')botVote(p.id);else if(phase==='guess'&&g.liarId===p.id)botGuess(p.id);
+ },850+i*950+Math.floor(Math.random()*350));});
+}
+function botReply(text){if(mode!=='online-host'||g.phase==='guess'||!botCount())return;const now=Date.now();if(now-aiReplyLock<6500)return;
+ if(Math.random()>.6)return;aiReplyLock=now;const round=g.round,phase=g.phase;const bots=players.filter(p=>p.bot&&p.online);const b=rand(bots);
+ let options=phase==='lobby'?['안녕! 같이 해보자 😎','사람 더 모이면 시작하자!','오늘은 내가 라이어 아니었으면 좋겠다ㅋㅋ']:phase==='vote'?['다들 누구 찍을 거야?','나는 힌트 다시 보고 있어','헷갈리는데...']:phase==='result'?['다음 판도 가자!','와 이번 판 어렵다ㅋㅋ','잘했다 다들!']:['오 이건 좀 수상한데?','그 힌트 재밌네ㅋㅋ','너무 직접적인 힌트 아니야?','아직은 누군지 모르겠어'];
+ if(/안녕|ㅎㅇ|하이/.test(text))options=['안녕!!','반가워 ㅋㅋ','어서 와!'];
+ setTimeout(()=>{if(mode==='online-host'&&g.round===round&&g.phase===phase&&getBot(b.id))doAction(b.id,{type:'chat',text:rand(options)})},1100+Math.random()*700);
+}
+
+let mode='home', peer=null, hostConn=null, channels=new Map(), me='', room='', status='', myId='', remote=null, showSecret=false, nameDraft='', codeDraft='';
+let players=[], g=freshGame(), clueDraft='', chatDraft='', lastChatAt=new Map();let localRevealIdx=0,localRevealShown=false,localVoteIdx=0,localVoteShown=false;
+const app=$('#app');
+function freshGame(){return {phase:'lobby',round:0,roundIds:[],category:'',word:'',liarId:'',prevLiar:'',votes:{},clues:[],chat:[],result:null,used:[]};}
+function randomCode(){const abc='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:6},()=>abc[Math.floor(Math.random()*abc.length)]).join('');}
+function freshName(){try{return localStorage.getItem('liar-name')||''}catch{return ''}}
+nameDraft=freshName();
+function storeName(s){try{localStorage.setItem('liar-name',s)}catch{}}
+function normalName(s){return String(s??'').replace(/[\x00-\x1f\x7f]/g,'').trim().slice(0,14)}
+function normGuess(s){return String(s??'').normalize('NFKC').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'')}
+function getMe(){return players.find(p=>p.id===myId)}
+function active(){return players.filter(p=>p.online&&g.roundIds.includes(p.id))}
+function roundPlayers(){return players.filter(p=>g.roundIds.includes(p.id))}
+function rand(a){return a[Math.floor(Math.random()*a.length)]}
+function pickWord(){let candidates=[];for(const [cat, arr] of Object.entries(WORDS))for(const word of arr)if(!g.used.includes(cat+':'+word))candidates.push({cat,word});if(!candidates.length){g.used=[];return pickWord()}const x=rand(candidates);g.used.push(x.cat+':'+x.word);return x}
+function beginRound(){if(!isAuthority())return;const ps=players.filter(p=>p.online);if(ps.length<3){toast('최소 3명이 있어야 시작할 수 있어.');return}g.round+=1;g.roundIds=ps.map(p=>p.id);g.votes={};g.clues=[];clueDraft='';g.result=null;const word=pickWord();g.category=word.cat;g.word=word.word;const allowed=ps.filter(p=>p.id!==g.prevLiar);g.liarId=rand(allowed.length?allowed:ps).id;g.prevLiar=g.liarId;g.phase='clue';showSecret=false;if(mode==='local'){localRevealIdx=0;localRevealShown=false;localVoteIdx=0;localVoteShown=false}publish();scheduleBots('clue')}
+function snapshot(id){const my=players.find(p=>p.id===id);const own=g.votes[id]||null;return {code:room,phase:g.phase,round:g.round,category:g.phase==='lobby'?'':g.category,players:players.map(p=>({id:p.id,name:p.name,online:p.online,score:p.score,bot:!!p.bot})),roundIds:[...g.roundIds],selfId:id,liar:g.phase==='clue'||g.phase==='vote'||g.phase==='guess'?id===g.liarId:null,secret:g.phase==='clue'||g.phase==='vote'||g.phase==='guess'?(id===g.liarId?null:g.word):null,ownVote:own,clues:g.clues.map(c=>({...c})),chat:g.chat.map(c=>({...c})),voted:Object.keys(g.votes).length,active:active().length,result:g.result,liarId:g.phase==='result'?g.liarId:null,word:g.phase==='result'?g.word:null,isHost:id===players[0]?.id,local:mode==='local'};}
+function send(conn,msg){try{if(conn&&conn.open)conn.send(msg)}catch(err){console.warn(err)}}
+function publish(){if(mode==='online-host'){for(const [id,c] of channels)send(c,{type:'state',value:snapshot(id)})}render()}
+function current(){return mode==='online-client'?remote:snapshot(myId)}
+function isAuthority(){return mode==='online-host'||mode==='local'}
+function say(code){return {lobby:'대기실',clue:'힌트 타임',vote:'범인 투표',guess:'마지막 기회',result:'결과 공개'}[code]||code}
+function doAction(id,msg){if(!players.some(p=>p.id===id&&p.online))return;const v=players.find(p=>p.id===id);
+if(msg.type==='chat'){
+ if(mode==='local'||g.phase==='guess')return;
+ const now=Date.now();if(now-(lastChatAt.get(id)||0)<700)return;
+ const value=String(msg.text??'').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g,'').trim().slice(0,200);
+ if(!value)return;
+ lastChatAt.set(id,now);
+ const message={id,name:v.name,text:value,at:now};g.chat.push(message);if(g.chat.length>100)g.chat.shift();
+ if(mode==='online-host')for(const conn of channels.values())send(conn,{type:'chatMessage',message});
+ updateChatFeed(g.chat);if(!v.bot)botReply(value);return;
+}
+if(msg.type==='vote'){if(g.phase!=='vote'||g.votes[id]||!g.roundIds.includes(id)||!active().some(p=>p.id===msg.target)||id===msg.target)return;g.votes[id]=msg.target;if(active().every(p=>!!g.votes[p.id]))tally();else publish()}
+else if(msg.type==='clue'){if(g.phase!=='clue'||!g.roundIds.includes(id)||g.clues.some(c=>c.id===id))return;const clue=String(msg.clue??'').trim().slice(0,120);if(!clue)return;g.clues.push({id,name:v.name,text:clue});publish()}
+else if(msg.type==='guess'){if(g.phase!=='guess'||id!==g.liarId)return;const guess=String(msg.guess??'').trim().slice(0,50);if(!guess)return;finish(normGuess(guess)===normGuess(g.word),guess)} }
+function tally(){if(g.phase!=='vote')return;const counts={};for(const voter of active())if(g.votes[voter.id]&&active().some(p=>p.id===g.votes[voter.id]))counts[g.votes[voter.id]]=(counts[g.votes[voter.id]]||0)+1;const high=Math.max(0,...Object.values(counts));const leaders=Object.keys(counts).filter(k=>counts[k]===high);const found=leaders.length===1&&leaders[0]===g.liarId;
+if(found){g.phase='guess';if(!players.find(p=>p.id===g.liarId)?.online){finish(false,'(라이어 연결 끊김)');return}publish();scheduleBots('guess')}else finish(null,null,leaders,high)}
+function finish(correct,guess,leaders=null,high=0){const liar=players.find(p=>p.id===g.liarId),found=correct!==null;const liarWins=!found||!!correct;const winners=liarWins?[g.liarId]:g.roundIds.filter(id=>id!==g.liarId);
+for(const p of players)if(p.online&&winners.includes(p.id))p.score+=(liarWins?2:1);
+g.result={liarWins,found,guessed:correct===true,guess,liarName:liar?.name||'라이어',word:g.word,category:g.category,votedNames:leaders?.map(id=>players.find(p=>p.id===id)?.name).filter(Boolean)||[],high};g.phase='result';publish()}
+function maybeLostPlayers(){if(g.phase==='vote'&&active().length&&active().every(p=>g.votes[p.id]))tally();else if(g.phase==='guess'&&!players.some(p=>p.id===g.liarId&&p.online))finish(false,'(연결 끊김)');else publish()}
+function toast(m){status=m;render();setTimeout(()=>{if(status===m){status='';render()}},3800)}
+function reset(){try{hostConn?.close()}catch{}for(const c of channels.values())try{c.close()}catch{}channels.clear();try{peer?.destroy()}catch{}peer=null;hostConn=null;remote=null;players=[];g=freshGame();chatDraft='';lastChatAt.clear();mode='home';room='';myId='';showSecret=false;status='';aiReplyLock=0;aiSequence=0;const u=new URL(location.href);u.searchParams.delete('room');history.replaceState({},'',u.href);render()}
+function initPeerHandlers(p){p.on('disconnected',()=>{try{p.reconnect()}catch{}});p.on('error',err=>{console.warn('P2P error',err);if(mode==='creating'){if(err.type==='unavailable-id'){try{p.destroy()}catch{}room=randomCode();createOnlinePeer(1)}else{mode='home';toast('방을 만들 수 없어. 네트워크를 확인해 줘.')}}else if(mode==='joining'||mode==='online-client'){if(err.type==='peer-unavailable'){try{p.destroy()}catch{}mode='home';toast('그 코드의 방이 없어. 코드나 방장 연결을 확인해 줘.')}else if(mode==='joining'){mode='home';toast('방에 연결하지 못했어. 다시 시도해 줘.')}}});}
+function createOnlinePeer(retries=0){if(!window.Peer){mode='home';toast('온라인 연결 라이브러리를 불러오지 못했어. 인터넷을 확인해 줘.');return}mode='creating';render();peer=new Peer('one-liar-room-'+room);const p=peer;initPeerHandlers(p);p.on('open',()=>{if(peer!==p)return;myId=p.id;players=[{id:myId,name:me,online:true,score:0}];g=freshGame();mode='online-host';const u=new URL(location.href);u.searchParams.set('room',room);history.replaceState({},'',u.href);render()});p.on('connection',conn=>{if(peer!==p)return;channels.set(conn.peer,conn);conn.on('data',d=>{if(!d||typeof d!=='object')return;if(d.type==='join'){
+ const name=normalName(d.name);if(!name){send(conn,{type:'reject',reason:'닉네임이 비어 있어.'});conn.close();return}
+ let user=players.find(q=>q.id===conn.peer);if(!user){if(g.phase!=='lobby'){send(conn,{type:'reject',reason:'진행 중인 게임이야. 다음 판에 들어와 줘.'});setTimeout(()=>conn.close(),350);return}if(players.length>=MAX){send(conn,{type:'reject',reason:'방이 꽉 찼어 (최대 12명).'});setTimeout(()=>conn.close(),350);return}user={id:conn.peer,name,online:true,score:0};players.push(user)}else user.online=true;
+ publish();
+ }else if(d.type==='vote'||d.type==='guess'||d.type==='clue'||d.type==='chat')doAction(conn.peer,d)});
+ conn.on('close',()=>{if(channels.get(conn.peer)!==conn)return;channels.delete(conn.peer);const p=players.find(q=>q.id===conn.peer);if(p){if(g.phase==='lobby')players=players.filter(q=>q.id!==conn.peer);else p.online=false;maybeLostPlayers()}});conn.on('error',()=>{});
+ });}
+function createOnline(){const name=normalName($('#name')?.value);if(!name){toast('닉네임부터 입력해 줘.');return}me=name;nameDraft=name;storeName(name);room=randomCode();createOnlinePeer()}
+function joinOnline(){const name=normalName($('#name')?.value),code=String($('#room')?.value||'').trim().toUpperCase().replace(/[^A-Z2-9]/g,'');if(!name||code.length!==6){toast('닉네임과 6자리 방 코드를 확인해 줘.');return}if(!window.Peer){toast('온라인 연결 기능을 불러오지 못했어.');return}me=name;nameDraft=name;codeDraft=code;storeName(name);room=code;mode='joining';render();peer=new Peer();const p=peer;initPeerHandlers(p);p.on('open',()=>{if(peer!==p)return;myId=p.id;const conn=p.connect('one-liar-room-'+room,{reliable:true});hostConn=conn;conn.on('open',()=>send(conn,{type:'join',name:me}));conn.on('data',d=>{if(d?.type==='reject'){const reason=d.reason||'입장할 수 없어.';reset();toast(reason);return}if(d?.type==='state'&&d.value){remote=d.value;mode='online-client';render()}else if(d?.type==='chatMessage'&&d.message){receiveChat(d.message)}});conn.on('close',()=>{if(mode==='online-client'||mode==='joining'){mode='lost';render()}});conn.on('error',()=>{mode='lost';render()})})}
+function restartConnection(){if(!peer||peer.destroyed){reset();return}mode='joining';render();try{hostConn?.close()}catch{}const conn=peer.connect('one-liar-room-'+room,{reliable:true});hostConn=conn;conn.on('open',()=>send(conn,{type:'join',name:me}));conn.on('data',d=>{if(d?.type==='state'){remote=d.value;mode='online-client';render()}else if(d?.type==='chatMessage'&&d.message){receiveChat(d.message)}else if(d?.type==='reject'){const reason=d.reason;reset();toast(reason)}});conn.on('close',()=>{mode='lost';render()})}
+function startLocal(){const raw=String($('#offlineNames')?.value||'').split(/[,\n，]+/).map(normalName).filter(Boolean);const unique=[...new Set(raw)];if(unique.length<3||unique.length>MAX){toast('서로 다른 닉네임을 3~12명 입력해 줘.');return}players=unique.map((name,i)=>({id:'local-'+i,name,online:true,score:0}));myId=players[0].id;me=players[0].name;mode='local';room='LOCAL';g=freshGame();beginRound()}
+function sendMe(msg){if(isAuthority())doAction(myId,msg);else if(mode==='online-client')send(hostConn,msg)}
+function chooseVote(target){if(mode==='local'){const voter=players[localVoteIdx];if(voter&&g.phase==='vote'){doAction(voter.id,{type:'vote',target});if(g.phase==='vote'){localVoteIdx++;localVoteShown=false;render()}}}else sendMe({type:'vote',target})}
+function startVote(){if(!isAuthority()||g.phase!=='clue')return;g.phase='vote';localVoteIdx=0;localVoteShown=false;publish();scheduleBots('vote')}
+function afterVote(){if(mode!=='local')return;if(localVoteIdx>=players.length){tally();return}localVoteShown=true;render()}
+function skipLiar(){if(!isAuthority()||g.phase!=='guess')return;finish(false,'(기회 포기)')}
+function sharedLink(){if(!/^https?:/.test(location.protocol))return room;const u=new URL(location.href);u.searchParams.set('room',room);return u.toString()}
+async function copyRoom(){const value=sharedLink();try{await navigator.clipboard.writeText(value);toast('초대 링크를 복사했어!')}catch{try{const t=document.createElement('textarea');t.value=value;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();toast('초대 정보를 복사했어!')}catch{toast('방 코드: '+room)}}}
+function showStatus(){return status?`<div class="msg" role="status">${E(status)}</div>`:''}
+function homeHTML(){return `<div class="hero"><div class="eyebrow">MULTIPLAYER PARTY GAME</div><h1>우리 중 <em>한 명은</em><br>정답을 몰라.</h1><p>다 같은 단어를 받았는데, 딱 한 명만 모른다고?<br>수상한 힌트를 주는 라이어를 찾아내 봐.</p></div><div class="home-grid"><section class="panel"><h2>게임 시작하기</h2><p class="desc">설치도, 가입도 없이. 각자 스마트폰으로 모여봐.</p><label class="fieldlabel" for="name">내 닉네임</label><input id="name" maxlength="14" autocomplete="nickname" value="${E(nameDraft)}" placeholder="뭐라고 부를까?" /><button class="btn primary wide" style="margin-top:13px" data-action="create">✦ 새 방 만들기</button><div class="divide">또는 친구 방에 참여</div><label class="fieldlabel" for="room">6자리 방 코드</label><input id="room" maxlength="6" inputmode="text" autocapitalize="characters" spellcheck="false" value="${E(codeDraft)}" placeholder="예: K7M2AP" style="text-transform:uppercase;letter-spacing:3px" /><button class="btn secondary wide" style="margin-top:12px" data-action="join">코드로 입장하기 →</button><p class="help">온라인은 방장이 게임 화면을 켜 둬야 해. 3~12명 권장.</p><details class="offline-box"><summary>한 대의 폰으로 돌아가며 하기 (오프라인)</summary><p class="help">이름을 쉼표로 구분해서 입력해. 카드와 투표를 순서대로 비밀리에 확인해.</p><textarea id="offlineNames" placeholder="민지, 준호, 수아, 태민">민지, 준호, 수아, 태민</textarea><button class="btn secondary wide" style="margin-top:9px" data-action="local">오프라인 게임 시작</button></details>${showStatus()}</section><section class="panel pitch"><div class="eyebrow">HOW TO PLAY</div><div class="big">눈치로 속이고,<br>말 한마디로 들킨다.</div><div class="steps"><div class="step"><div class="step-idx">01</div><div><strong>비밀 단어 확인</strong><span>전원에게 같은 단어가 주어져. 단, 라이어 한 명은 카테고리만 보여.</span></div></div><div class="step"><div class="step-idx">02</div><div><strong>한 사람씩 힌트 말하기</strong><span>정답을 대놓고 말하면 라이어가 눈치챌 거야.</span></div></div><div class="step"><div class="step-idx">03</div><div><strong>누가 라이어인지 투표</strong><span>잡아내도 끝이 아니야. 라이어가 단어를 맞히면 역전!</span></div></div></div><div class="chips"><span class="chip">👥 3~12명</span><span class="chip">📱 모바일 최적화</span><span class="chip">🎲 72개 단어</span><span class="chip">🏆 라운드 점수</span></div></section></div>`}
+function listPlayers(v,limit=MAX){return `<div class="list">${[...v.players].sort((a,b)=>b.score-a.score).slice(0,limit).map((p,i)=>`<div class="player-row" style="${p.online?'':'opacity:.5'}"><div class="who"><div class="circle">${E(p.name.slice(0,1))}</div><div class="name">${E(p.name)} ${p.id===v.selfId&&!v.local?'<span class="pill">나</span>':''} ${p.bot?'<span class="pill ai-badge">🤖 AI</span>':''} ${i===0&&v.round>0?'👑':''} ${!p.online?'<span class="pill">연결 끊김</span>':''}</div></div><div class="rank">${p.score}<span class="minor"> 점</span></div></div>`).join('')}</div>`}
+function personName(v,id){return v.players.find(p=>p.id===id)?.name||'?'}
+function roomHTML(){const v=current();if(!v)return `<section class="panel">연결 중...</section>`;const isControl=isAuthority(),isLocal=mode==='local';let main='';
+if(v.phase==='lobby'){main=`<div class="big-icon">👋</div><h2>친구들 모이는 중</h2><p class="lead">방 코드를 공유해서 모두 입장하면 시작해. 이름과 점수는 오른쪽에 표시돼.</p><div class="offline-ready"><b>${v.players.length}명</b>이 대기 중이야. ${v.players.length<3?'최소 3명이 모여야 게임을 시작할 수 있어.':'준비됐어! 시작 버튼을 눌러봐.'}</div>${isControl?`<div class="ai-controls"><div class="ai-heading">🤖 AI 플레이어 <span class="pill">${botCount()} / 6</span></div><p class="help">힌트·채팅·투표·정답 추리에 참여하는 규칙 기반 봇이야. API 키 불필요.</p><div class="actions"><button class="btn secondary small" data-action="addBot" ${v.players.length>=MAX||botCount()>=6?'disabled':''}>+ AI 참가</button><button class="btn secondary small" data-action="removeBot" ${botCount()===0?'disabled':''}>− AI 제거</button></div></div><button class="btn primary wide" data-action="begin" ${v.players.length<3?'disabled':''}>게임 시작하기 →</button>`:`<div class="notice">방장이 게임을 시작하기를 기다리는 중…</div>`}`}
+else if(v.phase==='clue'){
+ if(isLocal&&localRevealIdx<players.length){const p=players[localRevealIdx],liar=p.id===g.liarId;main=`<div class="big-icon">🔐</div><h2>${E(p.name)} 차례야!</h2><p class="lead">${localRevealIdx+1} / ${players.length} · 다른 사람은 화면을 보지 않게 해 줘.</p><div class="dots">${players.map((_,i)=>`<i class="${i<localRevealIdx?'done':i===localRevealIdx?'current':''}"></i>`).join('')}</div>${localRevealShown?roleCard(liar,liar?null:g.word,g.category):`<div class="secretcover"><strong>${E(p.name)}에게만 보여줄게</strong><span>다른 사람이 안 보는지 확인!</span><button class="btn primary wide" data-action="localReveal">비밀 카드 열기 👀</button></div>`}${localRevealShown?`<button class="btn secondary wide" data-action="nextReveal">확인했어 · 다음 사람에게 넘기기 →</button>`:''}`}
+ else if(isLocal){main=`<div class="big-icon">💬</div><h2>자, 돌아가며 힌트를!</h2><p class="lead">한 사람씩 단어를 직접 말하지 않고 설명해 줘. 라이어는 티 나지 않게 섞여야 해.</p><div class="notice">모든 플레이어가 단어 또는 라이어 역할을 확인했어. 토론이 끝나면 투표를 시작해.</div><button class="btn hot wide" data-action="startVote">모두 얘기했어! 투표 시작 →</button>`}
+ else{main=`<div class="big-icon">🗣️</div><h2>이 단어를 알고 있어?</h2><p class="lead">각자 단어를 은근하게 설명해. 단어를 직접 말하거나 화면을 보여주면 안 돼.</p>${showSecret?roleCard(v.liar,v.secret,v.category)+`<button class="btn secondary small" data-action="secret">비밀 카드 숨기기</button>`:`<div class="secretcover"><strong>나만의 비밀 카드</strong><span>주변 사람이 못 보게 조심!</span><button class="btn primary" data-action="secret">🔎 비밀 카드 보기</button></div>`}${clueChat(v)}<div class="info-row">${isControl?`<button class="btn hot wide" data-action="startVote">다 얘기했어 · 투표 시작 →</button>`:`<div class="notice">방장이 힌트 시간을 끝내고 투표를 열어 줄 거야.</div>`}</div>`}}
+else if(v.phase==='vote'){
+ if(isLocal){const voter=players[localVoteIdx];if(!voter){main=`<h2>투표를 집계 중…</h2>`}else if(!localVoteShown){main=`<div class="big-icon">🗳️</div><h2>${E(voter.name)}, 네 차례야.</h2><p class="lead">휴대폰을 넘겨받고 자기 차례에만 투표해. 이전 투표는 보이지 않아.</p><div class="secretcover"><strong>${E(voter.name)}만 화면을 봐 줘.</strong><span>준비됐으면 투표지를 펼쳐.</span><button class="btn primary wide" data-action="localBallot">내 투표지 열기 →</button></div>`}else{main=`<div class="big-icon">🗳️</div><h2>${E(voter.name)}의 선택</h2><p class="lead">가장 수상한 한 명을 골라. 나 자신에게는 투표할 수 없어.</p>${voteOptions(v,voter.id)}`}}
+ else{main=`<div class="big-icon">🗳️</div><h2>누가 거짓말을 했을까?</h2><p class="lead">의심되는 한 사람에게 투표해. 한 번 선택하면 되돌릴 수 없어.</p>${v.ownVote?`<div class="notice">✅ <b>${E(personName(v,v.ownVote))}</b>에게 투표 완료! 나머지 사람들을 기다리는 중…</div>`:voteOptions(v,v.selfId)}<div class="minor">${v.voted} / ${v.active}명 투표 완료</div>`}}
+else if(v.phase==='guess'){
+ if(isLocal){main=`<div class="big-icon">🎭</div><h2>라이어에게 마지막 기회!</h2><p class="lead"><b>${E(personName(v,g.liarId))}</b>에게 화면을 넘겨 줘. 토론을 듣고 정답을 추리해 봐.</p><div class="notice">라이어가 단어를 맞히면 역전 승리. 틀리면 나머지 사람들의 승리!</div>${guessForm()}`}
+ else{main=`<div class="big-icon">🎭</div><h2>라이어를 잡았어!</h2><p class="lead">하지만 라이어가 단어를 알아냈다면 역전할 수 있어.</p>${v.liar?guessForm():`<div class="notice">라이어가 정답을 입력하고 있어. 조금만 기다려 줘.</div>`}${isControl&&!v.liar?`<button class="btn secondary small" style="margin-top:14px" data-action="skipGuess">라이어가 접속하지 못하면 기회 종료</button>`:''}`}}
+else if(v.phase==='result'){const r=v.result, s=r.liarWins?'라이어 승리!':'시민 승리!';main=`<div class="result-box"><div class="result-icon">${r.liarWins?'😈':'🎉'}</div><div class="result-title">${s}</div><p class="result-text">${r.liarWins?(r.found?`라이어 ${E(r.liarName)}가 정답까지 맞혔어!`:`${r.votedNames.length?'투표로 지목된 건 '+r.votedNames.map(E).join(', ')+'!':'투표가 갈렸어!'} 진짜 라이어는 ${E(r.liarName)}였어.`):`${E(r.liarName)}를 찾아냈어! ${r.guess?`라이어가 제출한 답은 「${E(r.guess)}」.`:''} 완벽한 추리였어.`}</p><div class="result-word">비밀 단어는 <b>${E(r.word)}</b> · ${E(r.category)}</div><div class="result-scores"><strong>🏆 누적 점수</strong><div style="margin-top:12px">${listPlayers(v)}</div></div>${isControl?`<button class="btn primary wide" style="margin-top:23px" data-action="begin">다음 라운드 시작 →</button>`:`<div class="notice" style="margin-top:20px">방장이 다음 라운드를 시작할 수 있어.</div>`}</div>`}
+return `<div class="room-head"><div><div class="roundtag">${v.round?'ROUND '+String(v.round).padStart(2,'0'):'WAITING ROOM'}</div><div class="room-title">${E(say(v.phase))}</div><div class="room-sub">${isLocal?'한 대의 폰을 돌려가며 진행':'각자 폰으로 접속해서 플레이'}</div></div>${!isLocal?`<div class="room-code"><div class="codebox">${E(room)}</div><button class="btn secondary small" data-action="copy">🔗 초대 복사</button></div>`:`<div class="codebox">OFFLINE</div>`}</div><div class="room-layout"><section class="panel scene"><div class="stage-head"><span class="phase">${E(say(v.phase))}</span><span class="tiny">${v.round?'라운드 '+v.round:'최소 3명 · 최대 12명'}</span></div>${main}${showStatus()}</section><aside class="room-sidebar">${!isLocal?chatPanel(v):''}<section class="panel sidepanel"><h3>👥 참가자 <span class="minor">${v.players.filter(p=>p.online).length} / ${MAX}명</span></h3><div class="side-note">매 라운드 정답을 들킨 라이어를 찾아봐.</div>${listPlayers(v)}<div class="sep"></div><div class="side-note">${v.phase==='lobby'?'친구를 초대해서 게임을 시작해.':v.phase==='clue'?'힌트는 너무 쉽지도, 너무 어렵지도 않게!':v.phase==='vote'?'자기 자신을 제외한 한 사람에게 투표해.':v.phase==='guess'?'라이어가 단어를 알아냈을까?':'다음 판에서는 누가 라이어일까?'}</div><button class="room-exit" data-action="exit">${isLocal?'게임 종료':'방 나가기'}</button></section></aside></div>`}
+function clueChat(v){const sent=v.clues?.some(c=>c.id===v.selfId);return `<div class="info-row"><b style="font-size:14px">💬 온라인 힌트 게시판</b><p class="help" style="margin-bottom:12px">같은 장소에 있지 않아도 한 사람씩 짧은 힌트를 남길 수 있어. 한 라운드에 한 번만!</p><div class="chatlog">${v.clues?.length?v.clues.map(c=>`<div class="chatmsg ${c.id===v.selfId?'mine':''}"><div class="chatname">${E(c.name)}</div><div class="chattext">${E(c.text)}</div></div>`).join(''):'<div class="minor">아직 아무도 힌트를 남기지 않았어.</div>'}</div>${sent?'<div class="notice">내 힌트는 보냈어. 모두의 힌트를 비교해 봐.</div>':`<div class="chatentry"><input id="clueInput" maxlength="120" placeholder="내 힌트를 적어 줘" value="${E(clueDraft)}" /><button class="btn primary" data-action="clue">보내기</button></div>`}</div>`}
+function chatPanel(v){const locked=v.phase==='guess';return `<section class="panel chat-panel" aria-label="공용 채팅창"><h3>💬 공용 채팅 <span class="chat-live">● 실시간</span></h3><p class="chat-help">방에 있는 모두가 보는 대화 · 힌트 게시판과 별개야</p><div id="roomChatFeed" class="chat-feed" role="log" aria-live="polite" aria-label="채팅 메시지">${chatMessageHTML(v.chat||[],v.selfId)}</div><div class="chat-compose"><input id="chatInput" maxlength="200" autocomplete="off" aria-label="채팅 입력" placeholder="${locked?'정답 추리 중에는 채팅 잠금':'메시지 입력 · Enter로 전송'}" value="${E(chatDraft)}" ${locked?'disabled':''}/><button class="btn primary small" data-action="chatSend" ${locked?'disabled':''}>전송</button></div>${locked?'<div class="chat-locked">🔒 라이어의 최종 정답 입력이 끝날 때까지 채팅 잠금</div>':''}</section>`}
+function chatMessageHTML(messages,selfId){if(!messages.length)return '<div class="chat-empty">아직 메시지가 없어.<br>첫 인사를 남겨봐! 👋</div>';return messages.map(c=>{const time=new Date(c.at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});return `<div class="room-chat-msg ${c.id===selfId?'mine':''}"><div class="chat-meta"><b>${E(c.name)}</b><span>${E(time)}</span></div><div class="chat-bubble">${E(c.text)}</div></div>`}).join('')}
+function updateChatFeed(messages){const feed=$('#roomChatFeed');if(!feed)return;const nearBottom=feed.scrollHeight-feed.scrollTop-feed.clientHeight<85;const v=current();feed.innerHTML=chatMessageHTML(messages,v?.selfId);if(nearBottom)feed.scrollTop=feed.scrollHeight}
+function receiveChat(msg){if(mode!=='online-client'||!remote||!msg||typeof msg.text!=='string')return;remote.chat=Array.isArray(remote.chat)?remote.chat:[];remote.chat.push(msg);if(remote.chat.length>100)remote.chat.shift();updateChatFeed(remote.chat)}
+function submitChat(){const field=$('#chatInput'),message=(field?.value||'').trim();if(!message||current()?.phase==='guess')return;chatDraft='';field.value='';sendMe({type:'chat',text:message})}
+function roleCard(liar,word,cat){return `<div class="rolecard ${liar?'liar':''}"><div class="role-label">${liar?'쉿! 당신의 역할은':'당신의 비밀 단어는'}</div><div class="role-word">${liar?'🎭 라이어':E(word||'')}</div><div class="role-foot">카테고리: <b>${E(cat)}</b><br>${liar?'다른 사람의 힌트를 듣고 단어를 알아내. 모르는 티를 내지 마!':'라이어는 이 단어를 몰라. 직접 답을 말하지 말고 힌트를 줘!'}</div></div>`}
+function voteOptions(v,selfId){const options=v.players.filter(p=>p.online&&v.roundIds.includes(p.id)&&p.id!==selfId);return `<div class="vote-list">${options.map(p=>`<button class="btn voteopt" data-action="vote" data-id="${E(p.id)}"><span>${E(p.name)}</span><span>선택 →</span></button>`).join('')}</div>`}
+function guessForm(){return `<div class="fieldlabel">네가 생각하는 정답은?</div><input maxlength="50" id="guess" placeholder="단어를 적어 줘" autocomplete="off" /><button class="btn hot wide" style="margin-top:12px" data-action="guess">최종 정답 제출 →</button>`}
+function render(){if(mode==='home')app.innerHTML=homeHTML();else if(mode==='creating'||mode==='joining')app.innerHTML=`<section class="panel" style="text-align:center;max-width:570px;margin:auto;padding:60px 20px"><div class="big-icon" style="margin:0 auto 15px">⌛</div><h2>${mode==='creating'?'새 방을 준비하는 중':'친구 방에 연결하는 중'}</h2><p class="lead">온라인 연결을 확인하고 있어.</p><button class="btn secondary" data-action="exit">돌아가기</button>${showStatus()}</section>`;else if(mode==='lost')app.innerHTML=`<section class="panel" style="text-align:center;max-width:570px;margin:auto;padding:60px 20px"><div class="big-icon" style="margin:0 auto 15px">📡</div><h2>방장과 연결이 끊겼어.</h2><p class="lead">방장이 화면을 닫았거나 일시적으로 연결이 불안정한 것 같아.</p><div class="actions" style="max-width:360px;margin:auto"><button class="btn primary" data-action="reconnect">다시 연결</button><button class="btn secondary" data-action="exit">처음으로</button></div></section>`;else{app.innerHTML=roomHTML();const feed=$('#roomChatFeed');if(feed)feed.scrollTop=feed.scrollHeight}}
+app.addEventListener('click',ev=>{const t=ev.target.closest('[data-action]');if(!t)return;const a=t.dataset.action;
+if(a==='create')createOnline();else if(a==='addBot')addBot();else if(a==='removeBot')removeBot();else if(a==='join')joinOnline();else if(a==='local')startLocal();else if(a==='exit')reset();else if(a==='copy')copyRoom();else if(a==='begin')beginRound();else if(a==='secret'){showSecret=!showSecret;render()}else if(a==='startVote')startVote();else if(a==='chatSend')submitChat();else if(a==='clue'){const clue=$('#clueInput')?.value?.trim();if(!clue){toast('힌트를 적어 줘.');return}clueDraft='';sendMe({type:'clue',clue});}else if(a==='vote')chooseVote(t.dataset.id);else if(a==='localReveal'){localRevealShown=true;render()}else if(a==='nextReveal'){localRevealIdx++;localRevealShown=false;render()}else if(a==='localBallot')afterVote();else if(a==='guess'){const guess=$('#guess')?.value||'';if(!guess.trim()){toast('정답을 입력해 줘.');return}if(mode==='local')doAction(g.liarId,{type:'guess',guess});else sendMe({type:'guess',guess});}else if(a==='skipGuess')skipLiar();else if(a==='reconnect')restartConnection()});
+app.addEventListener('keydown',ev=>{if(ev.key!=='Enter')return;if(ev.target?.id==='room'){ev.preventDefault();joinOnline()}if(ev.target?.id==='chatInput'){ev.preventDefault();submitChat()}if(ev.target?.id==='clueInput'){ev.preventDefault();app.querySelector('[data-action="clue"]')?.click()}if(ev.target?.id==='guess'){ev.preventDefault();app.querySelector('[data-action="guess"]')?.click()}});
+app.addEventListener('input',ev=>{if(ev.target?.id==='clueInput')clueDraft=ev.target.value;else if(ev.target?.id==='chatInput')chatDraft=ev.target.value});
+const fromUrl=new URLSearchParams(location.search).get('room');if(fromUrl&&/^[A-Z2-9]{6}$/i.test(fromUrl))codeDraft=fromUrl.toUpperCase();render();
+})();
+</script>
+</body>
+</html>
