@@ -135,7 +135,22 @@ function customThemeInstallURL() {
   Object.entries(currentSettings()).forEach(([key,value])=>url.searchParams.set(key,value));
   return url.href;
 }
-function installGeneratedTheme(){window.location.href=customThemeInstallURL()}
+function isStayThemeInstall() {
+  // 사이트의 기기 선택(자동/iOS/Android·PC)을 설치 버튼에도 반영한다.
+  return window.ZetaSite?.getPlatform?.() === 'ios';
+}
+async function installGeneratedTheme() {
+  if (isStayThemeInstall()) {
+    // Stay는 설치 URL의 색상 파라미터에 의존하지 않고 완성본을 가져온다.
+    return downloadGeneratedScript(false);
+  }
+  window.location.href = customThemeInstallURL();
+}
+function syncThemeInstallActions() {
+  const ios = isStayThemeInstall();
+  $('#installScript').textContent = ios ? 'Stay용 .js 다운로드' : 'Tampermonkey 설치';
+  $('#downloadScript').textContent = ios ? '.user.js 다운로드 (대체 형식)' : '.user.js 다운로드';
+}
 async function generateBookmarklet() {
   // A full inline bookmarklet would exceed mobile bookmark URL limits.
   // Seed the compiled code in the current Zeta origin through the existing short loader.
@@ -194,10 +209,12 @@ bindHex(accentHex,accentPicker);bindHex(otherHex,otherPicker);bindHex(bgHex,bgPi
 document.querySelectorAll('.quick-swatches').forEach(group=>group.addEventListener('click',e=>{const btn=e.target.closest('button[data-color]');if(!btn)return;const picker=group.dataset.target==='accent'?accentPicker:group.dataset.target==='other'?otherPicker:bgPicker;picker.value=btn.dataset.color;render();}));
 document.querySelectorAll('.preset').forEach(btn=>btn.addEventListener('click',()=>setColors(btn.dataset.a,btn.dataset.o,btn.dataset.b)));
 $('#resetTheme').addEventListener('click',()=>{fontSize.value='15';if(meBorder)meBorder.checked=false;if(otherBorder)otherBorder.checked=false;if(meBorderPicker)meBorderPicker.value='#53636C';if(otherBorderPicker)otherBorderPicker.value='#53636C';if(meBorderWidth)meBorderWidth.value='1';if(otherBorderWidth)otherBorderWidth.value='1';setColors('#FEE500','#FFFFFF','#B2C7D9')});
-$('#downloadScript').addEventListener('click',async()=>{try{await downloadGeneratedScript()}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 파일을 만들지 못했어요.')}});
-$('#installScript').addEventListener('click',async()=>{try{await installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 설치 링크를 열지 못했어요.')}});
+$('#downloadScript').addEventListener('click',async()=>{try{await downloadGeneratedScript(true)}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 파일을 만들지 못했어요.')}});
+$('#installScript').addEventListener('click',async()=>{try{await installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast(isStayThemeInstall()?'Stay용 테마 파일을 만들지 못했어요.':'커스텀 테마 설치 링크를 열지 못했어요.')}});
 $('#copyBookmarklet').addEventListener('click',async()=>{try{ZetaSite.copyText(await generateBookmarklet(),'북마클릿 링크를 복사했어요.')}catch(e){console.error(e);ZetaSite.toast('북마클릿 링크를 만들지 못했어요.')}});
 
 applyFromURL();
 render();
+syncThemeInstallActions();
+window.addEventListener('zeta:platformchange',syncThemeInstallActions);
 syncBaseThemeVersion();
