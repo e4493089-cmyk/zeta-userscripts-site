@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      2.0.18
+// @version      2.0.19
 // @description  전체 테마 내장 · 선택 색 유지 · 1시간 간격 백그라운드 업데이트
 // @match        https://zeta-ai.io/*
 // @match        https://frame.pingpong.ai/v1/index.html
@@ -14,6 +14,7 @@
 
 (()=>{
 function compileCustomTheme(source, query) {
+  source = source.replace(/\r\n?/g, '\n');
   const p=new URLSearchParams(query);
   const clamp=(v,min=0,max=255)=>Math.max(min,Math.min(max,v));
   const hexToRgb=hex=>{hex=hex.replace('#','');const n=parseInt(hex,16);return{r:n>>16&255,g:n>>8&255,b:n&255}};
@@ -51,7 +52,8 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
   const scope='html.kt-chat-theme-active';
   let css=`${scope},${scope} body,${scope} main#contents,${scope} [role="log"][aria-label="Chat messages"]{background:${chat}!important;color:${ct}!important;color-scheme:light!important}`;
   for(const [side,bg,fg,border,bc,bw] of [['RightTextContent',accent,me,mb,mbc,mbw],['LeftTextContent',other,ai,ob,obc,obw]]) {
-    const bubble=`${scope} [data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"]`;
+    const sceneBubble=side==='RightTextContent'?'.message-context-menu-trigger.bg-bubble-user':'.message-context-menu-trigger.self-start.bg-gray-sub1';
+    const bubble=`${scope} :is([data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"], .scene-web [role="log"] ${sceneBubble})`;
     css+=`${bubble}{background:${bg}!important;color:${fg}!important;border:${border?bw+'px solid '+bc:'0'}!important}`;
     css+=`${bubble} .chat,${bubble} p,${bubble} strong,${bubble} b,${bubble} a{color:${fg}!important}`;
     css+=`${bubble} em,${bubble} em [class*="text-primary-"],${bubble} em [data-placeholder]{color:${mix(fg,bg,side==='RightTextContent'?.28:.34)}!important}`;
@@ -59,7 +61,7 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
   css+=`${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{color:${mix(ct,chat,.28)}!important}`;
   css+=`${scope} [data-sentry-component="ChatBubbleContainer"] .chat,${scope} [data-sentry-component="ChatBubbleContainer"] p,${scope} [data-sentry-component="ChatBubbleContainer"] em,${scope} [data-sentry-component="ChatBubbleContainer"] li,${scope} [data-sentry-component="NarratorBubble"] .chat,${scope} [data-sentry-component="NarratorBubble"] p{font-size:${fs}px!important}`;
   const surface=luminance(chat)<.28?mix(chat,'#FFFFFF',.86):mix('#FFFFFF',chat,.025), soft=mix(surface,chat,.08), ink=textFor(surface), line=mix(surface,ink,.10), muted=mix(ink,surface,.55);
-  const composer=`${scope} [data-sentry-component="ChatComposer"]`, box=`${composer} div:has(> textarea[aria-label="내용 입력하기"])`, input=`${composer} textarea[aria-label="내용 입력하기"]`;
+  const composer=`${scope} [data-sentry-component="ChatComposer"]`, box=`${scope} :is([data-sentry-component="ChatComposer"] div:has(> textarea[aria-label="내용 입력하기"]), .scene-web [data-testid="composer-input-box"])`, input=`${scope} :is([data-sentry-component="ChatComposer"] textarea[aria-label="내용 입력하기"], .scene-web [data-testid="composer-input-box"] textarea)`;
   css+=`${composer},${composer}>div:last-child{background:${surface}!important;color:${ink}!important;border-top-color:${line}!important}`;
   css+=`${box}{background:${soft}!important;border:1px solid ${line}!important}`;
   css+=`${input}{background:transparent!important;color:${ink}!important;caret-color:${ink}!important;border:0!important}${input}::placeholder{color:${muted}!important;opacity:1!important}`;
@@ -72,13 +74,18 @@ function firstPaintCss(accent, other, chat, fs, mb, mbc, mbw, ob, obc, obw) {
 
   const token='  const CSS = `', start=source.indexOf(token);
   if(start<0)throw Error('지원하지 않는 테마 형식입니다.');
-  const cssStart=start+token.length,end=source.indexOf('\n  `;',cssStart);
+  const cssStart=start+token.length;
+  const closing=/\n[ \t]*`;/.exec(source.slice(cssStart));
+  const end=closing?cssStart+closing.index:-1;
   if(end<0||!source.includes("const STYLE_ID = 'zeta-kakaotalk-theme-style';"))throw Error('테마 원본을 확인할 수 없습니다.');
   let css=transformCss(source.slice(cssStart,end));
   for(const [marker,side] of [['kt-other','LeftTextContent'],['kt-me','RightTextContent']]) {
     const old=`[data-sentry-component="ChatBubbleContainer"].${marker}`;
-    css=css.split(old).join(`:is(${old}, [data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"])`);
+    const sceneBubble=marker==='kt-me'?'.message-context-menu-trigger.bg-bubble-user':'.message-context-menu-trigger.self-start.bg-gray-sub1';
+    css=css.split(old).join(`:is(${old}, [data-sentry-component="${side}"] [data-sentry-component="ChatBubbleContainer"], .scene-web [role="log"] ${sceneBubble})`);
   }
+  css=css.split('[data-sentry-component="NarratorBubble"]').join(':is([data-sentry-component="NarratorBubble"], .scene-web [role="log"] div:has(> .message-context-menu-trigger.bg-gray-main))');
+  css=css.split('[data-sentry-component="ChatBubbleContainer"] .chat').join(':is([data-sentry-component="ChatBubbleContainer"], .scene-web [role="log"] .message-context-menu-trigger) .chat');
   const compiled=(source.slice(0,cssStart)+css+source.slice(end)).replace("const STYLE_ID = 'zeta-kakaotalk-theme-style';","const STYLE_ID = 'zeta-custom-theme-style';");
   new Function(compiled);
   return compiled;
