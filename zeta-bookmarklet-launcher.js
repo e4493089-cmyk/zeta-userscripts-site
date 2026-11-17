@@ -73,16 +73,6 @@
 
   async function launch(index) {
     const tool = tools[index];
-    if (document.querySelector('iframe[src^="https://frame.pingpong.ai/v1/index.html"]')) {
-      const state = list.children[index].querySelector('.state');
-      const link = document.createElement('a');
-      link.href = raw + tool.file;
-      link.target = '_blank';
-      link.rel = 'noopener';
-      link.textContent = '설치 / 업데이트';
-      state.replaceChildren(link);
-      throw Error('새 채팅 화면은 프레임 안에서 실행되는 사용자 스크립트 설치가 필요합니다. 도구 옆 설치 / 업데이트를 눌러 주세요.');
-    }
 
     if (tool.action && window[tool.key]) {
       const button = document.getElementById('zeta-full-chat-export-button');
@@ -129,7 +119,10 @@
         await launch(index);
         ok++;
       }
-      msg.textContent = ok + '개 도구 실행 완료';
+      const embedded = document.querySelector('iframe[src^="https://frame.pingpong.ai/v1/index.html"]');
+      msg.textContent = embedded
+        ? ok + '개 도구를 바깥 페이지에서 실행했어요. 채팅 프레임 내부 적용은 확인되지 않았어요.'
+        : ok + '개 도구 실행 완료';
     } catch (error) {
       msg.textContent = '실행 실패: ' + error.message;
     } finally {
