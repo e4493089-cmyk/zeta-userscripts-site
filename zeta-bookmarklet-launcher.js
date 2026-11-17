@@ -73,6 +73,16 @@
 
   async function launch(index) {
     const tool = tools[index];
+    if (document.querySelector('iframe[src^="https://frame.pingpong.ai/v1/index.html"]')) {
+      const state = list.children[index].querySelector('.state');
+      const link = document.createElement('a');
+      link.href = raw + tool.file;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = '설치 / 업데이트';
+      state.replaceChildren(link);
+      throw Error('새 채팅 화면은 프레임 안에서 실행되는 사용자 스크립트 설치가 필요합니다. 도구 옆 설치 / 업데이트를 눌러 주세요.');
+    }
 
     if (tool.action && window[tool.key]) {
       const button = document.getElementById('zeta-full-chat-export-button');
