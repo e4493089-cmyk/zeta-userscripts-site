@@ -112,7 +112,7 @@ async function buildStandaloneScript() {
   return `// ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      2.0.2
+// @version      2.0.3
 // @description  완성본 · 내 말풍선 #${s.bubble} · 캐릭터 말풍선 #${s.other} · 배경 #${s.bg} · 글씨 ${s.fs}px · base ${baseVersion}
 // @match        https://zeta-ai.io/*
 // @match        https://frame.pingpong.ai/v1/index.html
