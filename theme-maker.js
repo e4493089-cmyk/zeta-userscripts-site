@@ -116,10 +116,19 @@ async function buildStandaloneScript() {
 // @description  완성본 · 내 말풍선 #${s.bubble} · 캐릭터 말풍선 #${s.other} · 배경 #${s.bg} · 글씨 ${s.fs}px · base ${baseVersion}
 // @match        https://zeta-ai.io/*
 // @match        https://frame.pingpong.ai/v1/index.html
+// @updateURL    ${CUSTOM_THEME_LOADER_URL}
+// @downloadURL  ${CUSTOM_THEME_LOADER_URL}
 // @run-at       document-start
-// @downloadURL  none
-// @grant        none
+// @grant        GM_info
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
+
+// 선택한 사용자 설정은 Stay 업그레이드 후 공통 원격 로더에서도 복원할 수 있도록 저장한다.
+(()=>{const key=${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},settings=${JSON.stringify(query)};
+  try{if(typeof GM_setValue==='function')GM_setValue(key,settings)}catch(_){}
+  try{localStorage.setItem(key,settings)}catch(_){}
+})();
 
 (${runCompiledCustomTheme.toString()})(${JSON.stringify(compiled)},${JSON.stringify(query)},${JSON.stringify(baseVersion)},${compileCustomTheme.toString()});
 `;
