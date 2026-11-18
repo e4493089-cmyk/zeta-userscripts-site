@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         ZETA Custom Theme
 // @namespace    zeta-custom-theme-maker
-// @version      2.0.36
+// @version      2.0.37
 // @description  전체 테마 내장 · 선택 색 유지 · 1시간 간격 백그라운드 업데이트
 // @match        https://zeta-ai.io/*
 // @match        https://frame.pingpong.ai/v1/index.html
 // @updateURL    https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
+// @downloadURL  https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts-site/main/zeta-custom-theme.user.js
 // @run-at       document-start
 // @grant        GM_info
 // @grant        GM_getValue
