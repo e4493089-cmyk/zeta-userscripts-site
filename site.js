@@ -60,7 +60,7 @@ function platformInstallMeta(platform=getPlatform()){
       primary:'Stay용 링크 복사',
       copyFirst:true,
       badge:'Stay for Mobile 추천',
-      summary:'링크를 복사한 뒤 Stay for Mobile에 등록합니다.',
+      summary:'자동 갱신을 위해 파일 저장보다 Stay용 원본 링크 등록을 권장합니다.',
       steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Edge의 Stay for Mobile을 열어 새 스크립트/Link 추가를 선택합니다.','복사한 .user.js 주소를 붙여넣고 저장한 뒤 활성화합니다.','ZETA 탭을 새로고침해 적용되었는지 확인합니다.']
     }:{
       manager:'Stay for Safari',
@@ -68,7 +68,7 @@ function platformInstallMeta(platform=getPlatform()){
       primary:'Stay용 링크 복사',
       copyFirst:true,
       badge:'Stay for Safari 추천',
-      summary:'링크를 복사해 Stay for Safari의 + → Link에 등록합니다.',
+      summary:'업데이트를 위해 파일 다운로드 대신 Stay용 원본 링크 등록을 권장합니다.',
       steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Stay for Safari를 열고 + → Link를 선택합니다.','복사한 .user.js 주소를 붙여넣고 저장한 뒤 활성화합니다.','Safari 확장에서 Stay 사용을 허용한 뒤 ZETA를 새로고침합니다.']
     };
   }
@@ -187,7 +187,7 @@ function renderScriptActions(root=document){
     const secondary=document.createElement('button');
     secondary.type='button';secondary.className=`btn btn-light${compact?' btn-sm':''}`;
     if(meta.copyFirst){
-      secondary.textContent='JS 다운로드';
+      secondary.textContent='JS 파일 저장 (수동 설치)';
       secondary.addEventListener('click',()=>downloadScript(url,name));
     }else{
       secondary.textContent='링크 복사';
