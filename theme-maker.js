@@ -161,13 +161,6 @@ function syncThemeInstallActions() {
   $('#installScript').textContent = ios ? 'Stay용 .js 다운로드' : 'Tampermonkey 설치';
   $('#downloadScript').textContent = ios ? '.user.js 다운로드 (대체 형식)' : '.user.js 다운로드';
 }
-async function generateBookmarklet() {
-  // A full inline bookmarklet would exceed mobile bookmark URL limits.
-  // Seed the compiled code in the current Zeta origin through the existing short loader.
-  const params=currentSettingsQuery();
-  return 'javascript:'+encodeURIComponent(`(async()=>{try{localStorage.setItem(${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},${JSON.stringify(params)});const key="zeta-custom-theme:bundle:2.0.0";let c=null,ran=false;try{c=JSON.parse(localStorage.getItem(key)||"null")}catch(_){}if(c&&typeof c.source==="string"){try{(0,eval)(c.source);ran=true}catch(_){}if(ran&&Date.now()-c.savedAt>=0&&Date.now()-c.savedAt<3600000)return}const r=await fetch(${JSON.stringify(CUSTOM_THEME_LOADER_URL)},{cache:"no-cache"});if(!r.ok)throw Error("HTTP "+r.status);const source=await r.text();if(!source.includes("zeta-custom-theme-maker"))throw Error("Invalid theme");if(!ran)(0,eval)(source);try{localStorage.setItem(key,JSON.stringify({source,savedAt:Date.now()}))}catch(_){}}catch(e){console.error("[ZETA Custom Theme]",e)}})();`);
-}
-
 async function syncBaseThemeVersion() {
   const el=document.querySelector('#baseThemeVersion');
   if(!el)return;
@@ -221,7 +214,6 @@ document.querySelectorAll('.preset').forEach(btn=>btn.addEventListener('click',(
 $('#resetTheme').addEventListener('click',()=>{fontSize.value='15';if(meBorder)meBorder.checked=false;if(otherBorder)otherBorder.checked=false;if(meBorderPicker)meBorderPicker.value='#53636C';if(otherBorderPicker)otherBorderPicker.value='#53636C';if(meBorderWidth)meBorderWidth.value='1';if(otherBorderWidth)otherBorderWidth.value='1';setColors('#FEE500','#FFFFFF','#B2C7D9')});
 $('#downloadScript').addEventListener('click',async()=>{try{await downloadGeneratedScript(true)}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 파일을 만들지 못했어요.')}});
 $('#installScript').addEventListener('click',async()=>{try{await installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast(isStayThemeInstall()?'Stay용 테마 파일을 만들지 못했어요.':'커스텀 테마 설치 링크를 열지 못했어요.')}});
-$('#copyBookmarklet').addEventListener('click',async()=>{try{ZetaSite.copyText(await generateBookmarklet(),'북마클릿 링크를 복사했어요.')}catch(e){console.error(e);ZetaSite.toast('북마클릿 링크를 만들지 못했어요.')}});
 
 applyFromURL();
 render();
