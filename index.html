@@ -1,16 +1,59 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#FEE500"><meta name="description" content="ZETA Tools의 최근 업데이트와 스크립트·북마클릿·커스텀 테마 도구를 확인합니다."><title>ZETA Tools — 홈</title><link rel="stylesheet" href="site.css?v=7.9.5"><link rel="stylesheet" href="ui-layout.css?v=1"></head><body><header class="header"><div class="wrap header-in"><a class="brand" href="index.html"><span class="logo">Z</span><span>ZETA Tools</span></a><nav class="nav" aria-label="주요 메뉴"><a class="active" href="index.html">홈</a><a href="scripts.html">스크립트</a><a href="bookmarklets.html">북마클릿</a><a href="theme-maker.html">테마 만들기</a><a class="gh" href="https://github.com/e4493089-cmyk/zeta-userscripts" target="_blank" rel="noopener">GitHub ↗</a></nav></div></header>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#FEE500"><meta name="description" content="ZETA Tools의 최근 유저스크립트 업데이트와 커스텀 테마 도구를 확인합니다."><title>ZETA Tools — 홈</title><link rel="stylesheet" href="site.css?v=7.9.5"><link rel="stylesheet" href="ui-layout.css?v=1"></head><body><header class="header"><div class="wrap header-in"><a class="brand" href="index.html"><span class="logo">Z</span><span>ZETA Tools</span></a><nav class="nav" aria-label="주요 메뉴"><a class="active" href="index.html">홈</a><a href="scripts.html">스크립트</a><a href="theme-maker.html">테마 만들기</a><a class="gh" href="https://github.com/e4493089-cmyk/zeta-userscripts" target="_blank" rel="noopener">GitHub ↗</a></nav></div></header>
 <main>
 <section class="hero home-hero update-hero"><div class="wrap"><span class="eyebrow">ZETA TOOLS</span><h1>HOME</h1><p>새로 추가된 기능과 수정된 내용을 확인할 수 있습니다.</p></div></section>
 
-<section class="section section-tight"><div class="wrap"><div class="route-grid">
+<section class="section section-tight"><div class="wrap"><div class="route-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))">
 <a class="route-card yellow" href="scripts.html"><span class="route-icon">⚙</span><div><span class="route-kicker">자동 실행</span><h3>스크립트</h3><p>한 번 설치하면 ZETA를 열 때마다 자동으로 실행됩니다.</p><span class="route-go">설치하기 →</span></div></a>
-<a class="route-card dark" href="bookmarklets.html"><span class="route-icon">⌁</span><div><span class="route-kicker">필요할 때 실행</span><h3>북마클릿</h3><p>북마크에 저장해 두고 필요할 때 실행합니다.</p><span class="route-go">복사하기 →</span></div></a>
+
 <a class="route-card maker" href="theme-maker.html"><span class="route-icon">🎨</span><div><span class="route-kicker">색 직접 선택</span><h3>테마 만들기</h3><p>말풍선·배경·외곽선 색과 글씨 크기를 직접 바꿉니다.</p><span class="route-go">만들기 →</span></div></a>
 </div></div></section>
 
-<section class="section update-section"><div class="wrap"><div class="section-head"><div><span class="section-label">CHANGELOG</span><h2>최근 업데이트</h2><p>유저스크립트와 북마클릿의 주요 변경사항을 날짜별로 정리합니다.</p></div></div>
+<section class="section update-section"><div class="wrap"><div class="section-head"><div><span class="section-label">CHANGELOG</span><h2>최근 업데이트</h2><p>공개 유저스크립트 저장소의 주요 변경사항을 날짜별로 정리합니다.</p></div></div>
 
 <div class="update-list" id="update-list" role="region" aria-label="업데이트 내역" tabindex="-1">
+
+<details class="update-card">
+<summary class="update-summary"><div class="update-summary-main"><h3>2026.11.18</h3><p>카카오톡 테마 iframe UI 보정 · 대화 내보내기 드래그 지원</p><div class="update-tags"><span>테마</span><span>대화 저장</span><span>대화 검색</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
+<div class="update-body">
+<section class="update-group"><h4>카카오톡 테마 · v3.50.96</h4><ul>
+<li>채팅 프레임의 메뉴·팝업을 밝은 카카오톡 팔레트에 다시 연결하고, 책갈피 설정/해제 상태에 따른 메시지 메뉴 색상 차이 수정</li>
+<li>요술봉 메시지 편집창의 검은 배경과 어두운 글씨 충돌을 보완하고, 취소·별표·확인 버튼의 대비 개선</li>
+<li>캐릭터 이름·AI 모델 표시·AI 생성 안내의 가독성 개선, 플러그인 삭제 확인창·대화 캡처 상단과 하단 UI 밝은 색으로 보정</li>
+<li>채팅·사이드바 스크롤바, 일기·꿈·제타그램·메시지 앱·프로필 선택과 여러 팝업에 기존 테마 규칙 재연결</li>
+</ul></section>
+<section class="update-group"><h4>대화 전체 저장 · v0.3.20</h4><ul>
+<li>대화 내보내기 플로팅 버튼을 마우스·터치로 드래그할 수 있게 변경하고 위치를 저장해 재접속 후에도 유지</li>
+<li>내보내기 메뉴가 버튼을 따라가도록 배치하고 화면 밖 이동 방지, 드래그 직후 잘못된 클릭 방지</li>
+<li>채팅 프레임에서 추출한 Markdown/TXT 파일을 바깥 페이지에서 저장하도록 연결하고, 다운로드 안내창·마지막 메시지 판별·화면 재연결 안정화</li>
+</ul></section>
+<section class="update-group"><h4>기타 · 진단</h4><ul>
+<li>채팅 프레임 전환 후 대화 검색의 메시지 위치 이동, 사이드바 메뉴 및 프로필 관련 연동을 보강</li>
+<li>Safari Stay에서 채팅 iframe 내 스크립트 실행 여부를 확인할 수 있는 별도 진단 스크립트 추가</li>
+</ul></section>
+</div></details>
+
+<details class="update-card">
+<summary class="update-summary"><div class="update-summary-main"><h3>2026.11.17</h3><p>제타 채팅 iframe 구조 대응 · 대화 검색·캡처·전체화면 수정</p><div class="update-tags"><span>테마</span><span>대화 검색</span><span>캡처</span><span>전체화면</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
+<div class="update-body">
+<section class="update-group"><h4>새 채팅 화면 대응</h4><ul>
+<li>제타 채팅이 별도 프레임에서 렌더링되는 구조에 맞춰 카카오톡 테마의 말풍선·입력창·프로필 갤러리 스타일 적용</li>
+<li>대화 검색과 대화 내보내기가 새 채팅 DOM 및 메시지 구조를 인식하도록 수정</li>
+<li>캡처 이름 가리기·캡처 OOC 제거·전체화면 유저스크립트가 새 프레임 환경에서도 작동하도록 대응</li>
+<li>Room Manager의 대화방 목록 별명 기능은 유지하고 채팅 사이드바의 별명 메뉴 삽입은 정리</li>
+</ul></section>
+</div></details>
+
+<details class="update-card">
+<summary class="update-summary"><div class="update-summary-main"><h3>2026.11.04</h3><p>Room Manager 전체 수집 안정화 · 스냅샷 오류 안내 대비 개선</p><div class="update-tags"><span>Room Manager</span><span>테마</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
+<div class="update-body">
+<section class="update-group"><h4>Room Manager · Android/PC 및 iOS</h4><ul>
+<li>수집 중 아직 불러오는 대화방이 남았는지 확인하고 실제 목록 끝에 도달했는지 검증하도록 보강</li>
+<li>실패한 수집 결과를 스크롤 영역에서 읽기 쉽게 정리하고, 반복적인 전체 목록 분석을 줄여 수집 중 부담 완화</li>
+</ul></section>
+<section class="update-group"><h4>카카오톡 테마</h4><ul>
+<li>스냅샷 생성 실패 안내와 버튼의 글자·배경 대비 개선</li>
+</ul></section>
+</div></details>
 
 <details class="update-card">
 <summary class="update-summary"><div class="update-summary-main"><h3>2026.10.22</h3><p>카카오톡 테마 · 새 입력창 UI 대응 · 스냅샷 버튼 정리</p><div class="update-tags"><span>테마</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
@@ -65,13 +108,13 @@
 </details>
 
 <details class="update-card">
-<summary class="update-summary"><div class="update-summary-main"><h3>2026.10.12</h3><p>대화 검색 · 검색 결과 이동 시 새로고침 제거</p><div class="update-tags"><span>대화 검색</span><span>북마클릿</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
+<summary class="update-summary"><div class="update-summary-main"><h3>2026.10.12</h3><p>대화 검색 · 검색 결과 이동 시 새로고침 제거</p><div class="update-tags"><span>대화 검색</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
 <div class="update-body">
 <section class="update-group"><h4>대화 검색</h4><ul>
-<li>검색 결과 이동 시 새로고침으로 북마클릿이 해제되던 문제 수정</li>
+<li>검색 결과에서 메시지로 이동할 때 불필요한 새로고침을 줄이도록 개선</li>
 <li>기본 책갈피와 같은 방식으로 해당 메시지 위치를 불러오도록 변경</li>
 <li>해당 메시지가 화면에 표시된 뒤 이동 완료 처리. 내부 이동 기능에 연결할 수 없는 경우 스크롤 탐색으로 대체</li>
-<li>스크립트는 업데이트 후 제타 새로고침. 북마클릿은 기존 코드 교체 없이 제타 새로고침 후 다시 실행</li>
+<li>스크립트 업데이트 후 제타를 새로고침하면 변경사항 반영</li>
 </ul></section>
 </div>
 </details>
@@ -91,7 +134,6 @@
 <li>Tampermonkey 설치 버튼은 선택한 색상 설정을 포함한 설치 링크를 바로 열도록 유지. Stay용 다운로드는 선택한 설정을 반영한 완성본 파일로 제공</li>
 <li>Stay용 다운로드 후 원격 코드 페이지로 이동하던 중복 동작 제거</li>
 <li>미리보기·자동 팔레트의 배경색과 글자 대비 계산을 실제 적용 테마와 통일</li>
-<li>북마클릿은 파일을 불러오는 방식을 유지하고, 저장된 배포 파일을 먼저 사용하도록 구성</li>
 </ul></section>
 </div></details>
 
@@ -210,7 +252,7 @@
 <summary class="update-summary"><div class="update-summary-main"><h3>2026.09.26</h3><p>카카오톡/커스텀 테마 중복 실행 방지 · 글자 대비 수정 · Room Manager 검색 공백 수정 · 프로필 선택창 및 전체화면 경로 판별 수정</p><div class="update-tags"><span>테마</span><span>Room Manager</span><span>전체화면</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
 <div class="update-body">
 <section class="update-group"><h4>카카오톡 · 커스텀 테마</h4><ul>
-<li>기본 테마와 커스텀 테마를 함께 실행하거나 북마클릿을 다시 실행해도 화면 감시와 이동 이벤트가 중복 등록되지 않도록 수정</li>
+<li>기본 테마와 커스텀 테마를 함께 실행해도 화면 감시와 이동 이벤트가 중복 등록되지 않도록 수정</li>
 <li>같은 페이지에서 다른 커스텀 색상을 다시 실행하면 런타임은 유지하고 새 테마 색상만 바로 교체하도록 개선</li>
 <li>대화 프로필 선택창의 테마 표시용 클래스가 적용 직후 제거되던 문제 수정</li>
 <li>중간 밝기의 말풍선과 배경에서 흰 글자의 대비가 낮아지던 문제 수정</li>
@@ -257,7 +299,7 @@
 <li>팝업 제목·설명·체크박스·버튼 색상과 배경 오버레이를 정리</li>
 <li>ZETA 홈 상단의 APP 출시 안내 배너를 숨기고 빈 공간도 함께 제거</li>
 <li>커스텀 테마가 최신 카카오톡 테마와 로더를 자동으로 불러오도록 업데이트 구조 개선</li>
-<li>Tampermonkey·Stay·북마클릿의 커스텀 테마 실행 경로를 하나의 로더 기준으로 통합</li>
+<li>Tampermonkey·Stay에서 커스텀 테마가 공통 로더를 사용하도록 정리</li>
 </ul></section>
 </div></details>
 
@@ -294,7 +336,7 @@
 </div></details>
 
 <details class="update-card">
-<summary class="update-summary"><div class="update-summary-main"><h3>2026.09.21</h3><p>대화 검색 추가 · Room Manager 대규모 개선 · 대화 검색 신규 추가 · Room Manager 수집 안정화 · ZETA Tools Launcher 추가</p><div class="update-tags"><span>대화 검색</span><span>Room Manager</span><span>북마클릿</span><span>테마</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
+<summary class="update-summary"><div class="update-summary-main"><h3>2026.09.21</h3><p>대화 검색 추가 · Room Manager 대규모 개선 · 대화 검색 신규 추가 · Room Manager 수집 안정화</p><div class="update-tags"><span>대화 검색</span><span>Room Manager</span><span>테마</span><i class="update-chevron" aria-hidden="true"></i></div></div><span class="update-toggle">자세히 보기</span></summary>
 <div class="update-body">
 <section class="update-group"><h4>대화 검색</h4><ul>
 <li>채팅방 안에서 지난 대화를 찾는 대화 검색 스크립트 추가</li>
@@ -314,11 +356,6 @@
 <li>PC/iOS 수집 속도·스크롤·배치 크기 조정 및 안정화</li>
 <li>방 목록 스크롤 끊김 및 초기 데이터 로딩 부담 완화</li>
 <li>수집 진행 및 완료 안내를 인앱 UI로 정리</li>
-</ul></section>
-<section class="update-group"><h4>북마클릿</h4><ul>
-<li>ZETA Tools Launcher 추가</li>
-<li>여러 북마클릿을 각각 실행하지 않고 런처 하나에서 원하는 도구를 선택해 실행할 수 있도록 추가</li>
-<li>런처와 Room Manager 북마클릿이 최신 스크립트를 불러오도록 업데이트 방식 개선</li>
 </ul></section>
 <section class="update-group"><h4>카카오톡 테마</h4><ul>
 <li>피스 충전 바텀시트를 밝은 테마에 맞게 수정</li>
@@ -374,6 +411,6 @@
 </div></section>
 </main>
 
-<footer class="footer"><div class="wrap footer-stack"><div class="footer-in"><div class="footer-brand">ZETA Tools · ZETA용 개인 도구</div><nav class="footer-links" aria-label="하단 메뉴"><a href="index.html">홈</a><a href="scripts.html">스크립트</a><a href="bookmarklets.html">북마클릿</a><a href="theme-maker.html">테마 만들기</a></nav></div><div class="update-footnote"><p>ZETA의 웹 UI 변경에 따라 일부 기능은 일시적으로 동작하지 않을 수 있습니다.</p><p>이 프로젝트는 비공식 사용자 제작 도구이며 ZETA 또는 Scatter Lab과 관련이 없습니다.</p></div></div></footer>
+<footer class="footer"><div class="wrap footer-stack"><div class="footer-in"><div class="footer-brand">ZETA Tools · ZETA용 개인 도구</div><nav class="footer-links" aria-label="하단 메뉴"><a href="index.html">홈</a><a href="scripts.html">스크립트</a><a href="theme-maker.html">테마 만들기</a></nav></div><div class="update-footnote"><p>ZETA의 웹 UI 변경에 따라 일부 기능은 일시적으로 동작하지 않을 수 있습니다.</p><p>이 프로젝트는 비공식 사용자 제작 도구이며 ZETA 또는 Scatter Lab과 관련이 없습니다.</p></div></div></footer>
 <script src="updates.js?v=1.0.1" defer></script>
 </body></html>
