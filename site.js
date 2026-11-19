@@ -194,9 +194,6 @@ function renderScriptActions(root=document){
       secondary.addEventListener('click',()=>copyText(url,`${name} 링크를 복사했어요.`));
     }
     box.appendChild(secondary);
-    if(!compact && box.dataset.bookmark){
-      const bm=document.createElement('a');bm.className='btn btn-soft';bm.href=box.dataset.bookmark;bm.textContent='북마클릿 버전';box.appendChild(bm);
-    }
     syncScriptVersion(box,url);
   });
 }
