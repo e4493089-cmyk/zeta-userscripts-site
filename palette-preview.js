@@ -74,8 +74,6 @@
     if (event.target.closest('.preset, #resetTheme')) requestAnimationFrame(renderPalette);
   });
 
-  const downloadButton = document.querySelector('#downloadScript');
-  if (downloadButton) downloadButton.textContent = 'Stay용 .js 다운로드';
 
   removeDuplicatePresets();
   renderPalette();

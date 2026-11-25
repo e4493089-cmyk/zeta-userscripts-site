@@ -2,15 +2,14 @@ const ZETA={
   repo:'https://github.com/e4493089-cmyk/zeta-userscripts',
   raw:'https://raw.githubusercontent.com/e4493089-cmyk/zeta-userscripts/main/',
   pages:'https://e4493089-cmyk.github.io/zeta-userscripts-site/',
-  staySafari:'https://apps.apple.com/app/stay-for-safari/id1591620171',
-  stayEdge:'https://microsoftedge.microsoft.com/addons/detail/pibdgdkfbmlggmbmmgmjblmdigmdgbdb',
+  userscripts:'https://apps.apple.com/kr/app/userscripts/id1463298887',
   tampermonkey:'https://www.tampermonkey.net/'
 };
 
 const PLATFORM_KEY='zeta-tools:platform-mode:v2';
 const PLATFORM_OPTIONS={
   auto:{label:'자동'},
-  ios:{label:'iOS · Stay'},
+  ios:{label:'iOS · Userscripts'},
   monkey:{label:'Android / PC · Tampermonkey'}
 };
 
@@ -47,36 +46,32 @@ function setPlatformMode(mode){
 }
 
 function platformName(platform=getPlatform()){
-  if(platform==='ios')return 'iOS · Stay';
+  if(platform==='ios')return 'iOS · Userscripts';
   return 'Android / PC · Tampermonkey';
 }
 
 function platformInstallMeta(platform=getPlatform()){
   if(platform==='ios'){
-    const edge=detectBrowser()==='Edge';
-    return edge?{
-      manager:'Stay for Mobile',
-      managerUrl:ZETA.stayEdge,
-      primary:'Stay용 링크 복사',
-      copyFirst:true,
-      badge:'Stay for Mobile 추천',
-      summary:'자동 갱신을 위해 파일 저장보다 Stay용 원본 링크 등록을 권장합니다.',
-      steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Edge의 Stay for Mobile을 열어 새 스크립트/Link 추가를 선택합니다.','복사한 .user.js 주소를 붙여넣고 저장한 뒤 활성화합니다.','ZETA 탭을 새로고침해 적용되었는지 확인합니다.']
-    }:{
-      manager:'Stay for Safari',
-      managerUrl:ZETA.staySafari,
-      primary:'Stay용 링크 복사',
-      copyFirst:true,
-      badge:'Stay for Safari 추천',
-      summary:'업데이트를 위해 파일 다운로드 대신 Stay용 원본 링크 등록을 권장합니다.',
-      steps:['원하는 스크립트의 “Stay용 링크 복사”를 누릅니다.','Stay for Safari를 열고 + → Link를 선택합니다.','복사한 .user.js 주소를 붙여넣고 저장한 뒤 활성화합니다.','Safari 확장에서 Stay 사용을 허용한 뒤 ZETA를 새로고침합니다.']
+    return {
+      manager:'Userscripts',
+      managerUrl:ZETA.userscripts,
+      primary:'.user.js 다운로드',
+      downloadFirst:true,
+      badge:'Safari · Userscripts 사용',
+      summary:'iPhone/iPad는 Safari + Userscripts를 사용하세요. 받은 .user.js 파일을 앱에 지정된 폴더에 넣고, Safari 확장의 기타 웹사이트 권한을 허용합니다.',
+      steps:['App Store에서 Userscripts를 설치하고 한 번 실행해 스크립트 저장 폴더를 확인합니다.',
+        '설정 → 앱 → Safari → 확장 프로그램 → Userscripts를 켭니다. 구버전 iOS는 설정 → Safari에서 찾으세요.',
+        '웹사이트 접근 권한의 “기타 웹사이트”를 “허용”으로 바꾸고, 제타가 별도 목록에 있으면 함께 허용합니다.',
+        '이 사이트에서 받은 .user.js 파일을 파일 앱에서 Userscripts에 지정된 폴더로 이동합니다. 다운로드 폴더에만 두면 적용되지 않습니다.',
+        'Safari로 제타를 열고 확장 프로그램 → Userscripts에서 해당 스크립트가 켜져 있는지 확인합니다.',
+        'Stay에서 같은 스크립트를 쓰고 있었다면 꺼서 중복 실행을 막고, 제타를 새로고침합니다.']
     };
   }
   return {
     manager:'Tampermonkey',
     managerUrl:ZETA.tampermonkey,
     primary:'Tampermonkey로 설치',
-    copyFirst:false,
+    downloadFirst:false,
     badge:'Tampermonkey 추천',
     summary:'설치 버튼을 누르면 Tampermonkey 설치 화면이 열립니다.',
     steps:['Tampermonkey를 설치하고 활성화합니다.','원하는 스크립트의 설치 버튼을 누릅니다.','Tampermonkey 설치 화면에서 설치를 확인합니다.','ZETA를 새로고침합니다.']
@@ -158,8 +153,8 @@ async function downloadScript(url,name){
 
 function installScript(url,name){
   const meta=platformInstallMeta();
-  if(meta.copyFirst){
-    copyText(url,`${name} 링크를 복사했어요.`).then(()=>showInstallGuide(name,url));
+  if(meta.downloadFirst){
+    downloadScript(url,name).then(()=>showInstallGuide(name,url));
   }else{
     window.location.href=url;
   }
@@ -172,9 +167,9 @@ function renderScriptActions(root=document){
     const compact=box.dataset.compact==='1';
     const meta=platformInstallMeta();
     box.innerHTML='';
-    const primary=document.createElement(meta.copyFirst?'button':'a');
+    const primary=document.createElement(meta.downloadFirst?'button':'a');
     primary.className=`btn btn-primary${compact?' btn-sm':''}`;primary.textContent=meta.primary;
-    if(meta.copyFirst){
+    if(meta.downloadFirst){
       primary.type='button';
       primary.addEventListener('click',()=>installScript(url,name));
     }else{
@@ -186,9 +181,9 @@ function renderScriptActions(root=document){
     box.appendChild(primary);
     const secondary=document.createElement('button');
     secondary.type='button';secondary.className=`btn btn-light${compact?' btn-sm':''}`;
-    if(meta.copyFirst){
-      secondary.textContent='JS 파일 저장 (수동 설치)';
-      secondary.addEventListener('click',()=>downloadScript(url,name));
+    if(meta.downloadFirst){
+      secondary.textContent='설치 방법';
+      secondary.addEventListener('click',()=>showInstallGuide(name,url));
     }else{
       secondary.textContent='링크 복사';
       secondary.addEventListener('click',()=>copyText(url,`${name} 링크를 복사했어요.`));

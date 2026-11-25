@@ -124,7 +124,7 @@ async function buildStandaloneScript() {
 // @grant        GM_setValue
 // ==/UserScript==
 
-// 선택한 사용자 설정은 Stay 업그레이드 후 공통 원격 로더에서도 복원할 수 있도록 저장한다.
+// 선택한 사용자 설정은 스크립트 업데이트 후 공통 원격 로더에서도 복원할 수 있도록 저장한다.
 (()=>{const key=${JSON.stringify(CUSTOM_THEME_SETTINGS_KEY)},settings=${JSON.stringify(query)};
   try{if(typeof GM_setValue==='function')GM_setValue(key,settings)}catch(_){}
   try{localStorage.setItem(key,settings)}catch(_){}
@@ -136,30 +136,30 @@ async function buildStandaloneScript() {
 async function downloadGeneratedScript(forTampermonkey=false) {
   const script=await buildStandaloneScript(),s=currentSettings();
   const blob=new Blob([script],{type:'text/javascript;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
-  link.href=url;link.download=`zeta-custom-theme-${s.bubble.toLowerCase()}-${s.other.toLowerCase()}-${s.bg.toLowerCase()}-${s.fs}px.${forTampermonkey?'user.js':'js'}`;
+  link.href=url;link.download=`zeta-custom-theme-${s.bubble.toLowerCase()}-${s.other.toLowerCase()}-${s.bg.toLowerCase()}-${s.fs}px.user.js`;
   document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-  ZetaSite.toast(forTampermonkey?'완성된 .user.js 파일입니다. Tampermonkey 대시보드의 유틸리티에서 가져오세요.':'Stay용 완성본 .js 파일을 만들었어요.');
+  ZetaSite.toast(!isUserscriptsThemeInstall()?'완성된 .user.js 파일입니다. Tampermonkey 대시보드의 유틸리티에서 가져오세요.':'Userscripts용 .user.js 파일을 만들었어요. 파일 앱에서 지정된 Userscripts 폴더로 이동하세요.');
 }
 function customThemeInstallURL() {
   const url=new URL(CUSTOM_THEME_LOADER_URL);
   Object.entries(currentSettings()).forEach(([key,value])=>url.searchParams.set(key,value));
   return url.href;
 }
-function isStayThemeInstall() {
+function isUserscriptsThemeInstall() {
   // 사이트의 기기 선택(자동/iOS/Android·PC)을 설치 버튼에도 반영한다.
   return window.ZetaSite?.getPlatform?.() === 'ios';
 }
 async function installGeneratedTheme() {
-  if (isStayThemeInstall()) {
-    // Stay는 설치 URL의 색상 파라미터에 의존하지 않고 완성본을 가져온다.
+  if (isUserscriptsThemeInstall()) {
+    // Userscripts는 설치 URL의 색상 파라미터에 의존하지 않고 완성본을 가져온다.
     return downloadGeneratedScript(false);
   }
   window.location.href = customThemeInstallURL();
 }
 function syncThemeInstallActions() {
-  const ios = isStayThemeInstall();
-  $('#installScript').textContent = ios ? 'Stay용 .js 다운로드' : 'Tampermonkey 설치';
-  $('#downloadScript').textContent = ios ? '.user.js 다운로드 (대체 형식)' : '.user.js 다운로드';
+  const ios = isUserscriptsThemeInstall();
+  $('#installScript').textContent = ios ? 'Userscripts용 .user.js 다운로드' : 'Tampermonkey 설치';
+  $('#downloadScript').textContent = ios ? '.user.js 다시 다운로드' : '.user.js 다운로드';
 }
 async function syncBaseThemeVersion() {
   const el=document.querySelector('#baseThemeVersion');
@@ -213,7 +213,7 @@ document.querySelectorAll('.quick-swatches').forEach(group=>group.addEventListen
 document.querySelectorAll('.preset').forEach(btn=>btn.addEventListener('click',()=>setColors(btn.dataset.a,btn.dataset.o,btn.dataset.b)));
 $('#resetTheme').addEventListener('click',()=>{fontSize.value='15';if(meBorder)meBorder.checked=false;if(otherBorder)otherBorder.checked=false;if(meBorderPicker)meBorderPicker.value='#53636C';if(otherBorderPicker)otherBorderPicker.value='#53636C';if(meBorderWidth)meBorderWidth.value='1';if(otherBorderWidth)otherBorderWidth.value='1';setColors('#FEE500','#FFFFFF','#B2C7D9')});
 $('#downloadScript').addEventListener('click',async()=>{try{await downloadGeneratedScript(true)}catch(e){console.error(e);ZetaSite.toast('커스텀 테마 파일을 만들지 못했어요.')}});
-$('#installScript').addEventListener('click',async()=>{try{await installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast(isStayThemeInstall()?'Stay용 테마 파일을 만들지 못했어요.':'커스텀 테마 설치 링크를 열지 못했어요.')}});
+$('#installScript').addEventListener('click',async()=>{try{await installGeneratedTheme()}catch(e){console.error(e);ZetaSite.toast(isUserscriptsThemeInstall()?'Userscripts용 테마 파일을 만들지 못했어요.':'커스텀 테마 설치 링크를 열지 못했어요.')}});
 
 applyFromURL();
 render();
